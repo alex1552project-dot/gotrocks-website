@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limestone Delivery | Texas Got Rocks? | Always FREE Delivery in Conroe & Houston</title>
+    <meta name="description" content="Limestone delivered FREE to Conroe, The Woodlands & Houston. Genuine Texas limestone brings natural beauty and durability to your landscape. Light colored and naturally textured, limestone is the quintessential ...">
+    <link rel="canonical" href="https://gotrocks.com/materials/limestone/">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap');
+        
+        :root {
+            --warm-orange: #F57C00;
+            --earth-dark: #2D1B0E;
+            --earth-brown: #5D4037;
+            --sand-tan: #D7CCC8;
+            --sand-light: #EFEBE9;
+            --white: #FFFFFF;
+            --success-green: #2E7D32;
+            --gold-accent: #FFB300;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 40px rgba(0,0,0,0.15);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--sand-light);
+            color: var(--earth-dark);
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        .nav {
+            background: var(--white);
+            padding: 16px 32px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        
+        .nav-logo img { height: 50px; }
+        
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--earth-dark);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+        
+        .nav-links a:hover { color: var(--warm-orange); }
+        
+        .nav-cta {
+            background: linear-gradient(135deg, var(--warm-orange), #E65100);
+            color: white !important;
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #D4C4B0 0%, #D4C4B0dd 100%);
+            padding: 80px 32px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="%23333"/></svg>') repeat;
+            background-size: 30px 30px;
+            opacity: 0.3;
+        }
+        
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(245, 124, 0, 0.2);
+            border: 1px solid var(--warm-orange);
+            color: var(--warm-orange);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .hero h1 {
+            font-size: 52px;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+        
+        .hero h1 span { color: #1a1a1a; text-shadow: -1px -1px 0 #666, 1px -1px 0 #666, -1px 1px 0 #666, 1px 1px 0 #666; }
+        
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--sand-tan);
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+        
+        .hero-price {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        
+        .price-amount {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--gold-accent);
+        }
+        
+        .price-unit {
+            font-size: 18px;
+            color: var(--sand-tan);
+        }
+        
+        .price-note {
+            font-size: 14px;
+            color: var(--success-green);
+            background: rgba(46, 125, 50, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+        
+        .hero-ctas {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 32px;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 17px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--warm-orange), #E65100);
+            color: white;
+            box-shadow: 0 4px 15px rgba(245, 124, 0, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(245, 124, 0, 0.5);
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .hero-image {
+            position: relative;
+        }
+        
+        .hero-image-main {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(145deg, #D4C4B0, #D4C4B0dd);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 120px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            border: 3px solid rgba(255,255,255,0.1);
+        }
+        
+        .hero-features {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+        }
+        
+        .hero-feature {
+            background: var(--white);
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--earth-dark);
+            box-shadow: var(--shadow-md);
+            white-space: nowrap;
+        }
+        
+        /* Benefits Section */
+        .benefits {
+            padding: 100px 32px;
+            background: var(--white);
+        }
+        
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-label {
+            display: inline-block;
+            background: var(--warm-orange);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        
+        .section-title {
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--earth-dark);
+            margin-bottom: 16px;
+        }
+        
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--earth-brown);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+        
+        .benefit-card {
+            background: var(--sand-light);
+            padding: 40px 32px;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .benefit-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .benefit-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .benefit-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--earth-dark);
+            margin-bottom: 12px;
+        }
+        
+        .benefit-card p {
+            font-size: 15px;
+            color: var(--earth-brown);
+            line-height: 1.6;
+        }
+        
+        /* Uses Section */
+        .uses {
+            padding: 100px 32px;
+            background: linear-gradient(135deg, var(--earth-dark) 0%, #3E2723 100%);
+        }
+        
+        .uses .section-title { color: var(--white); }
+        .uses .section-subtitle { color: var(--sand-tan); }
+        
+        .uses-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+        
+        .use-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 32px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            transition: all 0.3s ease;
+        }
+        
+        .use-card:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(8px);
+        }
+        
+        .use-icon {
+            font-size: 36px;
+            flex-shrink: 0;
+        }
+        
+        .use-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+        
+        .use-card p {
+            font-size: 15px;
+            color: var(--sand-tan);
+            line-height: 1.6;
+        }
+        
+        /* Coverage Calculator */
+        .coverage {
+            padding: 100px 32px;
+            background: var(--sand-light);
+        }
+        
+        .coverage-box {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 48px;
+            box-shadow: var(--shadow-lg);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+        
+        .coverage-info h3 {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--earth-dark);
+            margin-bottom: 16px;
+        }
+        
+        .coverage-info p {
+            font-size: 16px;
+            color: var(--earth-brown);
+            margin-bottom: 24px;
+        }
+        
+        .coverage-table {
+            background: var(--sand-light);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+        
+        .coverage-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .coverage-row:last-child { border-bottom: none; }
+        
+        .coverage-row.header {
+            background: var(--earth-dark);
+            color: white;
+            font-weight: 700;
+        }
+        
+        .coverage-calc {
+            background: linear-gradient(135deg, var(--warm-orange), #E65100);
+            padding: 40px;
+            border-radius: var(--radius-lg);
+            color: white;
+            text-align: center;
+        }
+        
+        .coverage-calc h4 {
+            font-size: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .calc-result {
+            font-size: 64px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        
+        .calc-label {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 24px;
+        }
+        
+        /* Pro Tips */
+        .tips {
+            padding: 100px 32px;
+            background: var(--white);
+        }
+        
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+        
+        .tip-card {
+            background: linear-gradient(135deg, #FFF8E1, #FFECB3);
+            border: 2px solid var(--gold-accent);
+            padding: 32px;
+            border-radius: var(--radius-lg);
+        }
+        
+        .tip-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--earth-dark);
+            margin-bottom: 12px;
+        }
+        
+        .tip-card p {
+            font-size: 15px;
+            color: var(--earth-brown);
+            line-height: 1.7;
+        }
+        
+        /* CTA Section */
+        .cta {
+            padding: 100px 32px;
+            background: linear-gradient(135deg, var(--warm-orange), #E65100);
+            text-align: center;
+        }
+        
+        .cta h2 {
+            font-size: 42px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 16px;
+        }
+        
+        .cta p {
+            font-size: 20px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 32px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta .btn-white {
+            background: white;
+            color: var(--warm-orange);
+            font-size: 18px;
+            padding: 18px 40px;
+        }
+        
+        .cta .btn-white:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        /* Related Materials */
+        .related {
+            padding: 100px 32px;
+            background: var(--sand-light);
+        }
+        
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+        
+        .related-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .related-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .related-image {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+        
+        .related-info {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .related-info h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--earth-dark);
+            margin-bottom: 4px;
+        }
+        
+        .related-info p {
+            font-size: 14px;
+            color: var(--warm-orange);
+            font-weight: 600;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #1a0f08;
+            padding: 60px 32px 30px;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-brand p {
+            color: var(--sand-tan);
+            font-size: 14px;
+            margin-top: 16px;
+        }
+        
+        .footer-column h4 {
+            color: var(--gold-accent);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        
+        .footer-column ul { list-style: none; }
+        
+        .footer-column li { margin-bottom: 8px; }
+        
+        .footer-column a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        
+        .footer-column a:hover { color: white; }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 24px;
+            text-align: center;
+        }
+        
+        .footer-bottom p {
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-container { grid-template-columns: 1fr; text-align: center; }
+            .hero-image { display: none; }
+            .benefits-grid { grid-template-columns: 1fr; }
+            .uses-grid { grid-template-columns: 1fr; }
+            .coverage-box { grid-template-columns: 1fr; }
+            .tips-grid { grid-template-columns: 1fr; }
+            .related-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+        
+        @media (max-width: 640px) {
+            .hero h1 { font-size: 36px; }
+            .section-title { font-size: 32px; }
+            .hero-ctas { flex-direction: column; }
+            .hero-features { flex-direction: column; position: static; transform: none; margin-top: 24px; }
+            .related-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <img src="/images/logo.png" alt="Texas Got Rocks?">
+            </a>
+            <div class="nav-links">
+                <a href="/" style="display: flex; align-items: center; gap: 6px;">← Home</a>
+                <a href="/#products">Materials</a>
+                <a href="/#how-it-works">How It Works</a>
+                <a href="/#service-areas">Service Areas</a>
+                <a href="/#faq">FAQ</a>
+                <a href="/?openQuote=true&material=limestone" class="nav-cta">Get Free Quote</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">🏛️ Texas Classic</div>
+                <h1>Premium <span>Limestone</span> Delivered Free</h1>
+                <p class="hero-subtitle">Genuine Texas limestone brings natural beauty and durability to your landscape. Light colored and naturally textured, limestone is the quintessential Texas landscaping material.</p>
+                
+                <div class="hero-price">
+                    <span class="price-amount">$55</span>
+                    <span class="price-unit">per cubic yard</span>
+                    <span class="price-note">✓ FREE Delivery</span>
+                </div>
+                
+                <div class="hero-ctas">
+                    <a href="/?openQuote=true&material=limestone" class="btn btn-primary">🚚 Get Instant Quote →</a>
+                    <a href="tel:9365551234" class="btn btn-secondary">📞 Call (936) 555-1234</a>
+                </div>
+            </div>
+            
+            <div class="hero-image">
+                <div class="hero-image-main"><img src="/images/decomposed-granite.png" alt="Limestone" style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px;"></div>
+                <div class="hero-features">
+                    <span class="hero-feature">✓ Color-Enhanced</span>
+                    <span class="hero-feature">✓ Double-Shredded</span>
+                    <span class="hero-feature">✓ Weed Barrier</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Benefits Section -->
+    <section class="benefits">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-label">Why Limestone?</span>
+                <h2 class="section-title">The Benefits of Limestone</h2>
+                <p class="section-subtitle">More than just good looks—black mulch delivers serious performance for your landscape</p>
+            </div>
+            
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">🎨</div>
+                    <h3>Stunning Contrast</h3>
+                    <p>Deep black color creates dramatic contrast against green plants, colorful flowers, and light-colored stones. Makes your landscaping look professionally designed.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">💧</div>
+                    <h3>Moisture Retention</h3>
+                    <p>Reduces water evaporation by up to 70%. Your plants stay hydrated longer, meaning less watering and lower water bills during hot Texas summers.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">🌡️</div>
+                    <h3>Temperature Control</h3>
+                    <p>Insulates soil from extreme heat and cold. Keeps roots cool in summer and protected in winter, promoting healthier plant growth year-round.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">🚫</div>
+                    <h3>Weed Suppression</h3>
+                    <p>A 3-4 inch layer blocks sunlight from reaching weed seeds, dramatically reducing weed growth. Spend less time pulling weeds, more time enjoying your yard.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">🌱</div>
+                    <h3>Soil Enrichment</h3>
+                    <p>As it decomposes, black mulch adds organic matter to your soil, improving structure and fertility. It's a slow-release soil conditioner.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">⏰</div>
+                    <h3>Long-Lasting Color</h3>
+                    <p>Our color-enhanced black mulch holds its rich color for 12+ months, unlike cheap mulch that fades to gray in weeks. One application lasts the whole season.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Uses Section -->
+    <section class="uses">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-label">Applications</span>
+                <h2 class="section-title">Perfect Uses for Limestone</h2>
+                <p class="section-subtitle">Versatile enough for any landscaping project around your home</p>
+            </div>
+            
+            <div class="uses-grid">
+                <div class="use-card">
+                    <div class="use-icon">🌸</div>
+                    <div>
+                        <h3>Flower Beds</h3>
+                        <p>The dark backdrop makes flowers absolutely pop. Whether you have roses, petunias, or native Texas wildflowers, black mulch creates a gallery-worthy display.</p>
+                    </div>
+                </div>
+                
+                <div class="use-card">
+                    <div class="use-icon">🌳</div>
+                    <div>
+                        <h3>Tree Rings</h3>
+                        <p>Create professional-looking tree rings that protect roots, retain moisture, and prevent lawn mower damage. Extend 3-4 feet from the trunk for best results.</p>
+                    </div>
+                </div>
+                
+                <div class="use-card">
+                    <div class="use-icon">🏠</div>
+                    <div>
+                        <h3>Foundation Beds</h3>
+                        <p>Perfect for beds against your home. The dark color complements any house color while protecting foundation plantings and improving curb appeal.</p>
+                    </div>
+                </div>
+                
+                <div class="use-card">
+                    <div class="use-icon">🚶</div>
+                    <div>
+                        <h3>Garden Pathways</h3>
+                        <p>Create soft, cushioned pathways through your garden. Black mulch defines walkways beautifully and is comfortable underfoot.</p>
+                    </div>
+                </div>
+                
+                <div class="use-card">
+                    <div class="use-icon">🏡</div>
+                    <div>
+                        <h3>Playground Areas</h3>
+                        <p>Soft landing surface for play areas. Our double-shredded mulch is free of large chunks and provides cushioning for active kids.</p>
+                    </div>
+                </div>
+                
+                <div class="use-card">
+                    <div class="use-icon">🌿</div>
+                    <div>
+                        <h3>Shrub Borders</h3>
+                        <p>Define borders between lawn and shrub beds. Creates clean lines and reduces trimming work by keeping grass from creeping into beds.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Coverage Section -->
+    <section class="coverage">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-label">How Much Do You Need?</span>
+                <h2 class="section-title">Limestone Coverage Guide</h2>
+                <p class="section-subtitle">Get the right amount the first time with our simple coverage chart</p>
+            </div>
+            
+            <div class="coverage-box">
+                <div class="coverage-info">
+                    <h3>Coverage by Depth</h3>
+                    <p>We recommend 3-4 inches of mulch for best weed suppression and moisture retention. Here's how far one cubic yard will go:</p>
+                    
+                    <div class="coverage-table">
+                        <div class="coverage-row header">
+                            <span>Depth</span>
+                            <span>Coverage (1 CY)</span>
+                        </div>
+                        <div class="coverage-row">
+                            <span>2 inches</span>
+                            <span>162 sq ft</span>
+                        </div>
+                        <div class="coverage-row">
+                            <span>3 inches (recommended)</span>
+                            <span>108 sq ft</span>
+                        </div>
+                        <div class="coverage-row">
+                            <span>4 inches</span>
+                            <span>81 sq ft</span>
+                        </div>
+                    </div>
+                    
+                    <p style="margin-top: 20px; font-size: 14px;"><strong>Pro Tip:</strong> Order 10% extra to account for settling and hard-to-reach areas.</p>
+                </div>
+                
+                <div class="coverage-calc">
+                    <h4>Quick Estimate</h4>
+                    <div class="calc-result">~3 CY</div>
+                    <div class="calc-label">covers a typical front yard bed</div>
+                    <a href="/?openQuote=true&material=limestone" class="btn btn-white" style="color: var(--warm-orange);">Calculate Your Exact Amount →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Pro Tips -->
+    <section class="tips">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-label">Expert Advice</span>
+                <h2 class="section-title">Pro Tips for Limestone</h2>
+                <p class="section-subtitle">Get the most out of your mulch with these professional landscaping tips</p>
+            </div>
+            
+            <div class="tips-grid">
+<div class="tip-card">
+                    <h3>💡 Expect Initial Dust</h3>
+                    <p>Limestone is naturally powdery when first spread. The dust settles quickly and actually helps the material compact and bind together.</p>
+                </div>
+
+                <div class="tip-card">
+                    <h3>💡 pH Consideration</h3>
+                    <p>Limestone is alkalite and will raise soil pH over time. Keep it away from acid-loving plants like azaleas, blueberries, and rhododendrons.</p>
+                </div>
+
+                <div class="tip-card">
+                    <h3>💡 Compact Thoroughly</h3>
+                    <p>Limestone compacts to an almost concrete-like surface when properly installed. Water and compact in layers for best results.</p>
+                </div>
+
+                <div class="tip-card">
+                    <h3>💡 Great for Drainage</h3>
+                    <p>The powdery nature helps prevent weeds while still allowing water to drain. Still recommend landscape fabric for best results.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="section-container">
+            <h2>Ready for Limestone?</h2>
+            <p>Get your instant quote now. Always FREE delivery, no hidden fees, just premium mulch from your local neighbors.</p>
+            <a href="/?openQuote=true&material=limestone" class="btn btn-white">🚚 Get Your Free Quote →</a>
+        </div>
+    </section>
+    
+    <!-- Related Materials -->
+    <section class="related">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-label">You Might Also Like</span>
+                <h2 class="section-title">Related Materials</h2>
+                <p class="section-subtitle">Complete your landscaping project with these popular additions</p>
+            </div>
+            
+            <div class="related-grid">
+                <a href="/materials/brown-mulch/" class="related-card"><div class="related-image"><img src="/images/brown-mulch.png" alt="Brown Mulch" style="width:100%;height:100%;object-fit:cover;"></div>
+                    <div class="related-info">
+                        <h4>Brown Mulch</h4>
+                        <p>From $35/CY</p>
+                    </div>
+                </a>
+                
+                <a href="/materials/topsoil/" class="related-card"><div class="related-image"><img src="/images/topsoil.png" alt="Topsoil" style="width:100%;height:100%;object-fit:cover;"></div>
+                    <div class="related-info">
+                        <h4>Premium Topsoil</h4>
+                        <p>From $55/CY</p>
+                    </div>
+                </a>
+                
+                <a href="/materials/decomposed-granite/" class="related-card"><div class="related-image"><img src="/images/decomposed-granite.png" alt="Decomposed Granite" style="width:100%;height:100%;object-fit:cover;"></div>
+                    <div class="related-info">
+                        <h4>Decomposed Granite</h4>
+                        <p>From $48/CY</p>
+                    </div>
+                </a>
+                
+                <a href="/materials/pea-gravel/" class="related-card"><div class="related-image"><img src="/images/blackstar-gravel.png" alt="Pea Gravel" style="width:100%;height:100%;object-fit:cover;"></div>
+                    <div class="related-info">
+                        <h4>Pea Gravel</h4>
+                        <p>From $45/CY</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="/images/logo.png" alt="Texas Got Rocks?" style="height: 40px;">
+                    <p>Your local source for premium landscape materials in Conroe and greater Houston area. Family-owned, not brokers.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Materials</h4>
+                    <ul>
+                        <li><a href="/materials/limestone/">Black Mulch</a></li>
+                        <li><a href="/materials/brown-mulch/">Brown Mulch</a></li>
+                        <li><a href="/materials/decomposed-granite/">Decomposed Granite</a></li>
+                        <li><a href="/materials/topsoil/">Topsoil</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Service Areas</h4>
+                    <ul>
+                        <li><a href="/the-woodlands/">The Woodlands</a></li>
+                        <li><a href="/conroe/">Conroe</a></li>
+                        <li><a href="/spring/">Spring</a></li>
+                        <li><a href="/tomball/">Tomball</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><a href="tel:9365551234">(936) 555-1234</a></li>
+                        <li><a href="mailto:info@gotrockstx.com">info@gotrockstx.com</a></li>
+                        <li>Conroe, TX</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 Texas Got Rocks? All rights reserved. | <a href="/privacy-policy.html" style="color: var(--sand-tan);">Privacy Policy</a> | <a href="/terms-of-service.html" style="color: var(--sand-tan);">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
