@@ -978,7 +978,7 @@ function requestInlineCallback() {
 // Visualizer State
 const vizState = {
     image: null,
-    selectedMaterial: { id: 'decomposed-granite', name: 'Decomposed Granite', color: '#C9A66B', price: 45 },
+    selectedMaterial: { id: 'black-mulch', name: 'Black Mulch', color: '#1a1a1a', price: 38 },
     points: [],
     isComplete: false,
     showOverlay: true,
@@ -986,12 +986,12 @@ const vizState = {
 };
 
 const vizMaterials = [
-    { id: 'decomposed-granite', name: 'Decomposed Granite', color: '#C9A66B', price: 45 },
-    { id: 'pea-gravel', name: 'Pea Gravel', color: '#8B7355', price: 52 },
-    { id: 'crushed-stone', name: 'Crushed Stone', color: '#6B6B6B', price: 48 },
-    { id: 'river-rock', name: 'River Rock', color: '#5D5D5D', price: 65 },
-    { id: 'red-lava', name: 'Red Lava Rock', color: '#8B3A3A', price: 75 },
-    { id: 'white-marble', name: 'White Marble', color: '#E8E8E8', price: 85 }
+    { id: 'black-mulch', name: 'Black Mulch', color: '#1a1a1a', price: 38 },
+    { id: 'brown-mulch', name: 'Brown Mulch', color: '#8B4513', price: 35 },
+    { id: 'blackstar-gravel', name: 'Blackstar Gravel', color: '#2d2d2d', price: 55 },
+    { id: 'decomposed-granite', name: 'Decomposed Granite', color: '#C9A66B', price: 48 },
+    { id: 'bull-rock', name: '2x3 Bull Rock', color: '#a08060', price: 68 },
+    { id: 'topsoil', name: 'Premium Topsoil', color: '#3d3225', price: 38 }
 ];
 
 // Open/Close Visualizer
