@@ -978,7 +978,7 @@ function requestInlineCallback() {
 // Visualizer State
 const vizState = {
     image: null,
-    selectedMaterial: { id: 'black-mulch', name: 'Black Mulch', color: '#1a1a1a', price: 38 },
+   selectedMaterial: { id: 'black-mulch', name: 'Black Mulch', color: '#1a1a1a', price: 38, image: '/images/materials/black-mulch.jpg' },
     points: [],
     isComplete: false,
     showOverlay: true,
@@ -986,12 +986,12 @@ const vizState = {
 };
 
 const vizMaterials = [
-    { id: 'black-mulch', name: 'Black Mulch', color: '#1a1a1a', price: 38 },
-    { id: 'brown-mulch', name: 'Brown Mulch', color: '#8B4513', price: 35 },
-    { id: 'blackstar-gravel', name: 'Blackstar Gravel', color: '#2d2d2d', price: 55 },
-    { id: 'decomposed-granite', name: 'Decomposed Granite', color: '#C9A66B', price: 48 },
-    { id: 'bull-rock', name: '2x3 Bull Rock', color: '#a08060', price: 68 },
-    { id: 'topsoil', name: 'Premium Topsoil', color: '#3d3225', price: 38 }
+    { id: 'black-mulch', name: 'Black Mulch', color: '#1a1a1a', price: 38, image: '/images/materials/black-mulch.jpg' },
+    { id: 'brown-mulch', name: 'Brown Mulch', color: '#8B4513', price: 35, image: '/images/materials/brown-mulch.jpg' },
+    { id: 'blackstar-gravel', name: 'Blackstar Gravel', color: '#2d2d2d', price: 55, image: '/images/materials/black-star.jpg' },
+    { id: 'decomposed-granite', name: 'Decomposed Granite', color: '#C9A66B', price: 48, image: '/images/materials/Decomposed-Granite.jpg' },
+    { id: 'bull-rock', name: '2x3 Bull Rock', color: '#a08060', price: 68, image: '/images/materials/2x3-bull-rock.jpeg' },
+    { id: 'topsoil', name: 'Premium Topsoil', color: '#3d3225', price: 38, image: '/images/materials/top-soil.jpg' }
 ];
 
 // Open/Close Visualizer
@@ -1202,19 +1202,26 @@ function drawVisualizerCanvas() {
                 });
             }
             
-            // Fill shape if complete
-            if (vizState.isComplete && vizState.showOverlay) {
-                ctx.globalAlpha = vizState.opacity;
-                ctx.fillStyle = vizState.selectedMaterial.color;
-                ctx.beginPath();
-                ctx.moveTo(vizState.points[0].x, vizState.points[0].y);
-                for (let i = 1; i < vizState.points.length; i++) {
-                    ctx.lineTo(vizState.points[i].x, vizState.points[i].y);
-                }
-                ctx.closePath();
-                ctx.fill();
-                ctx.globalAlpha = 1;
-            }
+         // Fill shape if complete
+    if (vizState.isComplete && vizState.showOverlay) {
+        ctx.globalAlpha = vizState.opacity;
+        
+        // Try to use texture pattern, fall back to color
+        if (vizState.materialPattern) {
+            ctx.fillStyle = vizState.materialPattern;
+        } else {
+            ctx.fillStyle = vizState.selectedMaterial.color;
+        }
+        
+        ctx.beginPath();
+        ctx.moveTo(vizState.points[0].x, vizState.points[0].y);
+        for (let i = 1; i < vizState.points.length; i++) {
+            ctx.lineTo(vizState.points[i].x, vizState.points[i].y);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.globalAlpha = 1;
+    }
         }
     };
     img.src = vizState.image;
@@ -1281,12 +1288,12 @@ function updateVisualizerUI() {
 
 // Visualizer Material Calculator
 const vizMaterialWeights = {
+    'black-mulch': 0.5,
+    'brown-mulch': 0.5,
+    'blackstar-gravel': 1.4,
     'decomposed-granite': 1.5,
-    'pea-gravel': 1.4,
-    'crushed-stone': 1.4,
-    'river-rock': 1.3,
-    'red-lava': 0.5,
-    'white-marble': 1.5
+    'bull-rock': 1.3,
+    'topsoil': 1.1
 };
 
 let vizCalculatedQuantity = null;
@@ -1364,7 +1371,19 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update state
             const materialId = btn.dataset.id;
             vizState.selectedMaterial = vizMaterials.find(m => m.id === materialId);
-            
+            // Load texture pattern for the selected material
+                if (vizState.selectedMaterial && vizState.selectedMaterial.image) {
+                    const textureImg = new Image();
+                    textureImg.onload = function() {
+                        const canvas = document.getElementById('vizCanvas');
+                        if (canvas) {
+                            const ctx = canvas.getContext('2d');
+                            vizState.materialPattern = ctx.createPattern(textureImg, 'repeat');
+                            drawVisualizerCanvas();
+                        }
+                    };
+                    textureImg.src = vizState.selectedMaterial.image;
+                }
             // Update price display
             document.getElementById('vizMaterialPrice').textContent = `$${vizState.selectedMaterial.price}/cubic yard`;
             
@@ -1439,14 +1458,14 @@ function getVisualizerQuote() {
     openCalculatorModal();
     
     // Map visualizer material to quote calculator material
-    const materialMapping = {
-        'decomposed-granite': 'decomposed-granite',
-        'pea-gravel': 'pea-gravel',
-        'crushed-stone': 'driveway-gravel',
-        'river-rock': 'river-rock',
-        'red-lava': 'river-rock',
-        'white-marble': 'limestone'
-    };
+   const materialMapping = {
+    'black-mulch': 'mulch-black',
+    'brown-mulch': 'mulch-brown',
+    'blackstar-gravel': 'blackstar-gravel',
+    'decomposed-granite': 'decomposed-granite',
+    'bull-rock': 'bull-rock',
+    'topsoil': 'topsoil'
+};
     
     const mappedMaterial = materialMapping[vizState.selectedMaterial.id] || '';
     const quoteProductSelect = document.getElementById('quoteProduct');
