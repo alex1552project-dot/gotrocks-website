@@ -1443,7 +1443,47 @@
         </svg>
     </button>
 </div>
+<!-- MongoDB Products Loader -->
+<script>
+async function loadProductsFromAPI() {
+    try {
+        const response = await fetch('/api/products');
+        const products = await response.json();
+        
+        // Group products by category
+        const categories = {};
+        products.forEach(p => {
+            const cat = p.category || 'Other';
+            if (!categories[cat]) categories[cat] = [];
+            categories[cat].push(p);
+        });
+        
+        // Build dropdown HTML
+        let optionsHTML = '<option value="" data-weight="1.4">-- Select Material --</option>';
+        Object.keys(categories).sort().forEach(category => {
+            optionsHTML += `<optgroup label="${category}">`;
+            categories[category].forEach(product => {
+                optionsHTML += `<option value="${product.id}" data-price="${product.price}" data-weight="${product.weight}">${product.name}</option>`;
+            });
+            optionsHTML += '</optgroup>';
+        });
+        
+        // Update both dropdowns
+        const inlineCalc = document.getElementById('inline-calc-material');
+        const quoteProduct = document.getElementById('quoteProduct');
+        
+        if (inlineCalc) inlineCalc.innerHTML = optionsHTML;
+        if (quoteProduct) quoteProduct.innerHTML = optionsHTML;
+        
+        console.log('✓ Loaded ' + products.length + ' products from MongoDB');
+    } catch (error) {
+        console.error('Failed to load products from API:', error);
+    }
+}
 
+// Load products when page is ready
+document.addEventListener('DOMContentLoaded', loadProductsFromAPI);
+</script>
 <script src="/js/main.js"></script>
 </body>
 </html>
