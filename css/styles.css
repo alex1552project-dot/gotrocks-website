@@ -5788,3 +5788,27 @@
         margin-top: 24px;
     }
 }
+
+/* =====================================================
+   HERO VIDEO MASCOT STYLES
+   ===================================================== */
+
+video.hero-combined-logo {
+    object-fit: contain;
+    background: transparent;
+    border-radius: 12px;
+}
+
+@media (max-width: 968px) {
+    video.hero-combined-logo {
+        width: 450px !important;
+    }
+}
+
+@media (max-width: 640px) {
+    video.hero-combined-logo {
+        width: 85vw !important;
+        display: block;
+        margin: 0 auto;
+    }
+}
