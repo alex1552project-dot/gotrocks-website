@@ -1,6 +1,7 @@
 // =====================================================
-// GOT ROCKS - COMPLETE CODEPEN JAVASCRIPT
-// Paste this into the JS pane
+// TEXAS GOT ROCKS - COMPLETE MAIN.JS
+// Last Updated: January 7, 2026
+// REPLACE YOUR ENTIRE main.js WITH THIS FILE
 // =====================================================
 
 // =====================================================
@@ -144,10 +145,8 @@ if (exitForm) {
 }
 
 // =====================================================
-// ZIP CODE CALCULATOR LOGIC
+// ZIP CODE DATABASE - Pre-calculated distances from yard
 // =====================================================
-
-// ZIP CODE DATABASE - Pre-calculated distances from Texas Got Rocks yard (Conroe)
 const ZIP_DATA = {
     // ZONE 1: Conroe & Immediate Area (0-15 miles)
     '77301': { city: 'Conroe', distance: 3, time: 8, zone: 1 },
@@ -212,29 +211,39 @@ const ZIP_DATA = {
     '77093': { city: 'Houston', distance: 40, time: 62, zone: 3 }
 };
 
-// TRUCK CONFIGURATION
+// =====================================================
+// TRUCK & PRICING CONFIGURATION
+// =====================================================
 const TRUCK_CONFIG = {
     trucks: {
-        endDump: { hourlyRate: 125, capacityTons: 24 },
-        tandem: { hourlyRate: 90, capacityTons: 15 }
+        endDump: { hourlyRate: 130, capacityTons: 24 },
+        tandem: { hourlyRate: 100, capacityTons: 15 }
     },
-    loadTime: 5,
-    dumpTime: 5,
-    globalMargin: 0.20,
-    tandemThreshold: 15
+    loadTime: 5,        // minutes
+    dumpTime: 5,        // minutes
+    globalMargin: 0.20, // 20%
+    tandemThreshold: 15, // tons
+    taxRate: 0.0825,    // 8.25% Texas sales tax
+    serviceFeeRate: 0.035 // 3.5% service fee
 };
 
-// STATE
+// =====================================================
+// STATE VARIABLES
+// =====================================================
 let currentZipData = null;
 let currentQuote = null;
 
+// =====================================================
 // ZIP LOOKUP FUNCTION
+// =====================================================
 function lookupZip(zip) {
     const cleaned = zip.replace(/\D/g, '').substring(0, 5);
     return ZIP_DATA[cleaned] || null;
 }
 
+// =====================================================
 // HANDLE ZIP INPUT
+// =====================================================
 function handleQuoteZipInput(e) {
     const zip = e.target.value.replace(/\D/g, '');
     e.target.value = zip;
@@ -252,7 +261,6 @@ function handleQuoteZipInput(e) {
         return;
     }
     
-    // Look up the zip code
     const data = lookupZip(zip);
     
     if (data) {
@@ -280,7 +288,9 @@ function handleQuoteZipInput(e) {
     recalculateQuote();
 }
 
+// =====================================================
 // ADJUST QUANTITY
+// =====================================================
 function adjustQuoteQuantity(delta) {
     const input = document.getElementById('quoteQuantity');
     let value = parseFloat(input.value) || 1;
@@ -289,7 +299,9 @@ function adjustQuoteQuantity(delta) {
     recalculateQuote();
 }
 
-// RECALCULATE QUOTE
+// =====================================================
+// RECALCULATE QUOTE - MAIN PRICING FORMULA
+// =====================================================
 function recalculateQuote() {
     const productSelect = document.getElementById('quoteProduct');
     const quantity = parseFloat(document.getElementById('quoteQuantity').value) || 0;
@@ -314,28 +326,64 @@ function recalculateQuote() {
     
     // Get product data
     const selectedOption = productSelect.options[productSelect.selectedIndex];
-    const unitPrice = parseFloat(selectedOption.dataset.price);
+    const pricePerTon = parseFloat(selectedOption.dataset.price);
     const weightPerYard = parseFloat(selectedOption.dataset.weight);
     
-    // Calculate costs
-    const materialCost = quantity * unitPrice;
+    // =========================================================
+    // PRICING FORMULA
+    // =========================================================
     
-    // Transport cost (internal - customer doesn't see itemized)
-    const totalTons = quantity * weightPerYard;
-    const truck = totalTons > TRUCK_CONFIG.tandemThreshold ? TRUCK_CONFIG.trucks.endDump : TRUCK_CONFIG.trucks.tandem;
-    const loads = Math.ceil(totalTons / truck.capacityTons);
+    // 1. Calculate tons from cubic yards
+    const tons = quantity * weightPerYard;
+    
+    // 2. Base material cost (before markup) - TAX IS CALCULATED ON THIS
+    const baseMaterialCost = tons * pricePerTon;
+    
+    // 3. Calculate delivery/transport cost
+    const truck = tons > TRUCK_CONFIG.tandemThreshold ? TRUCK_CONFIG.trucks.endDump : TRUCK_CONFIG.trucks.tandem;
+    const loads = Math.ceil(tons / truck.capacityTons);
     const timePerLoad = TRUCK_CONFIG.loadTime + currentZipData.time + TRUCK_CONFIG.dumpTime;
     const totalHours = (timePerLoad * loads) / 60;
-    const transportCost = totalHours * truck.hourlyRate;
+    const deliveryCost = totalHours * truck.hourlyRate;
     
-    // Final price with margin
-    const subtotal = materialCost + transportCost;
-    const total = subtotal * (1 + TRUCK_CONFIG.globalMargin);
-    const perUnit = total / quantity;
+    // 4. Subtotal (material + delivery)
+    const subtotal = baseMaterialCost + deliveryCost;
     
-    // Update display
-    document.getElementById('quoteTotalAmount').textContent = '$' + Math.round(total);
-    document.getElementById('quotePerUnit').textContent = perUnit.toFixed(2);
+    // 5. Apply margin (20%) - this becomes customer-facing material price
+    const materialWithMargin = subtotal * (1 + TRUCK_CONFIG.globalMargin);
+    
+    // 6. Calculate customer-facing price per ton (for display)
+    const customerPricePerTon = materialWithMargin / tons;
+    
+    // 7. Sales tax (8.25% on BASE material only)
+    const salesTax = baseMaterialCost * TRUCK_CONFIG.taxRate;
+    
+    // 8. Service fee (3.5% on material with margin + tax)
+    const serviceFee = (materialWithMargin + salesTax) * TRUCK_CONFIG.serviceFeeRate;
+    
+    // 9. Final total
+    const total = materialWithMargin + salesTax + serviceFee;
+    
+    // =========================================================
+    // UPDATE DISPLAY
+    // =========================================================
+    
+    // Update conversion display (yards to tons)
+    document.getElementById('quoteYardsAmount').textContent = quantity;
+    document.getElementById('quoteTonsAmount').textContent = tons.toFixed(1);
+    
+    // Update material line item
+    document.getElementById('quoteMaterialName').textContent = selectedOption.text;
+    document.getElementById('quoteTonsDisplay').textContent = tons.toFixed(1);
+    document.getElementById('quotePerTonPrice').textContent = customerPricePerTon.toFixed(2);
+    document.getElementById('quoteMaterialTotal').textContent = materialWithMargin.toFixed(2);
+    
+    // Update tax and service fee
+    document.getElementById('quoteSalesTax').textContent = salesTax.toFixed(2);
+    document.getElementById('quoteServiceFee').textContent = serviceFee.toFixed(2);
+    
+    // Update total
+    document.getElementById('quoteTotalAmount').textContent = total.toFixed(2);
     
     // Show sections
     document.getElementById('quoteFreeDeliveryBadge').classList.remove('hidden');
@@ -351,32 +399,26 @@ function recalculateQuote() {
         ctaButton.disabled = true;
     }
     
-    // Store quote data
+    // Store quote data for cart
     currentQuote = {
         zip: document.getElementById('quoteZipCode').value,
         city: currentZipData.city,
         distance: currentZipData.distance,
         product: selectedOption.text,
         quantity: quantity,
-        total: Math.round(total),
-        perUnit: perUnit.toFixed(2)
+        tons: tons,
+        pricePerTon: customerPricePerTon,
+        baseMaterialCost: baseMaterialCost,
+        materialWithMargin: materialWithMargin,
+        salesTax: salesTax,
+        serviceFee: serviceFee,
+        total: total.toFixed(2)
     };
 }
 
-// SUBMIT QUOTE
-function submitQuoteRequest() {
-    if (!currentQuote) return;
-    
-    console.log('Quote submitted:', currentQuote);
-    
-    // Show success toast
-    showToast('success', 'Quote Ready!', `$${currentQuote.total} for ${currentQuote.quantity} yd³ to ${currentQuote.city} with FREE delivery!`);
-    
-    // For now, show alert - can be replaced with checkout flow
-    alert(`Quote Ready!\n\nDelivering to: ${currentQuote.city} (${currentQuote.zip})\nMaterial: ${currentQuote.product}\nQuantity: ${currentQuote.quantity} yd³\nTotal: $${currentQuote.total}\n\nNext step: We'll collect your address and schedule delivery.`);
-}
-
+// =====================================================
 // ATTACH ZIP CODE CALCULATOR EVENT LISTENERS
+// =====================================================
 const quoteZipInput = document.getElementById('quoteZipCode');
 if (quoteZipInput) {
     quoteZipInput.addEventListener('input', handleQuoteZipInput);
@@ -417,7 +459,6 @@ function showToast(type, title, message) {
     
     container.appendChild(toast);
     
-    // Auto remove after 5 seconds
     setTimeout(() => {
         toast.style.animation = 'toastSlideIn 0.3s ease reverse';
         setTimeout(() => toast.remove(), 300);
@@ -432,7 +473,6 @@ function toggleFaq(button) {
     const answer = faqItem.querySelector('.faq-answer');
     const icon = button.querySelector('.faq-icon');
     
-    // Close all other FAQs
     document.querySelectorAll('.faq-item').forEach(item => {
         if (item !== faqItem) {
             item.classList.remove('active');
@@ -443,7 +483,6 @@ function toggleFaq(button) {
         }
     });
     
-    // Toggle current FAQ
     faqItem.classList.toggle('active');
     
     if (faqItem.classList.contains('active')) {
@@ -468,14 +507,12 @@ if (heroDropdownBtn && heroDropdownMenu) {
         heroDropdownMenu.classList.toggle('show');
     });
 
-    // Close dropdown when clicking outside
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.hero-dropdown')) {
             heroDropdownMenu.classList.remove('show');
         }
     });
 
-    // Close dropdown when pressing Escape
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             heroDropdownMenu.classList.remove('show');
@@ -487,25 +524,21 @@ if (heroDropdownBtn && heroDropdownMenu) {
 // SHOPPING CART SYSTEM
 // =====================================================
 
-// Cart State
 let cart = [];
 let cartIdCounter = 1;
 
-// Generate tomorrow's date as minimum delivery date
 function getMinDeliveryDate() {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow.toISOString().split('T')[0];
 }
 
-// Generate default delivery date (2 days from now)
 function getDefaultDeliveryDate() {
     const defaultDate = new Date();
     defaultDate.setDate(defaultDate.getDate() + 2);
     return defaultDate.toISOString().split('T')[0];
 }
 
-// Add item to cart
 function addToCart() {
     if (!currentQuote) return;
     
@@ -513,37 +546,35 @@ function addToCart() {
         id: cartIdCounter++,
         product: currentQuote.product,
         quantity: currentQuote.quantity,
+        tons: currentQuote.tons,
         zip: currentQuote.zip,
         city: currentQuote.city,
         distance: currentQuote.distance,
-        total: currentQuote.total,
-        perUnit: currentQuote.perUnit,
+        pricePerTon: currentQuote.pricePerTon,
+        materialWithMargin: currentQuote.materialWithMargin,
+        salesTax: currentQuote.salesTax,
+        serviceFee: currentQuote.serviceFee,
+        total: parseFloat(currentQuote.total),
         deliveryDate: getDefaultDeliveryDate()
     };
     
     cart.push(cartItem);
     
-    // Update UI
     updateCartCount();
     updateCartDrawer();
     
-    // Show success toast
-    showToast('success', 'Added to Cart!', `${cartItem.quantity} yd³ ${cartItem.product} - $${cartItem.total}`);
+    showToast('success', 'Added to Cart!', `${cartItem.tons.toFixed(1)} tons ${cartItem.product} - $${cartItem.total.toFixed(2)}`);
     
-    // Pulse animation on cart icon
     const cartCount = document.getElementById('navCartCount');
     cartCount.classList.add('pulse');
     setTimeout(() => cartCount.classList.remove('pulse'), 300);
     
-    // Close calculator and open cart
     closeCalculatorModal();
     setTimeout(() => openCartDrawer(), 300);
     
-    // Reset calculator form
     resetCalculatorForm();
 }
 
-// Remove item from cart
 function removeFromCart(itemId) {
     cart = cart.filter(item => item.id !== itemId);
     updateCartCount();
@@ -551,7 +582,6 @@ function removeFromCart(itemId) {
     showToast('info', 'Item Removed', 'Item removed from your cart');
 }
 
-// Update delivery date for item
 function updateDeliveryDate(itemId, newDate) {
     const item = cart.find(item => item.id === itemId);
     if (item) {
@@ -559,7 +589,6 @@ function updateDeliveryDate(itemId, newDate) {
     }
 }
 
-// Update cart count badge
 function updateCartCount() {
     const countEl = document.getElementById('navCartCount');
     const count = cart.length;
@@ -572,7 +601,6 @@ function updateCartCount() {
     }
 }
 
-// Update cart drawer contents
 function updateCartDrawer() {
     const emptyEl = document.getElementById('cartEmpty');
     const itemsContainer = document.getElementById('cartItemsContainer');
@@ -588,7 +616,6 @@ function updateCartDrawer() {
     emptyEl.style.display = 'none';
     footerEl.style.display = 'block';
     
-    // Build cart items HTML
     let itemsHtml = '';
     let subtotal = 0;
     
@@ -604,38 +631,37 @@ function updateCartDrawer() {
                     <button class="cart-item-remove" onclick="removeFromCart(${item.id})">✕</button>
                 </div>
                 <div class="cart-item-details">
-                    <span class="cart-item-qty">${item.quantity} cubic yards</span>
-                    <span class="cart-item-price">$${item.total}</span>
+                    <span class="cart-item-qty">${item.quantity} yd³ (${item.tons.toFixed(1)} tons)</span>
+                    <span class="cart-item-price">$${item.total.toFixed(2)}</span>
                 </div>
-                <div class="cart-item-per-unit">$${item.perUnit}/yd³ delivered</div>
+                <div class="cart-item-per-unit">$${item.pricePerTon.toFixed(2)}/ton delivered</div>
             </div>
         `;
     });
     
     itemsContainer.innerHTML = itemsHtml;
     
-    // Update summary
     document.getElementById('cartItemCount').textContent = cart.length;
-    document.getElementById('cartSubtotal').textContent = '$' + subtotal;
-    document.getElementById('cartTotal').textContent = '$' + subtotal;
+    document.getElementById('cartSubtotal').textContent = '$' + subtotal.toFixed(2);
+    document.getElementById('cartTotal').textContent = '$' + subtotal.toFixed(2);
 }
 
-// Open cart drawer
 function openCartDrawer() {
     document.getElementById('cartDrawerOverlay').classList.add('active');
     document.getElementById('cartDrawer').classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 
-// Close cart drawer
 function closeCartDrawer() {
     document.getElementById('cartDrawerOverlay').classList.remove('active');
     document.getElementById('cartDrawer').classList.remove('active');
     document.body.style.overflow = '';
 }
 
-// Proceed to checkout
-// Customer info storage
+// =====================================================
+// CHECKOUT SYSTEM
+// =====================================================
+
 var customerInfo = {
     name: '',
     email: '',
@@ -651,31 +677,24 @@ function proceedToCheckout() {
     
     closeCartDrawer();
     
-    // Pre-fill city/zip from cart if available
     if (cart.length > 0) {
         document.getElementById('checkoutCity').value = cart[0].city || '';
         document.getElementById('checkoutZipConfirm').value = cart[0].zip || '';
     }
     
-    // Reset to step 1
     showCheckoutStep(1);
-    
-    // Show checkout modal
     document.getElementById('checkoutModal').classList.add('active');
 }
 
 function showCheckoutStep(step) {
-    // Hide all steps
     document.getElementById('checkoutStep1').style.display = 'none';
     document.getElementById('checkoutStep2').style.display = 'none';
     document.getElementById('checkoutStep3').style.display = 'none';
     
-    // Reset step indicators
     document.getElementById('step1indicator').classList.remove('active', 'completed');
     document.getElementById('step2indicator').classList.remove('active', 'completed');
     document.getElementById('step3indicator').classList.remove('active', 'completed');
     
-    // Show current step and update indicators
     if (step === 1) {
         document.getElementById('checkoutStep1').style.display = 'block';
         document.getElementById('step1indicator').classList.add('active');
@@ -699,7 +718,6 @@ function goToContactStep() {
 }
 
 function goToDeliveryStep() {
-    // Validate contact info
     var name = document.getElementById('checkoutName').value.trim();
     var email = document.getElementById('checkoutEmail').value.trim();
     var phone = document.getElementById('checkoutPhone').value.trim();
@@ -712,13 +730,11 @@ function goToDeliveryStep() {
         return;
     }
     
-    // Basic email validation
     if (!email.includes('@') || !email.includes('.')) {
         showToast('error', 'Invalid Email', 'Please enter a valid email address');
         return;
     }
     
-    // Store customer info
     customerInfo = {
         name: name,
         email: email,
@@ -729,16 +745,15 @@ function goToDeliveryStep() {
         marketingConsent: document.getElementById('checkoutMarketingConsent').checked
     };
     
-    // Build delivery date selection UI
     var deliveryHtml = '';
     cart.forEach(function(item, index) {
         deliveryHtml += '<div class="checkout-delivery-item">' +
             '<div class="checkout-delivery-item-header">' +
                 '<div>' +
                     '<div class="checkout-delivery-item-name">' + item.product + '</div>' +
-                    '<div class="checkout-delivery-item-details">' + item.quantity + ' yd³ → ' + item.city + '</div>' +
+                    '<div class="checkout-delivery-item-details">' + item.tons.toFixed(1) + ' tons → ' + item.city + '</div>' +
                 '</div>' +
-                '<div class="checkout-delivery-item-price">$' + item.total + '</div>' +
+                '<div class="checkout-delivery-item-price">$' + item.total.toFixed(2) + '</div>' +
             '</div>' +
             '<label>📅 Preferred Delivery Date</label>' +
             '<input type="date" id="deliveryDate' + index + '" value="' + item.deliveryDate + '" min="' + getMinDeliveryDate() + '">' +
@@ -746,12 +761,10 @@ function goToDeliveryStep() {
     });
     
     document.getElementById('checkoutDeliveryItems').innerHTML = deliveryHtml;
-    
     showCheckoutStep(2);
 }
 
 function goToPaymentStep() {
-    // Update cart items with selected delivery dates
     cart.forEach(function(item, index) {
         var dateInput = document.getElementById('deliveryDate' + index);
         if (dateInput) {
@@ -759,7 +772,6 @@ function goToPaymentStep() {
         }
     });
     
-    // Build final summary
     var summaryHtml = '<div class="checkout-customer-summary">' +
         '<h4>📍 Delivery To:</h4>' +
         '<p><strong>' + customerInfo.name + '</strong><br>' +
@@ -780,47 +792,40 @@ function goToPaymentStep() {
         summaryHtml += '<div class="checkout-order-item">' +
             '<div>' +
                 '<strong>' + item.product + '</strong><br>' +
-                '<small>' + item.quantity + ' yd³</small><br>' +
+                '<small>' + item.tons.toFixed(1) + ' tons</small><br>' +
                 '<small>📅 ' + deliveryDate + '</small>' +
             '</div>' +
-            '<strong>$' + item.total + '</strong>' +
+            '<strong>$' + item.total.toFixed(2) + '</strong>' +
         '</div>';
     });
     
     summaryHtml += '<div class="checkout-order-total">' +
         '<span>Total (FREE Delivery)</span>' +
-        '<span>$' + total + '</span>' +
+        '<span>$' + total.toFixed(2) + '</span>' +
     '</div>';
     
     document.getElementById('checkoutOrderSummary').innerHTML = summaryHtml;
-    
     showCheckoutStep(3);
 }
 
-// Add more items from checkout
 function addMoreFromCheckout() {
     document.getElementById('checkoutModal').classList.remove('active');
     openCalculatorModal();
 }
 
-// Close checkout modal
 function closeCheckoutModal() {
     document.getElementById('checkoutModal').classList.remove('active');
 }
 
-// Process payment
 function processPayment() {
     if (cart.length === 0) return;
     
     const total = cart.reduce((sum, item) => sum + item.total, 0);
     
-    // For demo - show success
     document.getElementById('checkoutModal').classList.remove('active');
     
-    // Show success toast
-    showToast('success', 'Order Placed!', `$${total} - We'll contact you to confirm delivery details.`);
+    showToast('success', 'Order Placed!', `$${total.toFixed(2)} - We'll contact you to confirm delivery details.`);
     
-    // Show confirmation alert
     let orderDetails = 'ORDER CONFIRMED!\n\n';
     cart.forEach((item, index) => {
         const deliveryDate = new Date(item.deliveryDate).toLocaleDateString('en-US', { 
@@ -828,26 +833,23 @@ function processPayment() {
             month: 'long', 
             day: 'numeric' 
         });
-        orderDetails += `Item ${index + 1}: ${item.quantity} yd³ ${item.product}\n`;
+        orderDetails += `Item ${index + 1}: ${item.tons.toFixed(1)} tons ${item.product}\n`;
         orderDetails += `  → Delivery to ${item.city} (${item.zip})\n`;
         orderDetails += `  → Scheduled: ${deliveryDate}\n`;
-        orderDetails += `  → Price: $${item.total}\n\n`;
+        orderDetails += `  → Price: $${item.total.toFixed(2)}\n\n`;
     });
-    orderDetails += `TOTAL: $${total} (FREE DELIVERY)\n\n`;
+    orderDetails += `TOTAL: $${total.toFixed(2)} (FREE DELIVERY)\n\n`;
     orderDetails += "We'll send a confirmation email and text with tracking info!";
     
     alert(orderDetails);
     
-    // Clear cart
     cart = [];
     updateCartCount();
     updateCartDrawer();
     
-    // Reset add more prompt for next time
     document.querySelector('.checkout-add-more-prompt').style.display = 'block';
 }
 
-// Reset calculator form
 function resetCalculatorForm() {
     document.getElementById('quoteZipCode').value = '';
     document.getElementById('quoteProduct').value = '';
@@ -868,7 +870,6 @@ function resetCalculatorForm() {
 // INLINE MATERIAL CALCULATOR
 // =====================================================
 
-// Store calculated values for passing to quote calculator
 let calculatedMaterial = null;
 
 function calculateInlineMaterial() {
@@ -877,7 +878,6 @@ function calculateInlineMaterial() {
     const width = parseFloat(document.getElementById('inline-calc-width').value) || 0;
     const depth = parseFloat(document.getElementById('inline-calc-depth').value) || 0;
     
-    // Require material selection
     if (!materialSelect.value) {
         showToast('error', 'Select Material', 'Please select a material type first');
         return;
@@ -888,69 +888,55 @@ function calculateInlineMaterial() {
         return;
     }
     
-    // Get weight per yard from selected material
     const selectedOption = materialSelect.options[materialSelect.selectedIndex];
     const weightPerYard = parseFloat(selectedOption.dataset.weight) || 1.4;
     const materialName = selectedOption.text;
     
     // Calculate cubic yards: (L ft × W ft × D in) / 324 = cubic yards
     const cubicYards = (length * width * depth) / 324;
-    
-    // Convert to tons using material-specific weight
     const tons = cubicYards * weightPerYard;
     
-    // Update display
     document.getElementById('inline-result-yards').textContent = cubicYards.toFixed(1);
     document.getElementById('inline-result-tons').textContent = tons.toFixed(1);
     
-    // Show material note
     const noteEl = document.getElementById('result-material-note');
     noteEl.innerHTML = `Based on <strong>${materialName}</strong> (${weightPerYard} tons/yd³)`;
     noteEl.style.display = 'block';
     
-    // Store for passing to quote calculator
     calculatedMaterial = {
         materialValue: materialSelect.value,
         materialName: materialName,
         cubicYards: cubicYards,
-        tons: tons
+        tons: tons,
+        weightPerYard: weightPerYard
     };
     
-    // Show result section
     document.getElementById('inline-calc-result').style.display = 'block';
-    
-    // Scroll to result
     document.getElementById('inline-calc-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-// Get Delivery Price - opens quote calculator with pre-filled values
 function getDeliveryPrice() {
     if (!calculatedMaterial) {
         showToast('error', 'Calculate First', 'Please calculate your material needs first');
         return;
     }
     
-    // Open the quote calculator modal
     openCalculatorModal();
     
-    // Pre-fill the material if one was selected
     if (calculatedMaterial.materialValue) {
         const quoteProductSelect = document.getElementById('quoteProduct');
         quoteProductSelect.value = calculatedMaterial.materialValue;
     }
     
-    // Pre-fill the quantity (round up to nearest 0.5)
     const quantity = Math.ceil(calculatedMaterial.cubicYards * 2) / 2;
     document.getElementById('quoteQuantity').value = quantity;
     
-    // Show toast
     if (calculatedMaterial.materialName) {
         showToast('info', 'Material Pre-filled', `${quantity} yd³ of ${calculatedMaterial.materialName} - enter your ZIP for pricing!`);
     } else {
         showToast('info', 'Quantity Pre-filled', `${quantity} cubic yards - select a material and enter your ZIP!`);
     }
     
-    // Trigger recalculation if ZIP is already filled
     recalculateQuote();
 }
 
@@ -966,7 +952,6 @@ function requestInlineCallback() {
     console.log('Callback requested:', { name, phone });
     showToast('success', 'Callback Requested!', "We'll call you during business hours.");
     
-    // Clear form
     document.getElementById('inline-callback-name').value = '';
     document.getElementById('inline-callback-phone').value = '';
 }
@@ -975,26 +960,47 @@ function requestInlineCallback() {
 // MATERIAL VISUALIZER
 // =====================================================
 
-// Visualizer State
 const vizState = {
     image: null,
-   selectedMaterial: { id: 'black-mulch', name: 'Black Mulch', color: '#1a1a1a', price: 38, image: '/images/materials/black-mulch.jpg' },
+    selectedMaterial: { id: 'black-mulch', name: 'Black Mulch', color: '#1a1a1a', price: 25, image: '/images/materials/black-mulch.jpg' },
     points: [],
     isComplete: false,
     showOverlay: true,
-    opacity: 0.7
+    opacity: 0.7,
+    materialPattern: null
 };
 
 const vizMaterials = [
-    { id: 'black-mulch', name: 'Black Mulch', color: '#1a1a1a', price: 38, image: '/images/materials/black-mulch.jpg' },
-    { id: 'brown-mulch', name: 'Brown Mulch', color: '#8B4513', price: 35, image: '/images/materials/brown-mulch.jpg' },
-    { id: 'blackstar-gravel', name: 'Blackstar Gravel', color: '#2d2d2d', price: 55, image: '/images/materials/black-star.jpg' },
+    { id: 'black-mulch', name: 'Black Mulch', color: '#1a1a1a', price: 25, image: '/images/materials/black-mulch.jpg' },
+    { id: 'brown-mulch', name: 'Brown Mulch', color: '#8B4513', price: 25, image: '/images/materials/brown-mulch.jpg' },
+    { id: 'blackstar-gravel', name: 'Blackstar Gravel', color: '#2d2d2d', price: 96, image: '/images/materials/black-star.jpg' },
     { id: 'decomposed-granite', name: 'Decomposed Granite', color: '#C9A66B', price: 48, image: '/images/materials/Decomposed-Granite.jpg' },
-    { id: 'bull-rock', name: '2x3 Bull Rock', color: '#a08060', price: 68, image: '/images/materials/2x3-bull-rock.jpeg' },
-    { id: 'topsoil', name: 'Premium Topsoil', color: '#3d3225', price: 38, image: '/images/materials/top-soil.jpg' }
+    { id: 'bull-rock', name: '3x5 Bull Rock', color: '#a08060', price: 41, image: '/images/materials/2x3-bull-rock.jpeg' },
+    { id: 'topsoil', name: 'Topsoil', color: '#3d3225', price: 24, image: '/images/materials/top-soil.jpg' }
 ];
 
-// Open/Close Visualizer
+const vizMaterialWeights = {
+    'black-mulch': 0.5,
+    'brown-mulch': 0.5,
+    'blackstar-gravel': 1.4,
+    'decomposed-granite': 1.4,
+    'bull-rock': 1.4,
+    'topsoil': 1.4
+};
+
+const vizToQuoteMaterialMapping = {
+    'black-mulch': 'mulch-black',
+    'brown-mulch': 'mulch-brown',
+    'blackstar-gravel': 'blackstar',
+    'decomposed-granite': 'decomposed-granite',
+    'bull-rock': 'bull-rock-3x5',
+    'topsoil': 'topsoil'
+};
+
+let vizCalculatedQuantity = null;
+let vizCalculatedTons = null;
+let vizCanvasDimensions = { width: 0, height: 0 };
+
 function openVisualizer() {
     document.getElementById('visualizerModal').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -1005,7 +1011,6 @@ function closeVisualizer() {
     document.body.style.overflow = '';
 }
 
-// Photo Consent State
 var pendingPhotoFile = null;
 var photoConsentGiven = false;
 
@@ -1017,7 +1022,6 @@ function closePhotoConsent() {
     document.getElementById('photoConsentModal').classList.remove('active');
 }
 
-// File Upload Handler - now shows consent first
 function handleVisualizerUpload(event) {
     var file = event.target.files[0];
     if (!file) return;
@@ -1051,10 +1055,8 @@ function processVisualizerFile(file) {
     
     const reader = new FileReader();
     reader.onload = function(e) {
-        // Resize image to prevent memory issues
         const img = new Image();
         img.onload = function() {
-            // Limit image size to 800px max dimension
             const maxDim = 800;
             let width = img.width;
             let height = img.height;
@@ -1069,14 +1071,12 @@ function processVisualizerFile(file) {
                 }
             }
             
-            // Create resized canvas
             const tempCanvas = document.createElement('canvas');
             tempCanvas.width = width;
             tempCanvas.height = height;
             const tempCtx = tempCanvas.getContext('2d');
             tempCtx.drawImage(img, 0, 0, width, height);
             
-            // Store resized image
             vizState.image = tempCanvas.toDataURL('image/jpeg', 0.8);
             vizState.points = [];
             vizState.isComplete = false;
@@ -1090,7 +1090,6 @@ function processVisualizerFile(file) {
     reader.readAsDataURL(file);
 }
 
-// Drag and Drop
 function handleVizDragOver(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -1119,7 +1118,6 @@ function handleVizDrop(event) {
     }
 }
 
-// Canvas Click Handler
 function handleVisualizerClick(event) {
     if (!vizState.image) return;
     if (vizState.isComplete) return;
@@ -1129,7 +1127,6 @@ function handleVisualizerClick(event) {
     const x = (event.clientX - rect.left) * (canvas.width / rect.width);
     const y = (event.clientY - rect.top) * (canvas.height / rect.height);
     
-    // Check if closing shape
     if (vizState.points.length > 2) {
         const first = vizState.points[0];
         const dist = Math.sqrt((x - first.x) ** 2 + (y - first.y) ** 2);
@@ -1146,10 +1143,6 @@ function handleVisualizerClick(event) {
     drawVisualizerCanvas();
 }
 
-// Store canvas dimensions
-let vizCanvasDimensions = { width: 0, height: 0 };
-
-// Draw Canvas - simplified working version
 function drawVisualizerCanvas() {
     if (!vizState.image) return;
     
@@ -1158,7 +1151,6 @@ function drawVisualizerCanvas() {
     
     const img = new Image();
     img.onload = function() {
-        // Calculate size on first draw
         if (vizCanvasDimensions.width === 0) {
             const maxDim = 500;
             let w = img.width, h = img.height;
@@ -1174,9 +1166,7 @@ function drawVisualizerCanvas() {
         canvas.height = vizCanvasDimensions.height;
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         
-        // Draw points and lines
         if (vizState.points.length > 0) {
-            // Draw lines
             ctx.strokeStyle = '#E85D04';
             ctx.lineWidth = 3;
             ctx.beginPath();
@@ -1189,7 +1179,6 @@ function drawVisualizerCanvas() {
             }
             ctx.stroke();
             
-            // Draw points (only if not complete)
             if (!vizState.isComplete) {
                 vizState.points.forEach(function(p, i) {
                     ctx.beginPath();
@@ -1202,37 +1191,33 @@ function drawVisualizerCanvas() {
                 });
             }
             
-         // Fill shape if complete
-    if (vizState.isComplete && vizState.showOverlay) {
-        ctx.globalAlpha = vizState.opacity;
-        
-        // Try to use texture pattern, fall back to color
-        if (vizState.materialPattern) {
-            ctx.fillStyle = vizState.materialPattern;
-        } else {
-            ctx.fillStyle = vizState.selectedMaterial.color;
-        }
-        
-        ctx.beginPath();
-        ctx.moveTo(vizState.points[0].x, vizState.points[0].y);
-        for (let i = 1; i < vizState.points.length; i++) {
-            ctx.lineTo(vizState.points[i].x, vizState.points[i].y);
-        }
-        ctx.closePath();
-        ctx.fill();
-        ctx.globalAlpha = 1;
-    }
+            if (vizState.isComplete && vizState.showOverlay) {
+                ctx.globalAlpha = vizState.opacity;
+                
+                if (vizState.materialPattern) {
+                    ctx.fillStyle = vizState.materialPattern;
+                } else {
+                    ctx.fillStyle = vizState.selectedMaterial.color;
+                }
+                
+                ctx.beginPath();
+                ctx.moveTo(vizState.points[0].x, vizState.points[0].y);
+                for (let i = 1; i < vizState.points.length; i++) {
+                    ctx.lineTo(vizState.points[i].x, vizState.points[i].y);
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
         }
     };
     img.src = vizState.image;
 }
 
-// Draw Material Overlay - now handled in drawVisualizerCanvas
 function drawVisualizerOverlay() {
-    // Overlay is now drawn directly on main canvas, nothing to do here
+    // Overlay is now drawn directly on main canvas
 }
 
-// Update UI State
 function updateVisualizerUI() {
     const placeholder = document.getElementById('vizPlaceholder');
     const canvasWrapper = document.getElementById('vizCanvasWrapper');
@@ -1286,18 +1271,6 @@ function updateVisualizerUI() {
     }
 }
 
-// Visualizer Material Calculator
-const vizMaterialWeights = {
-    'black-mulch': 0.5,
-    'brown-mulch': 0.5,
-    'blackstar-gravel': 1.4,
-    'decomposed-granite': 1.5,
-    'bull-rock': 1.3,
-    'topsoil': 1.1
-};
-
-let vizCalculatedQuantity = null;
-
 function calculateVisualizerMaterial() {
     const length = parseFloat(document.getElementById('vizCalcLength').value) || 0;
     const width = parseFloat(document.getElementById('vizCalcWidth').value) || 0;
@@ -1308,46 +1281,30 @@ function calculateVisualizerMaterial() {
         return;
     }
     
-    // Calculate cubic yards
     const cubicYards = (length * width * depth) / 324;
-    
-    // Get weight for selected material
     const weight = vizMaterialWeights[vizState.selectedMaterial.id] || 1.4;
     const tons = cubicYards * weight;
     
-    // Update display
     document.getElementById('vizCalcYards').textContent = cubicYards.toFixed(1);
     document.getElementById('vizCalcTons').textContent = tons.toFixed(1);
     
-    // Store for quote
-    vizCalculatedQuantity = Math.ceil(cubicYards * 2) / 2; // Round up to nearest 0.5
+    vizCalculatedQuantity = Math.ceil(cubicYards * 2) / 2;
+    vizCalculatedTons = tons;
     
-    // Show result
     document.getElementById('vizCalcResult').style.display = 'block';
 }
 
-// Get quote with calculated quantity
 function getVisualizerQuoteWithQuantity() {
     closeVisualizer();
     openCalculatorModal();
     
-    // Map visualizer material to quote calculator material
-    const materialMapping = {
-        'decomposed-granite': 'decomposed-granite',
-        'pea-gravel': 'pea-gravel',
-        'crushed-stone': 'driveway-gravel',
-        'river-rock': 'river-rock',
-        'red-lava': 'river-rock',
-        'white-marble': 'limestone'
-    };
-    
-    const mappedMaterial = materialMapping[vizState.selectedMaterial.id] || '';
+    const mappedMaterial = vizToQuoteMaterialMapping[vizState.selectedMaterial.id] || '';
     const quoteProductSelect = document.getElementById('quoteProduct');
+    
     if (quoteProductSelect && mappedMaterial) {
         quoteProductSelect.value = mappedMaterial;
     }
     
-    // Set quantity from calculator
     if (vizCalculatedQuantity) {
         document.getElementById('quoteQuantity').value = vizCalculatedQuantity;
     }
@@ -1356,7 +1313,22 @@ function getVisualizerQuoteWithQuantity() {
     showToast('info', 'Ready for Quote', `${vizCalculatedQuantity} yd³ of ${vizState.selectedMaterial.name} - enter your ZIP!`);
 }
 
-// Material Selection
+function getVisualizerQuote() {
+    closeVisualizer();
+    openCalculatorModal();
+    
+    const mappedMaterial = vizToQuoteMaterialMapping[vizState.selectedMaterial.id] || '';
+    const quoteProductSelect = document.getElementById('quoteProduct');
+    
+    if (quoteProductSelect && mappedMaterial) {
+        quoteProductSelect.value = mappedMaterial;
+        recalculateQuote();
+    }
+    
+    showToast('info', 'Material Selected', `${vizState.selectedMaterial.name} - Enter your ZIP and quantity for pricing!`);
+}
+
+// Material Selection Event Listener
 document.addEventListener('DOMContentLoaded', function() {
     const materialGrid = document.getElementById('vizMaterialGrid');
     if (materialGrid) {
@@ -1364,36 +1336,32 @@ document.addEventListener('DOMContentLoaded', function() {
             const btn = e.target.closest('.material-btn');
             if (!btn) return;
             
-            // Update active state
             document.querySelectorAll('.material-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
-            // Update state
             const materialId = btn.dataset.id;
             vizState.selectedMaterial = vizMaterials.find(m => m.id === materialId);
-            // Load texture pattern for the selected material
-                if (vizState.selectedMaterial && vizState.selectedMaterial.image) {
-                    const textureImg = new Image();
-                    textureImg.onload = function() {
-                        const canvas = document.getElementById('vizCanvas');
-                        if (canvas) {
-                            const ctx = canvas.getContext('2d');
-                            vizState.materialPattern = ctx.createPattern(textureImg, 'repeat');
-                            drawVisualizerCanvas();
-                        }
-                    };
-                    textureImg.src = vizState.selectedMaterial.image;
-                }
-            // Update price display
-            document.getElementById('vizMaterialPrice').textContent = `$${vizState.selectedMaterial.price}/cubic yard`;
             
-            // Update calculator material name if visible
+            if (vizState.selectedMaterial && vizState.selectedMaterial.image) {
+                const textureImg = new Image();
+                textureImg.onload = function() {
+                    const canvas = document.getElementById('vizMainCanvas');
+                    if (canvas) {
+                        const ctx = canvas.getContext('2d');
+                        vizState.materialPattern = ctx.createPattern(textureImg, 'repeat');
+                        drawVisualizerCanvas();
+                    }
+                };
+                textureImg.src = vizState.selectedMaterial.image;
+            }
+            
+            document.getElementById('vizMaterialPrice').textContent = `$${vizState.selectedMaterial.price}/ton`;
+            
             const calcMaterial = document.getElementById('vizCalcMaterial');
             if (calcMaterial) {
                 calcMaterial.innerHTML = `Calculating for: <strong>${vizState.selectedMaterial.name}</strong>`;
             }
             
-            // Redraw if complete
             if (vizState.isComplete) {
                 document.getElementById('vizBadgeName').textContent = vizState.selectedMaterial.name;
                 drawVisualizerCanvas();
@@ -1402,13 +1370,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Toggle Overlay
 function toggleVisualizerOverlay() {
     vizState.showOverlay = document.getElementById('vizShowOverlay').checked;
     drawVisualizerCanvas();
 }
 
-// Update Opacity
 function updateVisualizerOpacity() {
     const slider = document.getElementById('vizOpacitySlider');
     vizState.opacity = slider.value / 100;
@@ -1416,14 +1382,13 @@ function updateVisualizerOpacity() {
     drawVisualizerCanvas();
 }
 
-// Reset Points
 function resetVisualizerPoints() {
     vizState.points = [];
     vizState.isComplete = false;
     vizCalculatedQuantity = null;
+    vizCalculatedTons = null;
     vizCanvasDimensions = { width: 0, height: 0 };
     
-    // Reset calculator fields
     document.getElementById('vizCalcLength').value = '';
     document.getElementById('vizCalcWidth').value = '';
     document.getElementById('vizCalcDepth').value = '';
@@ -1433,15 +1398,14 @@ function resetVisualizerPoints() {
     drawVisualizerCanvas();
 }
 
-// Full Reset
 function resetVisualizer() {
     vizState.image = null;
     vizState.points = [];
     vizState.isComplete = false;
     vizCalculatedQuantity = null;
+    vizCalculatedTons = null;
     vizCanvasDimensions = { width: 0, height: 0 };
     
-    // Reset calculator fields
     document.getElementById('vizCalcLength').value = '';
     document.getElementById('vizCalcWidth').value = '';
     document.getElementById('vizCalcDepth').value = '';
@@ -1450,31 +1414,6 @@ function resetVisualizer() {
     document.getElementById('vizFileInput').value = '';
     document.getElementById('vizCameraInput').value = '';
     updateVisualizerUI();
-}
-
-// Get Quote from Visualizer
-function getVisualizerQuote() {
-    closeVisualizer();
-    openCalculatorModal();
-    
-    // Map visualizer material to quote calculator material
-   const materialMapping = {
-    'black-mulch': 'mulch-black',
-    'brown-mulch': 'mulch-brown',
-    'blackstar-gravel': 'blackstar-gravel',
-    'decomposed-granite': 'decomposed-granite',
-    'bull-rock': 'bull-rock',
-    'topsoil': 'topsoil'
-};
-    
-    const mappedMaterial = materialMapping[vizState.selectedMaterial.id] || '';
-    const quoteProductSelect = document.getElementById('quoteProduct');
-    if (quoteProductSelect && mappedMaterial) {
-        quoteProductSelect.value = mappedMaterial;
-        recalculateQuote();
-    }
-    
-    showToast('info', 'Material Selected', `${vizState.selectedMaterial.name} - Enter your ZIP and quantity for pricing!`);
 }
 
 // =====================================================
@@ -1489,7 +1428,6 @@ if (mobileMenuBtn && navLinks) {
         navLinks.classList.toggle('active');
     });
     
-    // Close mobile menu when clicking a link
     navLinks.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
             mobileMenuBtn.classList.remove('active');
@@ -1497,7 +1435,6 @@ if (mobileMenuBtn && navLinks) {
         });
     });
     
-    // Toggle service areas dropdown in mobile
     const navDropdown = document.querySelector('.nav-dropdown > a');
     if (navDropdown) {
         navDropdown.addEventListener('click', function(e) {
@@ -1509,7 +1446,6 @@ if (mobileMenuBtn && navLinks) {
     }
 }
 
-// Close mobile menu when clicking outside
 document.addEventListener('click', function(e) {
     if (navLinks && mobileMenuBtn) {
         if (!e.target.closest('.nav-links') && !e.target.closest('.mobile-menu-btn')) {
@@ -1522,9 +1458,8 @@ document.addEventListener('click', function(e) {
 // =====================================================
 // INITIALIZATION
 // =====================================================
-console.log('🪨 Texas Got Rocks CodePen loaded successfully!');
+console.log('🪨 Texas Got Rocks loaded successfully!');
 console.log('Test ZIP codes: 77301 (Conroe), 77380 (The Woodlands), 77338 (Humble)');
-console.log('Click "Get Your Free Quote" to test the calculator!');
 
 // =====================================================
 // BEFORE/AFTER SLIDER
@@ -1544,16 +1479,12 @@ function initBeforeAfterSlider() {
     function updateSliderPosition(x) {
         const rect = container.getBoundingClientRect();
         let position = (x - rect.left) / rect.width;
-        position = Math.max(0.05, Math.min(0.95, position)); // Keep within bounds
+        position = Math.max(0.05, Math.min(0.95, position));
         
         const percentage = position * 100;
         beforeWrapper.style.width = percentage + '%';
         handle.style.left = percentage + '%';
         
-        // Toggle labels based on position
-        // Slider left (< 30%) = showing mostly AFTER, hide BEFORE label
-        // Slider middle (30-70%) = show BOTH labels
-        // Slider right (> 70%) = showing mostly BEFORE, hide AFTER label
         if (position < 0.3) {
             beforeLabel.style.opacity = '0';
             afterLabel.style.opacity = '1';
@@ -1566,7 +1497,6 @@ function initBeforeAfterSlider() {
         }
     }
     
-    // Mouse events
     slider.addEventListener('mousedown', function(e) {
         isDragging = true;
         updateSliderPosition(e.clientX);
@@ -1582,7 +1512,6 @@ function initBeforeAfterSlider() {
         isDragging = false;
     });
     
-    // Touch events
     slider.addEventListener('touchstart', function(e) {
         isDragging = true;
         updateSliderPosition(e.touches[0].clientX);
@@ -1598,9 +1527,7 @@ function initBeforeAfterSlider() {
     });
 }
 
-// Initialize slider on page load
 document.addEventListener('DOMContentLoaded', initBeforeAfterSlider);
-// Also try to init immediately in case DOM is already ready
 if (document.readyState !== 'loading') {
     initBeforeAfterSlider();
 }
@@ -1609,14 +1536,12 @@ if (document.readyState !== 'loading') {
 // CLOUDFLARE TURNSTILE FUNCTIONS
 // =====================================================
 
-// Track Turnstile completion status
 let turnstileStatus = {
     visualizer: false,
     price: false,
     quote: false
 };
 
-// Callback when visualizer Turnstile is completed
 function onTurnstileVisualizer(token) {
     turnstileStatus.visualizer = true;
     const btn = document.getElementById('visualizerBtn');
@@ -1625,7 +1550,6 @@ function onTurnstileVisualizer(token) {
     }
 }
 
-// Callback when price Turnstile is completed
 function onTurnstilePrice(token) {
     turnstileStatus.price = true;
     const btn = document.getElementById('getPriceBtn');
@@ -1634,16 +1558,13 @@ function onTurnstilePrice(token) {
     }
 }
 
-// Callback when quote Turnstile is completed
 function onTurnstileQuote(token) {
     turnstileStatus.quote = true;
-    // Recalculate quote to update button state
     if (typeof recalculateQuote === 'function') {
         recalculateQuote();
     }
 }
 
-// Open visualizer with captcha check
 function openVisualizerWithCaptcha() {
     if (turnstileStatus.visualizer) {
         openVisualizer();
@@ -1652,7 +1573,6 @@ function openVisualizerWithCaptcha() {
     }
 }
 
-// Get delivery price with captcha check
 function getDeliveryPriceWithCaptcha() {
     if (turnstileStatus.price) {
         getDeliveryPrice();
@@ -1661,7 +1581,6 @@ function getDeliveryPriceWithCaptcha() {
     }
 }
 
-// Add to cart with captcha check
 function addToCartWithCaptcha() {
     if (turnstileStatus.quote) {
         addToCart();
@@ -1679,23 +1598,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (!scrollUpBtn || !scrollDownBtn) return;
     
-    // Get all main sections for scrolling
     const sections = document.querySelectorAll('section');
     
-    // Show/hide arrows based on scroll position
     function updateArrowVisibility() {
         const scrollY = window.scrollY;
         const windowHeight = window.innerHeight;
         const documentHeight = document.documentElement.scrollHeight;
         
-        // Show up arrow when scrolled down more than 300px
         if (scrollY > 300) {
             scrollUpBtn.classList.add('visible');
         } else {
             scrollUpBtn.classList.remove('visible');
         }
         
-        // Hide down arrow when near bottom of page
         if (scrollY + windowHeight >= documentHeight - 200) {
             scrollDownBtn.classList.add('hidden');
         } else {
@@ -1703,20 +1618,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Scroll up - go to top
     scrollUpBtn.addEventListener('click', function() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
     
-    // Scroll down - go to next section
     scrollDownBtn.addEventListener('click', function() {
         const scrollY = window.scrollY;
         const windowHeight = window.innerHeight;
         
-        // Find the next section to scroll to
         let nextSection = null;
         for (let i = 0; i < sections.length; i++) {
             const sectionTop = sections[i].offsetTop;
@@ -1729,18 +1638,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (nextSection) {
             nextSection.scrollIntoView({ behavior: 'smooth' });
         } else {
-            // If no next section, scroll down by viewport height
-            window.scrollBy({
-                top: windowHeight * 0.8,
-                behavior: 'smooth'
-            });
+            window.scrollBy({ top: windowHeight * 0.8, behavior: 'smooth' });
         }
     });
     
-    // Listen for scroll events
     window.addEventListener('scroll', updateArrowVisibility);
-    
-    // Initial check
     updateArrowVisibility();
 });
 
@@ -1753,20 +1655,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const materialParam = urlParams.get('material');
     
     if (openQuote === 'true') {
-        // Small delay to ensure everything is loaded
         setTimeout(function() {
             if (typeof openCalculatorModal === 'function') {
                 openCalculatorModal();
                 
-                // Pre-select material if provided in URL
                 if (materialParam) {
                     const quoteProductSelect = document.getElementById('quoteProduct');
                     if (quoteProductSelect) {
-                        // Try to find and select the matching option
                         for (let i = 0; i < quoteProductSelect.options.length; i++) {
                             if (quoteProductSelect.options[i].value === materialParam) {
                                 quoteProductSelect.value = materialParam;
-                                // Trigger change event to update any dependent UI
                                 quoteProductSelect.dispatchEvent(new Event('change'));
                                 break;
                             }
@@ -1776,16 +1674,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 300);
         
-        // Clean up the URL without refreshing the page
         if (window.history.replaceState) {
             window.history.replaceState({}, document.title, window.location.pathname);
         }
     }
 });
 
-// ================================
-// Self-Hosted Video Player
-// ================================
+// =====================================================
+// SELF-HOSTED VIDEO PLAYER
+// =====================================================
 
 let promoVideo = null;
 let videoOverlay = null;
@@ -1803,7 +1700,6 @@ document.addEventListener('DOMContentLoaded', function() {
     playPauseBtn = document.getElementById('playPauseBtn');
     
     if (promoVideo) {
-        // Update progress bar and time
         promoVideo.addEventListener('timeupdate', updateVideoProgress);
         promoVideo.addEventListener('loadedmetadata', updateVideoTime);
         promoVideo.addEventListener('ended', onVideoEnded);
@@ -1823,7 +1719,7 @@ function togglePromoVideo() {
 }
 
 function onVideoPlay() {
-    trackVideoPlay(); // GA4 tracking
+    trackVideoPlay();
     if (videoOverlay) videoOverlay.classList.add('hidden');
     if (playPauseBtn) {
         playPauseBtn.querySelector('.play-icon').style.display = 'none';
@@ -1840,7 +1736,7 @@ function onVideoPause() {
 }
 
 function onVideoEnded() {
-    trackVideoComplete(); // GA4 tracking
+    trackVideoComplete();
     if (videoOverlay) videoOverlay.classList.remove('hidden');
     promoVideo.parentElement.classList.remove('playing');
     if (playPauseBtn) {
@@ -1898,9 +1794,9 @@ function toggleFullscreen() {
     }
 }
 
-// ================================
-// Google Analytics Event Tracking
-// ================================
+// =====================================================
+// GOOGLE ANALYTICS EVENT TRACKING
+// =====================================================
 
 function trackEvent(eventName, eventParams = {}) {
     eventParams.site_version = typeof SITE_VERSION !== 'undefined' ? SITE_VERSION : 'unknown';
@@ -1963,7 +1859,6 @@ function trackVideoComplete() {
     });
 }
 
-// Section view tracking
 document.addEventListener('DOMContentLoaded', function() {
     const howItWorks = document.getElementById('how-it-works');
     if (howItWorks) {
