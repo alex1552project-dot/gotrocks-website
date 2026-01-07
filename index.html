@@ -8,7 +8,6 @@
   gtag('js', new Date());
   gtag('config', 'G-9N8HZT4KRL');
 </script>
-```
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Texas Got Rocks? | The Woodlands & Conroe's Direct Rock, Gravel, Mulch & Topsoil Source</title>
@@ -113,10 +112,22 @@
     <div class="hero-container">
         <div class="hero-content">
             
-            <!-- Top Row: Mascot + Value Proposition Side by Side -->
+            <!-- Top Row: Video Mascot + Value Proposition Side by Side -->
             <div class="hero-top-row">
                 <div class="hero-mascot-wrapper animate-fade-in">
-                    <img src="/images/rocky-logo-transparent.png" alt="Rocky - Texas Got Rocks?" class="hero-combined-logo">
+                    <!-- VIDEO REPLACES THE ROCKY PNG IMAGE -->
+                    <video 
+                        autoplay 
+                        muted 
+                        playsinline
+                        id="heroRockyVideo"
+                        class="hero-combined-logo"
+                        poster="/images/rocky-logo-transparent.png"
+                    >
+                        <source src="/videos/RockyLetsGoTexas.mp4" type="video/mp4">
+                        <!-- Fallback for browsers that don't support video -->
+                        <img src="/images/rocky-logo-transparent.png" alt="Rocky - Texas Got Rocks?">
+                    </video>
                 </div>
 
                 <!-- Value Proposition Text -->
