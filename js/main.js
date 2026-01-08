@@ -1,6 +1,7 @@
 // =====================================================
 // TEXAS GOT ROCKS - COMPLETE MAIN.JS
 // Last Updated: January 7, 2026
+// INCLUDES: Smart truck selection, delivery minimums, 48-ton cap
 // REPLACE YOUR ENTIRE main.js WITH THIS FILE
 // =====================================================
 
@@ -145,10 +146,13 @@ if (exitForm) {
 }
 
 // =====================================================
-// ZIP CODE DATABASE - Pre-calculated distances from yard
+// ZIP CODE DATABASE - EXPANDED FOR ALL 20 SERVICE AREAS + HOUSTON
+// Pre-calculated distances from Conroe yard
 // =====================================================
 const ZIP_DATA = {
-    // ZONE 1: Conroe & Immediate Area (0-15 miles)
+    // =========================================================
+    // ZONE 1: Conroe & Immediate Area (0-15 miles from yard)
+    // =========================================================
     '77301': { city: 'Conroe', distance: 3, time: 8, zone: 1 },
     '77302': { city: 'Conroe', distance: 7, time: 15, zone: 1 },
     '77303': { city: 'Conroe', distance: 5, time: 12, zone: 1 },
@@ -157,34 +161,109 @@ const ZIP_DATA = {
     '77306': { city: 'Conroe', distance: 8, time: 18, zone: 1 },
     '77384': { city: 'Conroe', distance: 10, time: 20, zone: 1 },
     '77385': { city: 'Conroe', distance: 2, time: 5, zone: 1 },
+    
+    // Montgomery
     '77316': { city: 'Montgomery', distance: 12, time: 22, zone: 1 },
     '77356': { city: 'Montgomery', distance: 14, time: 25, zone: 1 },
+    
+    // Willis
     '77318': { city: 'Willis', distance: 10, time: 18, zone: 1 },
     '77378': { city: 'Willis', distance: 12, time: 20, zone: 1 },
-    '77354': { city: 'Magnolia', distance: 15, time: 28, zone: 1 },
     
-    // ZONE 2: The Woodlands & Spring (15-30 miles)
-    '77355': { city: 'Magnolia', distance: 18, time: 32, zone: 2 },
+    // Oak Ridge North
+    '77386': { city: 'Oak Ridge North', distance: 14, time: 24, zone: 1 },
+    
+    // Shenandoah
+    '77381': { city: 'Shenandoah', distance: 12, time: 22, zone: 1 },
+    
+    // =========================================================
+    // ZONE 2: The Woodlands, Spring, Magnolia (15-30 miles)
+    // =========================================================
+    
+    // The Woodlands
     '77380': { city: 'The Woodlands', distance: 18, time: 30, zone: 2 },
-    '77381': { city: 'The Woodlands', distance: 16, time: 28, zone: 2 },
     '77382': { city: 'The Woodlands', distance: 17, time: 29, zone: 2 },
-    '77386': { city: 'Spring', distance: 20, time: 35, zone: 2 },
     '77387': { city: 'The Woodlands', distance: 19, time: 32, zone: 2 },
-    '77389': { city: 'Spring', distance: 22, time: 38, zone: 2 },
+    '77389': { city: 'The Woodlands', distance: 22, time: 38, zone: 2 },
+    
+    // Magnolia
+    '77354': { city: 'Magnolia', distance: 15, time: 28, zone: 2 },
+    '77355': { city: 'Magnolia', distance: 18, time: 32, zone: 2 },
+    
+    // Spring
     '77373': { city: 'Spring', distance: 25, time: 40, zone: 2 },
     '77379': { city: 'Spring', distance: 24, time: 42, zone: 2 },
     '77388': { city: 'Spring', distance: 26, time: 45, zone: 2 },
+    
+    // Tomball
     '77375': { city: 'Tomball', distance: 22, time: 38, zone: 2 },
     '77377': { city: 'Tomball', distance: 25, time: 42, zone: 2 },
+    
+    // Splendora
     '77372': { city: 'Splendora', distance: 22, time: 35, zone: 2 },
     
-    // ZONE 3: Greater Houston - North (30-45 miles)
+    // Porter
+    '77365': { city: 'Porter', distance: 26, time: 40, zone: 2 },
+    
+    // New Caney
+    '77357': { city: 'New Caney', distance: 28, time: 42, zone: 2 },
+    
+    // Plantersville
+    '77363': { city: 'Plantersville', distance: 25, time: 40, zone: 2 },
+    
+    // New Waverly
+    '77358': { city: 'New Waverly', distance: 20, time: 32, zone: 2 },
+    
+    // =========================================================
+    // ZONE 3: Huntsville, Humble, Cypress, Katy, Cleveland (30-60 miles)
+    // =========================================================
+    
+    // Huntsville (about 40 miles north)
+    '77320': { city: 'Huntsville', distance: 40, time: 50, zone: 3 },
+    '77340': { city: 'Huntsville', distance: 42, time: 52, zone: 3 },
+    '77341': { city: 'Huntsville', distance: 42, time: 52, zone: 3 },
+    '77344': { city: 'Huntsville', distance: 44, time: 55, zone: 3 },
+    '77348': { city: 'Huntsville', distance: 44, time: 55, zone: 3 },
+    '77349': { city: 'Huntsville', distance: 44, time: 55, zone: 3 },
+    
+    // Cleveland (about 35 miles east)
+    '77327': { city: 'Cleveland', distance: 35, time: 45, zone: 3 },
+    '77328': { city: 'Cleveland', distance: 37, time: 48, zone: 3 },
+    
+    // Humble / Kingwood
     '77338': { city: 'Humble', distance: 32, time: 50, zone: 3 },
     '77339': { city: 'Kingwood', distance: 30, time: 48, zone: 3 },
     '77345': { city: 'Kingwood', distance: 32, time: 52, zone: 3 },
     '77346': { city: 'Humble', distance: 35, time: 55, zone: 3 },
-    '77357': { city: 'New Caney', distance: 28, time: 42, zone: 3 },
-    '77365': { city: 'Porter', distance: 26, time: 40, zone: 3 },
+    '77347': { city: 'Humble', distance: 33, time: 52, zone: 3 },
+    '77396': { city: 'Humble', distance: 34, time: 54, zone: 3 },
+    
+    // Cypress (about 35 miles southwest)
+    '77410': { city: 'Cypress', distance: 35, time: 50, zone: 3 },
+    '77429': { city: 'Cypress', distance: 35, time: 50, zone: 3 },
+    '77433': { city: 'Cypress', distance: 38, time: 55, zone: 3 },
+    
+    // Katy (about 50 miles southwest)
+    '77449': { city: 'Katy', distance: 50, time: 65, zone: 3 },
+    '77450': { city: 'Katy', distance: 52, time: 68, zone: 3 },
+    '77491': { city: 'Katy', distance: 50, time: 65, zone: 3 },
+    '77492': { city: 'Katy', distance: 50, time: 65, zone: 3 },
+    '77493': { city: 'Katy', distance: 48, time: 62, zone: 3 },
+    '77494': { city: 'Katy', distance: 52, time: 68, zone: 3 },
+    
+    // =========================================================
+    // HOUSTON - North & Northwest (closest to Conroe)
+    // =========================================================
+    '77014': { city: 'Houston', distance: 35, time: 55, zone: 3 },
+    '77018': { city: 'Houston', distance: 42, time: 64, zone: 3 },
+    '77022': { city: 'Houston', distance: 40, time: 60, zone: 3 },
+    '77032': { city: 'Houston', distance: 38, time: 58, zone: 3 },
+    '77037': { city: 'Houston', distance: 36, time: 56, zone: 3 },
+    '77038': { city: 'Houston', distance: 34, time: 54, zone: 3 },
+    '77039': { city: 'Houston', distance: 35, time: 55, zone: 3 },
+    '77040': { city: 'Houston', distance: 36, time: 56, zone: 3 },
+    '77041': { city: 'Houston', distance: 38, time: 58, zone: 3 },
+    '77043': { city: 'Houston', distance: 40, time: 62, zone: 3 },
     '77044': { city: 'Houston', distance: 38, time: 58, zone: 3 },
     '77050': { city: 'Houston', distance: 40, time: 60, zone: 3 },
     '77060': { city: 'Houston', distance: 35, time: 55, zone: 3 },
@@ -195,37 +274,185 @@ const ZIP_DATA = {
     '77068': { city: 'Houston', distance: 28, time: 45, zone: 3 },
     '77069': { city: 'Houston', distance: 26, time: 42, zone: 3 },
     '77070': { city: 'Houston', distance: 28, time: 46, zone: 3 },
-    '77090': { city: 'Houston', distance: 30, time: 48, zone: 3 },
-    '77014': { city: 'Houston', distance: 35, time: 55, zone: 3 },
-    '77032': { city: 'Houston', distance: 38, time: 58, zone: 3 },
-    '77037': { city: 'Houston', distance: 36, time: 56, zone: 3 },
-    '77038': { city: 'Houston', distance: 34, time: 54, zone: 3 },
-    '77040': { city: 'Houston', distance: 36, time: 56, zone: 3 },
-    '77041': { city: 'Houston', distance: 38, time: 58, zone: 3 },
-    '77043': { city: 'Houston', distance: 40, time: 62, zone: 3 },
-    '77018': { city: 'Houston', distance: 42, time: 64, zone: 3 },
+    '77073': { city: 'Houston', distance: 30, time: 48, zone: 3 },
+    '77078': { city: 'Houston', distance: 38, time: 58, zone: 3 },
     '77080': { city: 'Houston', distance: 40, time: 62, zone: 3 },
+    '77086': { city: 'Houston', distance: 32, time: 50, zone: 3 },
     '77088': { city: 'Houston', distance: 38, time: 60, zone: 3 },
+    '77090': { city: 'Houston', distance: 30, time: 48, zone: 3 },
     '77091': { city: 'Houston', distance: 40, time: 62, zone: 3 },
     '77092': { city: 'Houston', distance: 42, time: 65, zone: 3 },
-    '77093': { city: 'Houston', distance: 40, time: 62, zone: 3 }
+    '77093': { city: 'Houston', distance: 40, time: 62, zone: 3 },
+    
+    // =========================================================
+    // HOUSTON - Central, West, Southwest (farther from Conroe)
+    // =========================================================
+    '77002': { city: 'Houston', distance: 45, time: 65, zone: 3 },
+    '77003': { city: 'Houston', distance: 46, time: 66, zone: 3 },
+    '77004': { city: 'Houston', distance: 48, time: 70, zone: 3 },
+    '77005': { city: 'Houston', distance: 50, time: 72, zone: 3 },
+    '77006': { city: 'Houston', distance: 48, time: 70, zone: 3 },
+    '77007': { city: 'Houston', distance: 45, time: 68, zone: 3 },
+    '77008': { city: 'Houston', distance: 42, time: 64, zone: 3 },
+    '77009': { city: 'Houston', distance: 40, time: 60, zone: 3 },
+    '77010': { city: 'Houston', distance: 45, time: 65, zone: 3 },
+    '77011': { city: 'Houston', distance: 48, time: 70, zone: 3 },
+    '77012': { city: 'Houston', distance: 50, time: 72, zone: 3 },
+    '77013': { city: 'Houston', distance: 45, time: 68, zone: 3 },
+    '77015': { city: 'Houston', distance: 50, time: 72, zone: 3 },
+    '77016': { city: 'Houston', distance: 42, time: 64, zone: 3 },
+    '77017': { city: 'Houston', distance: 52, time: 75, zone: 3 },
+    '77019': { city: 'Houston', distance: 48, time: 70, zone: 3 },
+    '77020': { city: 'Houston', distance: 45, time: 68, zone: 3 },
+    '77021': { city: 'Houston', distance: 50, time: 72, zone: 3 },
+    '77023': { city: 'Houston', distance: 48, time: 70, zone: 3 },
+    '77024': { city: 'Houston', distance: 45, time: 68, zone: 3 },
+    '77025': { city: 'Houston', distance: 52, time: 75, zone: 3 },
+    '77026': { city: 'Houston', distance: 45, time: 68, zone: 3 },
+    '77027': { city: 'Houston', distance: 48, time: 70, zone: 3 },
+    '77028': { city: 'Houston', distance: 44, time: 66, zone: 3 },
+    '77029': { city: 'Houston', distance: 50, time: 72, zone: 3 },
+    '77030': { city: 'Houston', distance: 50, time: 72, zone: 3 },
+    '77031': { city: 'Houston', distance: 55, time: 78, zone: 3 },
+    '77033': { city: 'Houston', distance: 52, time: 75, zone: 3 },
+    '77034': { city: 'Houston', distance: 55, time: 78, zone: 3 },
+    '77035': { city: 'Houston', distance: 55, time: 78, zone: 3 },
+    '77036': { city: 'Houston', distance: 52, time: 75, zone: 3 },
+    '77042': { city: 'Houston', distance: 48, time: 70, zone: 3 },
+    '77045': { city: 'Houston', distance: 55, time: 78, zone: 3 },
+    '77046': { city: 'Houston', distance: 50, time: 72, zone: 3 },
+    '77047': { city: 'Houston', distance: 58, time: 80, zone: 3 },
+    '77048': { city: 'Houston', distance: 58, time: 80, zone: 3 },
+    '77051': { city: 'Houston', distance: 55, time: 78, zone: 3 },
+    '77053': { city: 'Houston', distance: 58, time: 80, zone: 3 },
+    '77054': { city: 'Houston', distance: 52, time: 75, zone: 3 },
+    '77055': { city: 'Houston', distance: 45, time: 68, zone: 3 },
+    '77056': { city: 'Houston', distance: 48, time: 70, zone: 3 },
+    '77057': { city: 'Houston', distance: 48, time: 70, zone: 3 },
+    '77058': { city: 'Houston', distance: 60, time: 85, zone: 3 },
+    '77059': { city: 'Houston', distance: 58, time: 82, zone: 3 },
+    '77061': { city: 'Houston', distance: 55, time: 78, zone: 3 },
+    '77062': { city: 'Houston', distance: 58, time: 82, zone: 3 },
+    '77063': { city: 'Houston', distance: 50, time: 72, zone: 3 },
+    '77071': { city: 'Houston', distance: 55, time: 78, zone: 3 },
+    '77072': { city: 'Houston', distance: 55, time: 78, zone: 3 },
+    '77074': { city: 'Houston', distance: 52, time: 75, zone: 3 },
+    '77075': { city: 'Houston', distance: 55, time: 78, zone: 3 },
+    '77076': { city: 'Houston', distance: 38, time: 58, zone: 3 },
+    '77077': { city: 'Houston', distance: 50, time: 72, zone: 3 },
+    '77079': { city: 'Houston', distance: 48, time: 70, zone: 3 },
+    '77081': { city: 'Houston', distance: 52, time: 75, zone: 3 },
+    '77082': { city: 'Houston', distance: 52, time: 75, zone: 3 },
+    '77083': { city: 'Houston', distance: 55, time: 78, zone: 3 },
+    '77084': { city: 'Houston', distance: 42, time: 62, zone: 3 },
+    '77085': { city: 'Houston', distance: 55, time: 78, zone: 3 },
+    '77087': { city: 'Houston', distance: 52, time: 75, zone: 3 },
+    '77089': { city: 'Houston', distance: 58, time: 82, zone: 3 },
+    '77094': { city: 'Houston', distance: 50, time: 72, zone: 3 },
+    '77095': { city: 'Houston', distance: 42, time: 62, zone: 3 },
+    '77096': { city: 'Houston', distance: 55, time: 78, zone: 3 },
+    '77098': { city: 'Houston', distance: 48, time: 70, zone: 3 },
+    '77099': { city: 'Houston', distance: 55, time: 78, zone: 3 }
 };
 
 // =====================================================
 // TRUCK & PRICING CONFIGURATION
 // =====================================================
 const TRUCK_CONFIG = {
-    trucks: {
-        endDump: { hourlyRate: 130, capacityTons: 24 },
-        tandem: { hourlyRate: 100, capacityTons: 15 }
+    // Truck types with rates and capacities
+    tandem: {
+        hourlyRate: 100,
+        capacityTons: 15,
+        minimumCharge: 75
     },
-    loadTime: 5,        // minutes
-    dumpTime: 5,        // minutes
+    endDump: {
+        hourlyRate: 130,
+        capacityTons: 24,
+        minimumCharge: 100
+    },
+    // Timing
+    loadTime: 5,        // minutes per trip
+    dumpTime: 5,        // minutes per trip
+    // Fees
     globalMargin: 0.20, // 20%
-    tandemThreshold: 15, // tons
     taxRate: 0.0825,    // 8.25% Texas sales tax
-    serviceFeeRate: 0.035 // 3.5% service fee
+    serviceFeeRate: 0.035, // 3.5% service fee
+    // Limits
+    maxTons: 48         // Cap - over this goes to contractor portal
 };
+
+// =====================================================
+// SMART TRUCK SELECTION FUNCTION
+// Returns optimal truck combination based on tonnage
+// =====================================================
+function selectOptimalTrucks(tons) {
+    const TANDEM = TRUCK_CONFIG.tandem;
+    const END_DUMP = TRUCK_CONFIG.endDump;
+    
+    if (tons <= 15) {
+        // Single tandem
+        return {
+            description: '1 Tandem',
+            trucks: [{ type: 'tandem', tons: tons }],
+            totalHourlyRate: TANDEM.hourlyRate,
+            trips: 1,
+            minimumCharge: TANDEM.minimumCharge
+        };
+    }
+    else if (tons <= 24) {
+        // Single end dump (trailer)
+        return {
+            description: '1 End Dump',
+            trucks: [{ type: 'endDump', tons: tons }],
+            totalHourlyRate: END_DUMP.hourlyRate,
+            trips: 1,
+            minimumCharge: END_DUMP.minimumCharge
+        };
+    }
+    else if (tons <= 30) {
+        // 2 Tandems is cheaper than 1 End Dump + 1 Tandem
+        // 2 × $100 = $200/hr vs $130 + $100 = $230/hr
+        return {
+            description: '2 Tandems',
+            trucks: [
+                { type: 'tandem', tons: 15 },
+                { type: 'tandem', tons: tons - 15 }
+            ],
+            totalHourlyRate: TANDEM.hourlyRate * 2,
+            trips: 2,
+            minimumCharge: TANDEM.minimumCharge * 2
+        };
+    }
+    else if (tons <= 39) {
+        // 1 End Dump + 1 Tandem
+        return {
+            description: '1 End Dump + 1 Tandem',
+            trucks: [
+                { type: 'endDump', tons: 24 },
+                { type: 'tandem', tons: tons - 24 }
+            ],
+            totalHourlyRate: END_DUMP.hourlyRate + TANDEM.hourlyRate,
+            trips: 2,
+            minimumCharge: END_DUMP.minimumCharge + TANDEM.minimumCharge
+        };
+    }
+    else if (tons <= 48) {
+        // 2 End Dumps
+        return {
+            description: '2 End Dumps',
+            trucks: [
+                { type: 'endDump', tons: 24 },
+                { type: 'endDump', tons: tons - 24 }
+            ],
+            totalHourlyRate: END_DUMP.hourlyRate * 2,
+            trips: 2,
+            minimumCharge: END_DUMP.minimumCharge * 2
+        };
+    }
+    
+    // Over 48 tons - shouldn't reach here due to cap check
+    return null;
+}
 
 // =====================================================
 // STATE VARIABLES
@@ -301,6 +528,7 @@ function adjustQuoteQuantity(delta) {
 
 // =====================================================
 // RECALCULATE QUOTE - MAIN PRICING FORMULA
+// With smart truck selection, minimums, and 48-ton cap
 // =====================================================
 function recalculateQuote() {
     const productSelect = document.getElementById('quoteProduct');
@@ -336,32 +564,53 @@ function recalculateQuote() {
     // 1. Calculate tons from cubic yards
     const tons = quantity * weightPerYard;
     
-    // 2. Base material cost (before markup) - TAX IS CALCULATED ON THIS
+    // 2. Check for 48-ton cap - redirect to contractor portal
+    if (tons > TRUCK_CONFIG.maxTons) {
+        document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
+        document.getElementById('quoteTotalSection').classList.add('hidden');
+        document.getElementById('needAProSection').classList.add('hidden');
+        ctaButton.textContent = '📞 Order Over 48 Tons - Get Commercial Quote';
+        ctaButton.disabled = false;
+        ctaButton.onclick = function() {
+            window.location.href = '/contractors/?from=large-order&tons=' + tons.toFixed(1);
+        };
+        return;
+    }
+    
+    // Reset onclick for normal orders
+    ctaButton.onclick = function() { addToCartWithCaptcha(); };
+    
+    // 3. Base material cost (before markup) - TAX IS CALCULATED ON THIS
     const baseMaterialCost = tons * pricePerTon;
     
-    // 3. Calculate delivery/transport cost
-    const truck = tons > TRUCK_CONFIG.tandemThreshold ? TRUCK_CONFIG.trucks.endDump : TRUCK_CONFIG.trucks.tandem;
-    const loads = Math.ceil(tons / truck.capacityTons);
-    const timePerLoad = TRUCK_CONFIG.loadTime + currentZipData.time + TRUCK_CONFIG.dumpTime;
-    const totalHours = (timePerLoad * loads) / 60;
-    const deliveryCost = totalHours * truck.hourlyRate;
+    // 4. Smart truck selection based on tonnage
+    const truckConfig = selectOptimalTrucks(tons);
     
-    // 4. Subtotal (material + delivery)
+    // 5. Calculate delivery cost with MINIMUM enforcement
+    // Formula: (Load Time + Travel Time + Dump Time) × Trips ÷ 60 × Hourly Rate
+    const timePerTrip = TRUCK_CONFIG.loadTime + currentZipData.time + TRUCK_CONFIG.dumpTime;
+    const totalHours = (timePerTrip * truckConfig.trips) / 60;
+    const calculatedDeliveryCost = totalHours * truckConfig.totalHourlyRate;
+    
+    // Apply minimum - use whichever is higher
+    const deliveryCost = Math.max(calculatedDeliveryCost, truckConfig.minimumCharge);
+    
+    // 6. Subtotal (material + delivery)
     const subtotal = baseMaterialCost + deliveryCost;
     
-    // 5. Apply margin (20%) - this becomes customer-facing material price
+    // 7. Apply margin (20%) - this becomes customer-facing material price
     const materialWithMargin = subtotal * (1 + TRUCK_CONFIG.globalMargin);
     
-    // 6. Calculate customer-facing price per ton (for display)
+    // 8. Calculate customer-facing price per ton (for display)
     const customerPricePerTon = materialWithMargin / tons;
     
-    // 7. Sales tax (8.25% on BASE material only)
+    // 9. Sales tax (8.25% on BASE material only)
     const salesTax = baseMaterialCost * TRUCK_CONFIG.taxRate;
     
-    // 8. Service fee (3.5% on material with margin + tax)
+    // 10. Service fee (3.5% on material with margin + tax)
     const serviceFee = (materialWithMargin + salesTax) * TRUCK_CONFIG.serviceFeeRate;
     
-    // 9. Final total
+    // 11. Final total
     const total = materialWithMargin + salesTax + serviceFee;
     
     // =========================================================
@@ -404,11 +653,15 @@ function recalculateQuote() {
         zip: document.getElementById('quoteZipCode').value,
         city: currentZipData.city,
         distance: currentZipData.distance,
+        travelTime: currentZipData.time,
         product: selectedOption.text,
+        productId: productSelect.value,
         quantity: quantity,
         tons: tons,
         pricePerTon: customerPricePerTon,
         baseMaterialCost: baseMaterialCost,
+        deliveryCost: deliveryCost,
+        truckConfig: truckConfig.description,
         materialWithMargin: materialWithMargin,
         salesTax: salesTax,
         serviceFee: serviceFee,
@@ -545,12 +798,15 @@ function addToCart() {
     const cartItem = {
         id: cartIdCounter++,
         product: currentQuote.product,
+        productId: currentQuote.productId,
         quantity: currentQuote.quantity,
         tons: currentQuote.tons,
         zip: currentQuote.zip,
         city: currentQuote.city,
         distance: currentQuote.distance,
+        travelTime: currentQuote.travelTime,
         pricePerTon: currentQuote.pricePerTon,
+        truckConfig: currentQuote.truckConfig,
         materialWithMargin: currentQuote.materialWithMargin,
         salesTax: currentQuote.salesTax,
         serviceFee: currentQuote.serviceFee,
@@ -836,6 +1092,7 @@ function processPayment() {
         orderDetails += `Item ${index + 1}: ${item.tons.toFixed(1)} tons ${item.product}\n`;
         orderDetails += `  → Delivery to ${item.city} (${item.zip})\n`;
         orderDetails += `  → Scheduled: ${deliveryDate}\n`;
+        orderDetails += `  → Truck: ${item.truckConfig}\n`;
         orderDetails += `  → Price: $${item.total.toFixed(2)}\n\n`;
     });
     orderDetails += `TOTAL: $${total.toFixed(2)} (FREE DELIVERY)\n\n`;
@@ -846,8 +1103,6 @@ function processPayment() {
     cart = [];
     updateCartCount();
     updateCartDrawer();
-    
-    document.querySelector('.checkout-add-more-prompt').style.display = 'block';
 }
 
 function resetCalculatorForm() {
@@ -1459,7 +1714,9 @@ document.addEventListener('click', function(e) {
 // INITIALIZATION
 // =====================================================
 console.log('🪨 Texas Got Rocks loaded successfully!');
-console.log('Test ZIP codes: 77301 (Conroe), 77380 (The Woodlands), 77338 (Humble)');
+console.log('📍 ZIP coverage: ~150 ZIP codes across 20+ service areas');
+console.log('🚚 Truck selection: Smart routing with minimums ($75 Tandem, $100 End Dump)');
+console.log('📦 Order cap: 48 tons max (over redirects to contractor portal)');
 
 // =====================================================
 // BEFORE/AFTER SLIDER
