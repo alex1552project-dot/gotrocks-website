@@ -564,7 +564,7 @@ function recalculateQuote() {
     // 1. Calculate tons from cubic yards
     const tons = quantity * weightPerYard;
     
-    // 2. Check for 48-ton cap - redirect to contractor portal
+    // 2. Check for 48-ton cap - scroll to bulk pricing section
     if (tons > TRUCK_CONFIG.maxTons) {
         document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
         document.getElementById('quoteTotalSection').classList.add('hidden');
@@ -572,7 +572,15 @@ function recalculateQuote() {
         ctaButton.textContent = '📞 Order Over 48 Tons - Get Commercial Quote';
         ctaButton.disabled = false;
         ctaButton.onclick = function() {
-            window.location.href = '/contractors/?from=large-order&tons=' + tons.toFixed(1);
+            // Close the calculator modal
+            closeCalculatorModal();
+            // Scroll to bulk pricing section on homepage
+            const bulkSection = document.getElementById('bulk-pricing') || document.querySelector('.commercial-cta');
+            if (bulkSection) {
+                setTimeout(function() {
+                    bulkSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            }
         };
         return;
     }
