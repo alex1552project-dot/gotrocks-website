@@ -1339,17 +1339,6 @@ function resetVisualizer() {
     document.getElementById('vizFileInput').value = ''; document.getElementById('vizCameraInput').value = '';
     updateVisualizerUI();
 }
-change'));
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }, 300);
-        if (window.history.replaceState) window.history.replaceState({}, document.title, window.location.pathname);
-    }
-});
 
 // =====================================================
 // SELF-HOSTED VIDEO PLAYER
