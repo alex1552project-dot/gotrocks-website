@@ -616,7 +616,7 @@
 <!-- Toast Notifications Container -->
 <div class="toast-container" id="toast-container"></div>
 
-<!-- Calculator Modal - ZIP CODE INSTANT QUOTE - UPDATED WITH NEW PRICING DISPLAY -->
+<!-- Calculator Modal - ZIP CODE INSTANT QUOTE - UPDATED WITH 2-YARD MIN & UPSELL -->
 <div class="calculator-modal-overlay" id="calculator-modal">
     <div class="calculator-modal">
         <button class="modal-close" onclick="closeCalculatorModal()">×</button>
@@ -693,6 +693,46 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- ========== NEW: 2-YARD MINIMUM WARNING ========== -->
+            <div id="quoteMinimumWarning" class="minimum-warning-box hidden">
+                <div class="warning-icon">⚠️</div>
+                <div class="warning-content">
+                    <strong>2 Yard Minimum Required</strong>
+                    <p><span id="minWarningMaterialName">This material</span> requires a minimum order of 2 cubic yards. Please adjust your quantity to continue.</p>
+                </div>
+            </div>
+            
+            <!-- ========== NEW: VALUE PROPOSITION UPSELL ========== -->
+            <div id="quoteUpsellSection" class="upsell-section hidden">
+                <div class="upsell-header">
+                    <span class="upsell-icon">💡</span>
+                    <strong>Get More Value!</strong>
+                </div>
+                <div class="upsell-comparison">
+                    <div class="upsell-option current">
+                        <div class="option-label">Your Order</div>
+                        <div class="option-qty"><span id="upsellCurrentQty">2</span> yards</div>
+                        <div class="option-total">$<span id="upsellCurrentTotal">0.00</span></div>
+                        <div class="option-per-yard">$<span id="upsellCurrentPerYard">0.00</span>/yard</div>
+                    </div>
+                    <div class="upsell-arrow">→</div>
+                    <div class="upsell-option upgrade">
+                        <div class="option-label">Upgrade to</div>
+                        <div class="option-qty">3 yards</div>
+                        <div class="option-total">$<span id="upsellUpgradeTotal">0.00</span></div>
+                        <div class="option-per-yard">$<span id="upsellUpgradePerYard">0.00</span>/yard</div>
+                    </div>
+                </div>
+                <div class="upsell-savings">
+                    You save <strong>$<span id="upsellSavingsPerYard">0.00</span> per yard!</strong>
+                </div>
+                <button type="button" class="btn-upsell" onclick="upgradeToThreeYards()">
+                    ✨ Upgrade to 3 Yards
+                </button>
+            </div>
+            <!-- ========== END NEW SECTIONS ========== -->
+            
             <!-- FREE DELIVERY BADGE -->
             <div id="quoteFreeDeliveryBadge" class="free-delivery-badge-calc hidden">✓ FREE DELIVERY TO <span id="quoteDeliveryCityBadge">YOUR AREA</span></div>
             <!-- QUOTE BREAKDOWN - NEW PRICING DISPLAY -->
