@@ -643,7 +643,6 @@ function recalculateQuote() {
         const savingsPerYard = currentPricing.pricePerYard - upsellPricing.pricePerYard;
         
         if (upsellSection && savingsPerYard > 0) {
-            document.getElementById('upsellMaterialName').textContent = materialName;
             document.getElementById('upsellCurrentQty').textContent = quantity;
             document.getElementById('upsellCurrentTotal').textContent = currentPricing.total.toFixed(2);
             document.getElementById('upsellCurrentPerYard').textContent = currentPricing.pricePerYard.toFixed(2);
