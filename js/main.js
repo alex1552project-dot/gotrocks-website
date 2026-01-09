@@ -1,7 +1,9 @@
 // =====================================================
 // TEXAS GOT ROCKS - COMPLETE MAIN.JS
-// Last Updated: January 7, 2026
+// Last Updated: January 8, 2026
 // INCLUDES: Smart truck selection, delivery minimums, 48-ton cap
+// NEW: 2-yard minimum per material, tiered margins, value proposition upsell
+// NEW: 41 additional ZIP codes (189 total)
 // REPLACE YOUR ENTIRE main.js WITH THIS FILE
 // =====================================================
 
@@ -42,7 +44,6 @@ function closeAllCallDropdowns() {
     });
 }
 
-// Close dropdowns when clicking outside
 document.addEventListener('click', function(e) {
     if (!e.target.closest('.nav-call-dropdown') && 
         !e.target.closest('.call-dropdown-container') && 
@@ -63,18 +64,13 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// Smooth scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         const href = this.getAttribute('href');
-        if (href === '#' || href === '') {
-            return;
-        }
+        if (href === '#' || href === '') return;
         e.preventDefault();
         const target = document.querySelector(href);
-        if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 });
 
@@ -91,14 +87,10 @@ function closeCalculatorModal() {
     document.body.style.overflow = '';
 }
 
-// Close modal on overlay click
 document.getElementById('calculator-modal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeCalculatorModal();
-    }
+    if (e.target === this) closeCalculatorModal();
 });
 
-// Close on escape key
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeCalculatorModal();
@@ -120,7 +112,6 @@ function closeModal(modalId) {
     document.body.style.overflow = '';
 }
 
-// Close modal on overlay click
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', function(e) {
         if (e.target === this) {
@@ -130,23 +121,21 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
     });
 });
 
-// Exit capture form
 const exitForm = document.getElementById('exit-capture-form');
 if (exitForm) {
     exitForm.addEventListener('submit', function(e) {
         e.preventDefault();
         const email = document.getElementById('exit-email').value;
         const phone = document.getElementById('exit-phone').value;
-        
         console.log('Lead Captured (Exit Intent):', { email, phone });
-        
         closeModal('exit-modal');
         showToast('success', 'Discount Sent!', 'Check your email for your 10% off code');
     });
 }
 
 // =====================================================
-// ZIP CODE DATABASE - EXPANDED FOR ALL 20 SERVICE AREAS + HOUSTON
+// ZIP CODE DATABASE - EXPANDED TO 189 ZIP CODES
+// Includes 41 new ZIP codes from gap analysis
 // Pre-calculated distances from Conroe yard
 // =====================================================
 const ZIP_DATA = {
@@ -190,6 +179,9 @@ const ZIP_DATA = {
     '77354': { city: 'Magnolia', distance: 15, time: 28, zone: 2 },
     '77355': { city: 'Magnolia', distance: 18, time: 32, zone: 2 },
     
+    // NEW: Pinehurst
+    '77362': { city: 'Pinehurst', distance: 20, time: 35, zone: 2 },
+    
     // Spring
     '77373': { city: 'Spring', distance: 25, time: 40, zone: 2 },
     '77379': { city: 'Spring', distance: 24, time: 42, zone: 2 },
@@ -215,7 +207,7 @@ const ZIP_DATA = {
     '77358': { city: 'New Waverly', distance: 20, time: 32, zone: 2 },
     
     // =========================================================
-    // ZONE 3: Huntsville, Humble, Cypress, Katy, Cleveland (30-60 miles)
+    // ZONE 3: Huntsville, Humble, Cypress, Katy, Cleveland + NEW AREAS (30-60 miles)
     // =========================================================
     
     // Huntsville (about 40 miles north)
@@ -230,6 +222,11 @@ const ZIP_DATA = {
     '77327': { city: 'Cleveland', distance: 35, time: 45, zone: 3 },
     '77328': { city: 'Cleveland', distance: 37, time: 48, zone: 3 },
     
+    // NEW: Romayor, Rye, Shepherd (east)
+    '77368': { city: 'Romayor', distance: 45, time: 55, zone: 3 },
+    '77369': { city: 'Rye', distance: 50, time: 60, zone: 3 },
+    '77371': { city: 'Shepherd', distance: 42, time: 52, zone: 3 },
+    
     // Humble / Kingwood
     '77338': { city: 'Humble', distance: 32, time: 50, zone: 3 },
     '77339': { city: 'Kingwood', distance: 30, time: 48, zone: 3 },
@@ -237,6 +234,56 @@ const ZIP_DATA = {
     '77346': { city: 'Humble', distance: 35, time: 55, zone: 3 },
     '77347': { city: 'Humble', distance: 33, time: 52, zone: 3 },
     '77396': { city: 'Humble', distance: 34, time: 54, zone: 3 },
+    
+    // NEW: Crosby, Huffman, Highlands (east of Humble)
+    '77532': { city: 'Crosby', distance: 42, time: 55, zone: 3 },
+    '77336': { city: 'Huffman', distance: 38, time: 50, zone: 3 },
+    '77562': { city: 'Highlands', distance: 45, time: 58, zone: 3 },
+    
+    // NEW: Channelview
+    '77530': { city: 'Channelview', distance: 48, time: 60, zone: 3 },
+    
+    // NEW: Baytown
+    '77520': { city: 'Baytown', distance: 52, time: 65, zone: 3 },
+    '77521': { city: 'Baytown', distance: 50, time: 62, zone: 3 },
+    '77522': { city: 'Baytown', distance: 51, time: 63, zone: 3 },
+    '77523': { city: 'Baytown', distance: 48, time: 60, zone: 3 },
+    
+    // NEW: Dayton
+    '77535': { city: 'Dayton', distance: 45, time: 55, zone: 3 },
+    
+    // NEW: Deer Park
+    '77536': { city: 'Deer Park', distance: 52, time: 65, zone: 3 },
+    
+    // NEW: La Porte
+    '77571': { city: 'La Porte', distance: 55, time: 68, zone: 3 },
+    
+    // NEW: Pasadena
+    '77501': { city: 'Pasadena', distance: 50, time: 65, zone: 3 },
+    '77502': { city: 'Pasadena', distance: 52, time: 67, zone: 3 },
+    '77503': { city: 'Pasadena', distance: 53, time: 68, zone: 3 },
+    '77504': { city: 'Pasadena', distance: 54, time: 70, zone: 3 },
+    '77505': { city: 'Pasadena', distance: 55, time: 72, zone: 3 },
+    '77506': { city: 'Pasadena', distance: 51, time: 66, zone: 3 },
+    '77507': { city: 'Pasadena', distance: 56, time: 72, zone: 3 },
+    '77508': { city: 'Pasadena', distance: 52, time: 67, zone: 3 },
+    
+    // NEW: Pearland
+    '77581': { city: 'Pearland', distance: 55, time: 70, zone: 3 },
+    '77584': { city: 'Pearland', distance: 58, time: 72, zone: 3 },
+    '77588': { city: 'Pearland', distance: 56, time: 70, zone: 3 },
+    
+    // NEW: Friendswood
+    '77546': { city: 'Friendswood', distance: 55, time: 70, zone: 3 },
+    
+    // NEW: League City
+    '77573': { city: 'League City', distance: 58, time: 75, zone: 3 },
+    
+    // NEW: Seabrook
+    '77586': { city: 'Seabrook', distance: 55, time: 70, zone: 3 },
+    
+    // NEW: Kemah
+    '77565': { city: 'Kemah', distance: 58, time: 72, zone: 3 },
     
     // Cypress (about 35 miles southwest)
     '77410': { city: 'Cypress', distance: 35, time: 50, zone: 3 },
@@ -250,6 +297,31 @@ const ZIP_DATA = {
     '77492': { city: 'Katy', distance: 50, time: 65, zone: 3 },
     '77493': { city: 'Katy', distance: 48, time: 62, zone: 3 },
     '77494': { city: 'Katy', distance: 52, time: 68, zone: 3 },
+    
+    // NEW: Brookshire
+    '77423': { city: 'Brookshire', distance: 55, time: 70, zone: 3 },
+    
+    // NEW: Fulshear
+    '77441': { city: 'Fulshear', distance: 55, time: 70, zone: 3 },
+    
+    // NEW: Richmond
+    '77406': { city: 'Richmond', distance: 58, time: 75, zone: 3 },
+    '77407': { city: 'Richmond', distance: 55, time: 70, zone: 3 },
+    '77469': { city: 'Richmond', distance: 58, time: 75, zone: 3 },
+    
+    // NEW: Rosenberg
+    '77471': { city: 'Rosenberg', distance: 60, time: 78, zone: 3 },
+    
+    // NEW: Simonton
+    '77476': { city: 'Simonton', distance: 58, time: 75, zone: 3 },
+    
+    // NEW: Sugar Land
+    '77478': { city: 'Sugar Land', distance: 52, time: 68, zone: 3 },
+    '77479': { city: 'Sugar Land', distance: 55, time: 70, zone: 3 },
+    '77498': { city: 'Sugar Land', distance: 53, time: 68, zone: 3 },
+    
+    // NEW: Bellaire
+    '77401': { city: 'Bellaire', distance: 48, time: 65, zone: 3 },
     
     // =========================================================
     // HOUSTON - North & Northwest (closest to Conroe)
@@ -265,6 +337,7 @@ const ZIP_DATA = {
     '77041': { city: 'Houston', distance: 38, time: 58, zone: 3 },
     '77043': { city: 'Houston', distance: 40, time: 62, zone: 3 },
     '77044': { city: 'Houston', distance: 38, time: 58, zone: 3 },
+    '77049': { city: 'Houston', distance: 42, time: 55, zone: 3 },
     '77050': { city: 'Houston', distance: 40, time: 60, zone: 3 },
     '77060': { city: 'Houston', distance: 35, time: 55, zone: 3 },
     '77064': { city: 'Houston', distance: 32, time: 52, zone: 3 },
@@ -359,98 +432,38 @@ const ZIP_DATA = {
 // TRUCK & PRICING CONFIGURATION
 // =====================================================
 const TRUCK_CONFIG = {
-    // Truck types with rates and capacities
-    tandem: {
-        hourlyRate: 100,
-        capacityTons: 15,
-        minimumCharge: 75
-    },
-    endDump: {
-        hourlyRate: 130,
-        capacityTons: 24,
-        minimumCharge: 100
-    },
-    // Timing
-    loadTime: 5,        // minutes per trip
-    dumpTime: 5,        // minutes per trip
-    // Fees
-    globalMargin: 0.20, // 20%
-    taxRate: 0.0825,    // 8.25% Texas sales tax
-    serviceFeeRate: 0.035, // 3.5% service fee
-    // Limits
-    maxTons: 48         // Cap - over this goes to contractor portal
+    tandem: { hourlyRate: 100, capacityTons: 15, minimumCharge: 75 },
+    endDump: { hourlyRate: 130, capacityTons: 24, minimumCharge: 100 },
+    loadTime: 5,
+    dumpTime: 5,
+    taxRate: 0.0825,
+    serviceFeeRate: 0.035,
+    maxTons: 48,
+    // NEW: Minimum Yard & Tiered Margin Configuration
+    minimumYards: 2,
+    smallOrderThreshold: 3,
+    smallOrderMargin: 0.30,
+    standardMargin: 0.20
 };
 
 // =====================================================
-// SMART TRUCK SELECTION FUNCTION
-// Returns optimal truck combination based on tonnage
+// SMART TRUCK SELECTION
 // =====================================================
 function selectOptimalTrucks(tons) {
     const TANDEM = TRUCK_CONFIG.tandem;
     const END_DUMP = TRUCK_CONFIG.endDump;
     
     if (tons <= 15) {
-        // Single tandem
-        return {
-            description: '1 Tandem',
-            trucks: [{ type: 'tandem', tons: tons }],
-            totalHourlyRate: TANDEM.hourlyRate,
-            trips: 1,
-            minimumCharge: TANDEM.minimumCharge
-        };
+        return { description: '1 Tandem', trucks: [{ type: 'tandem', tons: tons }], totalHourlyRate: TANDEM.hourlyRate, trips: 1, minimumCharge: TANDEM.minimumCharge };
+    } else if (tons <= 24) {
+        return { description: '1 End Dump', trucks: [{ type: 'endDump', tons: tons }], totalHourlyRate: END_DUMP.hourlyRate, trips: 1, minimumCharge: END_DUMP.minimumCharge };
+    } else if (tons <= 30) {
+        return { description: '2 Tandems', trucks: [{ type: 'tandem', tons: 15 }, { type: 'tandem', tons: tons - 15 }], totalHourlyRate: TANDEM.hourlyRate * 2, trips: 2, minimumCharge: TANDEM.minimumCharge * 2 };
+    } else if (tons <= 39) {
+        return { description: '1 End Dump + 1 Tandem', trucks: [{ type: 'endDump', tons: 24 }, { type: 'tandem', tons: tons - 24 }], totalHourlyRate: END_DUMP.hourlyRate + TANDEM.hourlyRate, trips: 2, minimumCharge: END_DUMP.minimumCharge + TANDEM.minimumCharge };
+    } else if (tons <= 48) {
+        return { description: '2 End Dumps', trucks: [{ type: 'endDump', tons: 24 }, { type: 'endDump', tons: tons - 24 }], totalHourlyRate: END_DUMP.hourlyRate * 2, trips: 2, minimumCharge: END_DUMP.minimumCharge * 2 };
     }
-    else if (tons <= 24) {
-        // Single end dump (trailer)
-        return {
-            description: '1 End Dump',
-            trucks: [{ type: 'endDump', tons: tons }],
-            totalHourlyRate: END_DUMP.hourlyRate,
-            trips: 1,
-            minimumCharge: END_DUMP.minimumCharge
-        };
-    }
-    else if (tons <= 30) {
-        // 2 Tandems is cheaper than 1 End Dump + 1 Tandem
-        // 2 × $100 = $200/hr vs $130 + $100 = $230/hr
-        return {
-            description: '2 Tandems',
-            trucks: [
-                { type: 'tandem', tons: 15 },
-                { type: 'tandem', tons: tons - 15 }
-            ],
-            totalHourlyRate: TANDEM.hourlyRate * 2,
-            trips: 2,
-            minimumCharge: TANDEM.minimumCharge * 2
-        };
-    }
-    else if (tons <= 39) {
-        // 1 End Dump + 1 Tandem
-        return {
-            description: '1 End Dump + 1 Tandem',
-            trucks: [
-                { type: 'endDump', tons: 24 },
-                { type: 'tandem', tons: tons - 24 }
-            ],
-            totalHourlyRate: END_DUMP.hourlyRate + TANDEM.hourlyRate,
-            trips: 2,
-            minimumCharge: END_DUMP.minimumCharge + TANDEM.minimumCharge
-        };
-    }
-    else if (tons <= 48) {
-        // 2 End Dumps
-        return {
-            description: '2 End Dumps',
-            trucks: [
-                { type: 'endDump', tons: 24 },
-                { type: 'endDump', tons: tons - 24 }
-            ],
-            totalHourlyRate: END_DUMP.hourlyRate * 2,
-            trips: 2,
-            minimumCharge: END_DUMP.minimumCharge * 2
-        };
-    }
-    
-    // Over 48 tons - shouldn't reach here due to cap check
     return null;
 }
 
@@ -460,9 +473,6 @@ function selectOptimalTrucks(tons) {
 let currentZipData = null;
 let currentQuote = null;
 
-// =====================================================
-// ZIP LOOKUP FUNCTION
-// =====================================================
 function lookupZip(zip) {
     const cleaned = zip.replace(/\D/g, '').substring(0, 5);
     return ZIP_DATA[cleaned] || null;
@@ -494,20 +504,16 @@ function handleQuoteZipInput(e) {
         currentZipData = data;
         statusEl.textContent = '✓ We deliver here!';
         statusEl.className = 'zip-status valid';
-        
         document.getElementById('quoteCityName').textContent = data.city;
         document.getElementById('quoteDistanceMiles').textContent = data.distance;
         document.getElementById('quoteTravelTime').textContent = data.time;
-        
         deliveryInfo.classList.remove('hidden');
         outOfArea.classList.add('hidden');
-        
         document.getElementById('quoteDeliveryCityBadge').textContent = data.city.toUpperCase();
     } else {
         currentZipData = null;
         statusEl.textContent = 'Outside area';
         statusEl.className = 'zip-status invalid';
-        
         deliveryInfo.classList.add('hidden');
         outOfArea.classList.remove('hidden');
     }
@@ -515,9 +521,6 @@ function handleQuoteZipInput(e) {
     recalculateQuote();
 }
 
-// =====================================================
-// ADJUST QUANTITY
-// =====================================================
 function adjustQuoteQuantity(delta) {
     const input = document.getElementById('quoteQuantity');
     let value = parseFloat(input.value) || 1;
@@ -527,13 +530,44 @@ function adjustQuoteQuantity(delta) {
 }
 
 // =====================================================
+// CALCULATE FULL PRICE HELPER
+// Used for both current order and upsell comparison
+// =====================================================
+function calculateFullPrice(quantity, pricePerTon, weightPerYard, travelTime, margin) {
+    const tons = quantity * weightPerYard;
+    const baseMaterialCost = tons * pricePerTon;
+    const truckConfig = selectOptimalTrucks(tons);
+    const timePerTrip = TRUCK_CONFIG.loadTime + travelTime + TRUCK_CONFIG.dumpTime;
+    const totalHours = (timePerTrip * truckConfig.trips) / 60;
+    const calculatedDeliveryCost = totalHours * truckConfig.totalHourlyRate;
+    const deliveryCost = Math.max(calculatedDeliveryCost, truckConfig.minimumCharge);
+    const subtotal = baseMaterialCost + deliveryCost;
+    const materialWithMargin = subtotal * (1 + margin);
+    const pricePerYard = materialWithMargin / quantity;
+    const salesTax = baseMaterialCost * TRUCK_CONFIG.taxRate;
+    const serviceFee = (materialWithMargin + salesTax) * TRUCK_CONFIG.serviceFeeRate;
+    const total = materialWithMargin + salesTax + serviceFee;
+    
+    return {
+        quantity, tons, baseMaterialCost, deliveryCost, truckConfig, margin, materialWithMargin,
+        pricePerYard, pricePerTon: materialWithMargin / tons, salesTax, serviceFee, total
+    };
+}
+
+// =====================================================
 // RECALCULATE QUOTE - MAIN PRICING FORMULA
-// With smart truck selection, minimums, and 48-ton cap
+// With 2-yard minimum, tiered margins, and value proposition upsell
 // =====================================================
 function recalculateQuote() {
     const productSelect = document.getElementById('quoteProduct');
     const quantity = parseFloat(document.getElementById('quoteQuantity').value) || 0;
     const ctaButton = document.getElementById('quoteCtaButton');
+    const minimumWarning = document.getElementById('quoteMinimumWarning');
+    const upsellSection = document.getElementById('quoteUpsellSection');
+    
+    // Hide warnings/upsells by default
+    if (minimumWarning) minimumWarning.classList.add('hidden');
+    if (upsellSection) upsellSection.classList.add('hidden');
     
     // Check if we have all required data
     if (!currentZipData || !productSelect.value || quantity <= 0) {
@@ -541,30 +575,37 @@ function recalculateQuote() {
         document.getElementById('quoteTotalSection').classList.add('hidden');
         document.getElementById('needAProSection').classList.add('hidden');
         
-        if (!currentZipData) {
-            ctaButton.textContent = 'Enter ZIP Code to Get Quote';
-        } else if (!productSelect.value) {
-            ctaButton.textContent = 'Select a Material';
-        } else {
-            ctaButton.textContent = 'Enter Quantity';
-        }
+        if (!currentZipData) ctaButton.textContent = 'Enter ZIP Code to Get Quote';
+        else if (!productSelect.value) ctaButton.textContent = 'Select a Material';
+        else ctaButton.textContent = 'Enter Quantity';
         ctaButton.disabled = true;
         return;
     }
     
-    // Get product data
     const selectedOption = productSelect.options[productSelect.selectedIndex];
     const pricePerTon = parseFloat(selectedOption.dataset.price);
     const weightPerYard = parseFloat(selectedOption.dataset.weight);
+    const materialName = selectedOption.text;
     
     // =========================================================
-    // PRICING FORMULA
+    // CHECK: 2-YARD MINIMUM PER MATERIAL
     // =========================================================
+    if (quantity < TRUCK_CONFIG.minimumYards) {
+        if (minimumWarning) {
+            document.getElementById('minWarningMaterialName').textContent = materialName;
+            minimumWarning.classList.remove('hidden');
+        }
+        document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
+        document.getElementById('quoteTotalSection').classList.add('hidden');
+        document.getElementById('needAProSection').classList.add('hidden');
+        ctaButton.textContent = '⚠️ 2 Yard Minimum Required';
+        ctaButton.disabled = true;
+        return;
+    }
     
-    // 1. Calculate tons from cubic yards
     const tons = quantity * weightPerYard;
     
-    // 2. Check for 48-ton cap - scroll to bulk pricing section
+    // CHECK: 48-TON CAP
     if (tons > TRUCK_CONFIG.maxTons) {
         document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
         document.getElementById('quoteTotalSection').classList.add('hidden');
@@ -572,15 +613,9 @@ function recalculateQuote() {
         ctaButton.textContent = '📞 Order Over 48 Tons - Get Commercial Quote';
         ctaButton.disabled = false;
         ctaButton.onclick = function() {
-            // Close the calculator modal
             closeCalculatorModal();
-            // Scroll to bulk pricing section on homepage
             const bulkSection = document.getElementById('bulk-pricing') || document.querySelector('.commercial-cta');
-            if (bulkSection) {
-                setTimeout(function() {
-                    bulkSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 300);
-            }
+            if (bulkSection) setTimeout(() => bulkSection.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
         };
         return;
     }
@@ -588,66 +623,54 @@ function recalculateQuote() {
     // Reset onclick for normal orders
     ctaButton.onclick = function() { addToCartWithCaptcha(); };
     
-    // 3. Base material cost (before markup) - TAX IS CALCULATED ON THIS
-    const baseMaterialCost = tons * pricePerTon;
+    // =========================================================
+    // DETERMINE MARGIN BASED ON QUANTITY
+    // 30% for 2-2.99 yards, 20% for 3+ yards
+    // =========================================================
+    const margin = (quantity < TRUCK_CONFIG.smallOrderThreshold) 
+        ? TRUCK_CONFIG.smallOrderMargin 
+        : TRUCK_CONFIG.standardMargin;
     
-    // 4. Smart truck selection based on tonnage
-    const truckConfig = selectOptimalTrucks(tons);
+    // Calculate current order pricing
+    const currentPricing = calculateFullPrice(quantity, pricePerTon, weightPerYard, currentZipData.time, margin);
     
-    // 5. Calculate delivery cost with MINIMUM enforcement
-    // Formula: (Load Time + Travel Time + Dump Time) × Trips ÷ 60 × Hourly Rate
-    const timePerTrip = TRUCK_CONFIG.loadTime + currentZipData.time + TRUCK_CONFIG.dumpTime;
-    const totalHours = (timePerTrip * truckConfig.trips) / 60;
-    const calculatedDeliveryCost = totalHours * truckConfig.totalHourlyRate;
-    
-    // Apply minimum - use whichever is higher
-    const deliveryCost = Math.max(calculatedDeliveryCost, truckConfig.minimumCharge);
-    
-    // 6. Subtotal (material + delivery)
-    const subtotal = baseMaterialCost + deliveryCost;
-    
-    // 7. Apply margin (20%) - this becomes customer-facing material price
-    const materialWithMargin = subtotal * (1 + TRUCK_CONFIG.globalMargin);
-    
-    // 8. Calculate customer-facing price per ton (for display)
-    const customerPricePerTon = materialWithMargin / tons;
-    
-    // 9. Sales tax (8.25% on BASE material only)
-    const salesTax = baseMaterialCost * TRUCK_CONFIG.taxRate;
-    
-    // 10. Service fee (3.5% on material with margin + tax)
-    const serviceFee = (materialWithMargin + salesTax) * TRUCK_CONFIG.serviceFeeRate;
-    
-    // 11. Final total
-    const total = materialWithMargin + salesTax + serviceFee;
+    // =========================================================
+    // VALUE PROPOSITION UPSELL (for 2-2.99 yard orders)
+    // Shows customer they pay MORE total but get BETTER per-yard rate
+    // =========================================================
+    if (quantity >= TRUCK_CONFIG.minimumYards && quantity < TRUCK_CONFIG.smallOrderThreshold) {
+        const upsellPricing = calculateFullPrice(3, pricePerTon, weightPerYard, currentZipData.time, TRUCK_CONFIG.standardMargin);
+        const savingsPerYard = currentPricing.pricePerYard - upsellPricing.pricePerYard;
+        
+        if (upsellSection && savingsPerYard > 0) {
+            document.getElementById('upsellMaterialName').textContent = materialName;
+            document.getElementById('upsellCurrentQty').textContent = quantity;
+            document.getElementById('upsellCurrentTotal').textContent = currentPricing.total.toFixed(2);
+            document.getElementById('upsellCurrentPerYard').textContent = currentPricing.pricePerYard.toFixed(2);
+            document.getElementById('upsellUpgradeTotal').textContent = upsellPricing.total.toFixed(2);
+            document.getElementById('upsellUpgradePerYard').textContent = upsellPricing.pricePerYard.toFixed(2);
+            document.getElementById('upsellSavingsPerYard').textContent = savingsPerYard.toFixed(2);
+            upsellSection.classList.remove('hidden');
+        }
+    }
     
     // =========================================================
     // UPDATE DISPLAY
     // =========================================================
-    
-    // Update conversion display (yards to tons)
     document.getElementById('quoteYardsAmount').textContent = quantity;
-    document.getElementById('quoteTonsAmount').textContent = tons.toFixed(1);
+    document.getElementById('quoteTonsAmount').textContent = currentPricing.tons.toFixed(1);
+    document.getElementById('quoteMaterialName').textContent = materialName;
+    document.getElementById('quoteTonsDisplay').textContent = currentPricing.tons.toFixed(1);
+    document.getElementById('quotePerTonPrice').textContent = currentPricing.pricePerTon.toFixed(2);
+    document.getElementById('quoteMaterialTotal').textContent = currentPricing.materialWithMargin.toFixed(2);
+    document.getElementById('quoteSalesTax').textContent = currentPricing.salesTax.toFixed(2);
+    document.getElementById('quoteServiceFee').textContent = currentPricing.serviceFee.toFixed(2);
+    document.getElementById('quoteTotalAmount').textContent = currentPricing.total.toFixed(2);
     
-    // Update material line item
-    document.getElementById('quoteMaterialName').textContent = selectedOption.text;
-    document.getElementById('quoteTonsDisplay').textContent = tons.toFixed(1);
-    document.getElementById('quotePerTonPrice').textContent = customerPricePerTon.toFixed(2);
-    document.getElementById('quoteMaterialTotal').textContent = materialWithMargin.toFixed(2);
-    
-    // Update tax and service fee
-    document.getElementById('quoteSalesTax').textContent = salesTax.toFixed(2);
-    document.getElementById('quoteServiceFee').textContent = serviceFee.toFixed(2);
-    
-    // Update total
-    document.getElementById('quoteTotalAmount').textContent = total.toFixed(2);
-    
-    // Show sections
     document.getElementById('quoteFreeDeliveryBadge').classList.remove('hidden');
     document.getElementById('quoteTotalSection').classList.remove('hidden');
     document.getElementById('needAProSection').classList.remove('hidden');
     
-    // Enable CTA only if Turnstile is completed
     if (typeof turnstileStatus !== 'undefined' && turnstileStatus.quote) {
         ctaButton.textContent = '🛒 Add to Cart →';
         ctaButton.disabled = false;
@@ -662,33 +685,40 @@ function recalculateQuote() {
         city: currentZipData.city,
         distance: currentZipData.distance,
         travelTime: currentZipData.time,
-        product: selectedOption.text,
+        product: materialName,
         productId: productSelect.value,
         quantity: quantity,
-        tons: tons,
-        pricePerTon: customerPricePerTon,
-        baseMaterialCost: baseMaterialCost,
-        deliveryCost: deliveryCost,
-        truckConfig: truckConfig.description,
-        materialWithMargin: materialWithMargin,
-        salesTax: salesTax,
-        serviceFee: serviceFee,
-        total: total.toFixed(2)
+        tons: currentPricing.tons,
+        pricePerTon: currentPricing.pricePerTon,
+        pricePerYard: currentPricing.pricePerYard,
+        baseMaterialCost: currentPricing.baseMaterialCost,
+        deliveryCost: currentPricing.deliveryCost,
+        truckConfig: currentPricing.truckConfig.description,
+        margin: margin,
+        materialWithMargin: currentPricing.materialWithMargin,
+        salesTax: currentPricing.salesTax,
+        serviceFee: currentPricing.serviceFee,
+        total: currentPricing.total.toFixed(2)
     };
+}
+
+// =====================================================
+// UPGRADE TO 3 YARDS FUNCTION (called from upsell button)
+// =====================================================
+function upgradeToThreeYards() {
+    document.getElementById('quoteQuantity').value = 3;
+    recalculateQuote();
+    showToast('success', 'Upgraded!', 'Quantity updated to 3 yards for better pricing');
 }
 
 // =====================================================
 // ATTACH ZIP CODE CALCULATOR EVENT LISTENERS
 // =====================================================
 const quoteZipInput = document.getElementById('quoteZipCode');
-if (quoteZipInput) {
-    quoteZipInput.addEventListener('input', handleQuoteZipInput);
-}
+if (quoteZipInput) quoteZipInput.addEventListener('input', handleQuoteZipInput);
 
 const quoteProductSelect = document.getElementById('quoteProduct');
-if (quoteProductSelect) {
-    quoteProductSelect.addEventListener('change', recalculateQuote);
-}
+if (quoteProductSelect) quoteProductSelect.addEventListener('change', recalculateQuote);
 
 const quoteQuantityInput = document.getElementById('quoteQuantity');
 if (quoteQuantityInput) {
@@ -702,28 +732,11 @@ if (quoteQuantityInput) {
 function showToast(type, title, message) {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    
-    const icons = {
-        success: '✓',
-        error: '✕',
-        info: 'ℹ'
-    };
-    
-    toast.innerHTML = `
-        <span class="toast-icon">${icons[type]}</span>
-        <div class="toast-message">
-            <strong>${title}</strong>
-            <span>${message}</span>
-        </div>
-    `;
-    
+    toast.className = 'toast ' + type;
+    const icons = { success: '✓', error: '✕', info: 'ℹ' };
+    toast.innerHTML = '<span class="toast-icon">' + icons[type] + '</span><div class="toast-message"><strong>' + title + '</strong><span>' + message + '</span></div>';
     container.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.animation = 'toastSlideIn 0.3s ease reverse';
-        setTimeout(() => toast.remove(), 300);
-    }, 5000);
+    setTimeout(() => { toast.style.animation = 'toastSlideIn 0.3s ease reverse'; setTimeout(() => toast.remove(), 300); }, 5000);
 }
 
 // =====================================================
@@ -745,97 +758,52 @@ function toggleFaq(button) {
     });
     
     faqItem.classList.toggle('active');
-    
-    if (faqItem.classList.contains('active')) {
-        answer.style.maxHeight = answer.scrollHeight + 'px';
-        icon.textContent = '−';
-    } else {
-        answer.style.maxHeight = null;
-        icon.textContent = '+';
-    }
+    if (faqItem.classList.contains('active')) { answer.style.maxHeight = answer.scrollHeight + 'px'; icon.textContent = '−'; }
+    else { answer.style.maxHeight = null; icon.textContent = '+'; }
 }
 
 // =====================================================
-// HERO DROPDOWN TOGGLE
+// HERO DROPDOWN
 // =====================================================
 const heroDropdownBtn = document.querySelector('.hero-dropdown-btn');
 const heroDropdownMenu = document.querySelector('.hero-dropdown-menu');
 
 if (heroDropdownBtn && heroDropdownMenu) {
-    heroDropdownBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        heroDropdownMenu.classList.toggle('show');
-    });
-
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.hero-dropdown')) {
-            heroDropdownMenu.classList.remove('show');
-        }
-    });
-
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            heroDropdownMenu.classList.remove('show');
-        }
-    });
+    heroDropdownBtn.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); heroDropdownMenu.classList.toggle('show'); });
+    document.addEventListener('click', function(e) { if (!e.target.closest('.hero-dropdown')) heroDropdownMenu.classList.remove('show'); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') heroDropdownMenu.classList.remove('show'); });
 }
 
 // =====================================================
-// SHOPPING CART SYSTEM
+// SHOPPING CART
 // =====================================================
-
 let cart = [];
 let cartIdCounter = 1;
 
-function getMinDeliveryDate() {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow.toISOString().split('T')[0];
-}
-
-function getDefaultDeliveryDate() {
-    const defaultDate = new Date();
-    defaultDate.setDate(defaultDate.getDate() + 2);
-    return defaultDate.toISOString().split('T')[0];
-}
+function getMinDeliveryDate() { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().split('T')[0]; }
+function getDefaultDeliveryDate() { const d = new Date(); d.setDate(d.getDate() + 2); return d.toISOString().split('T')[0]; }
 
 function addToCart() {
     if (!currentQuote) return;
-    
     const cartItem = {
-        id: cartIdCounter++,
-        product: currentQuote.product,
-        productId: currentQuote.productId,
-        quantity: currentQuote.quantity,
-        tons: currentQuote.tons,
-        zip: currentQuote.zip,
-        city: currentQuote.city,
-        distance: currentQuote.distance,
-        travelTime: currentQuote.travelTime,
-        pricePerTon: currentQuote.pricePerTon,
-        truckConfig: currentQuote.truckConfig,
-        materialWithMargin: currentQuote.materialWithMargin,
-        salesTax: currentQuote.salesTax,
-        serviceFee: currentQuote.serviceFee,
-        total: parseFloat(currentQuote.total),
+        id: cartIdCounter++, product: currentQuote.product, productId: currentQuote.productId,
+        quantity: currentQuote.quantity, tons: currentQuote.tons, zip: currentQuote.zip,
+        city: currentQuote.city, distance: currentQuote.distance, travelTime: currentQuote.travelTime,
+        pricePerTon: currentQuote.pricePerTon, pricePerYard: currentQuote.pricePerYard,
+        truckConfig: currentQuote.truckConfig, margin: currentQuote.margin,
+        materialWithMargin: currentQuote.materialWithMargin, salesTax: currentQuote.salesTax,
+        serviceFee: currentQuote.serviceFee, total: parseFloat(currentQuote.total),
         deliveryDate: getDefaultDeliveryDate()
     };
-    
     cart.push(cartItem);
-    
     updateCartCount();
     updateCartDrawer();
-    
-    showToast('success', 'Added to Cart!', `${cartItem.tons.toFixed(1)} tons ${cartItem.product} - $${cartItem.total.toFixed(2)}`);
-    
+    showToast('success', 'Added to Cart!', cartItem.quantity + ' yd³ ' + cartItem.product + ' - $' + cartItem.total.toFixed(2));
     const cartCount = document.getElementById('navCartCount');
     cartCount.classList.add('pulse');
     setTimeout(() => cartCount.classList.remove('pulse'), 300);
-    
     closeCalculatorModal();
     setTimeout(() => openCartDrawer(), 300);
-    
     resetCalculatorForm();
 }
 
@@ -846,23 +814,10 @@ function removeFromCart(itemId) {
     showToast('info', 'Item Removed', 'Item removed from your cart');
 }
 
-function updateDeliveryDate(itemId, newDate) {
-    const item = cart.find(item => item.id === itemId);
-    if (item) {
-        item.deliveryDate = newDate;
-    }
-}
-
 function updateCartCount() {
     const countEl = document.getElementById('navCartCount');
-    const count = cart.length;
-    
-    if (count > 0) {
-        countEl.textContent = count;
-        countEl.classList.remove('hidden');
-    } else {
-        countEl.classList.add('hidden');
-    }
+    if (cart.length > 0) { countEl.textContent = cart.length; countEl.classList.remove('hidden'); }
+    else countEl.classList.add('hidden');
 }
 
 function updateCartDrawer() {
@@ -882,29 +837,12 @@ function updateCartDrawer() {
     
     let itemsHtml = '';
     let subtotal = 0;
-    
     cart.forEach(item => {
         subtotal += item.total;
-        itemsHtml += `
-            <div class="cart-item">
-                <div class="cart-item-header">
-                    <div>
-                        <div class="cart-item-name">${item.product}</div>
-                        <div class="cart-item-location">📍 ${item.city} (${item.zip})</div>
-                    </div>
-                    <button class="cart-item-remove" onclick="removeFromCart(${item.id})">✕</button>
-                </div>
-                <div class="cart-item-details">
-                    <span class="cart-item-qty">${item.quantity} yd³ (${item.tons.toFixed(1)} tons)</span>
-                    <span class="cart-item-price">$${item.total.toFixed(2)}</span>
-                </div>
-                <div class="cart-item-per-unit">$${item.pricePerTon.toFixed(2)}/ton delivered</div>
-            </div>
-        `;
+        itemsHtml += '<div class="cart-item"><div class="cart-item-header"><div><div class="cart-item-name">' + item.product + '</div><div class="cart-item-location">📍 ' + item.city + ' (' + item.zip + ')</div></div><button class="cart-item-remove" onclick="removeFromCart(' + item.id + ')">✕</button></div><div class="cart-item-details"><span class="cart-item-qty">' + item.quantity + ' yd³ (' + item.tons.toFixed(1) + ' tons)</span><span class="cart-item-price">$' + item.total.toFixed(2) + '</span></div><div class="cart-item-per-unit">$' + item.pricePerYard.toFixed(2) + '/yard delivered</div></div>';
     });
     
     itemsContainer.innerHTML = itemsHtml;
-    
     document.getElementById('cartItemCount').textContent = cart.length;
     document.getElementById('cartSubtotal').textContent = '$' + subtotal.toFixed(2);
     document.getElementById('cartTotal').textContent = '$' + subtotal.toFixed(2);
@@ -925,27 +863,15 @@ function closeCartDrawer() {
 // =====================================================
 // CHECKOUT SYSTEM
 // =====================================================
-
-var customerInfo = {
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    zip: '',
-    marketingConsent: false
-};
+var customerInfo = { name: '', email: '', phone: '', address: '', city: '', zip: '', marketingConsent: false };
 
 function proceedToCheckout() {
     if (cart.length === 0) return;
-    
     closeCartDrawer();
-    
     if (cart.length > 0) {
         document.getElementById('checkoutCity').value = cart[0].city || '';
         document.getElementById('checkoutZipConfirm').value = cart[0].zip || '';
     }
-    
     showCheckoutStep(1);
     document.getElementById('checkoutModal').classList.add('active');
 }
@@ -954,7 +880,6 @@ function showCheckoutStep(step) {
     document.getElementById('checkoutStep1').style.display = 'none';
     document.getElementById('checkoutStep2').style.display = 'none';
     document.getElementById('checkoutStep3').style.display = 'none';
-    
     document.getElementById('step1indicator').classList.remove('active', 'completed');
     document.getElementById('step2indicator').classList.remove('active', 'completed');
     document.getElementById('step3indicator').classList.remove('active', 'completed');
@@ -977,9 +902,7 @@ function showCheckoutStep(step) {
     }
 }
 
-function goToContactStep() {
-    showCheckoutStep(1);
-}
+function goToContactStep() { showCheckoutStep(1); }
 
 function goToDeliveryStep() {
     var name = document.getElementById('checkoutName').value.trim();
@@ -993,37 +916,17 @@ function goToDeliveryStep() {
         showToast('error', 'Missing Information', 'Please fill in all required fields');
         return;
     }
-    
     if (!email.includes('@') || !email.includes('.')) {
         showToast('error', 'Invalid Email', 'Please enter a valid email address');
         return;
     }
     
-    customerInfo = {
-        name: name,
-        email: email,
-        phone: phone,
-        address: address,
-        city: city,
-        zip: zip,
-        marketingConsent: document.getElementById('checkoutMarketingConsent').checked
-    };
+    customerInfo = { name, email, phone, address, city, zip, marketingConsent: document.getElementById('checkoutMarketingConsent').checked };
     
     var deliveryHtml = '';
     cart.forEach(function(item, index) {
-        deliveryHtml += '<div class="checkout-delivery-item">' +
-            '<div class="checkout-delivery-item-header">' +
-                '<div>' +
-                    '<div class="checkout-delivery-item-name">' + item.product + '</div>' +
-                    '<div class="checkout-delivery-item-details">' + item.tons.toFixed(1) + ' tons → ' + item.city + '</div>' +
-                '</div>' +
-                '<div class="checkout-delivery-item-price">$' + item.total.toFixed(2) + '</div>' +
-            '</div>' +
-            '<label>📅 Preferred Delivery Date</label>' +
-            '<input type="date" id="deliveryDate' + index + '" value="' + item.deliveryDate + '" min="' + getMinDeliveryDate() + '">' +
-        '</div>';
+        deliveryHtml += '<div class="checkout-delivery-item"><div class="checkout-delivery-item-header"><div><div class="checkout-delivery-item-name">' + item.product + '</div><div class="checkout-delivery-item-details">' + item.quantity + ' yd³ (' + item.tons.toFixed(1) + ' tons) → ' + item.city + '</div></div><div class="checkout-delivery-item-price">$' + item.total.toFixed(2) + '</div></div><label>📅 Preferred Delivery Date</label><input type="date" id="deliveryDate' + index + '" value="' + item.deliveryDate + '" min="' + getMinDeliveryDate() + '"></div>';
     });
-    
     document.getElementById('checkoutDeliveryItems').innerHTML = deliveryHtml;
     showCheckoutStep(2);
 }
@@ -1031,83 +934,41 @@ function goToDeliveryStep() {
 function goToPaymentStep() {
     cart.forEach(function(item, index) {
         var dateInput = document.getElementById('deliveryDate' + index);
-        if (dateInput) {
-            item.deliveryDate = dateInput.value;
-        }
+        if (dateInput) item.deliveryDate = dateInput.value;
     });
     
-    var summaryHtml = '<div class="checkout-customer-summary">' +
-        '<h4>📍 Delivery To:</h4>' +
-        '<p><strong>' + customerInfo.name + '</strong><br>' +
-        customerInfo.address + '<br>' +
-        customerInfo.city + ', TX ' + customerInfo.zip + '<br>' +
-        '📞 ' + customerInfo.phone + '<br>' +
-        '✉️ ' + customerInfo.email + '</p>' +
-    '</div>';
-    
+    var summaryHtml = '<div class="checkout-customer-summary"><h4>📍 Delivery To:</h4><p><strong>' + customerInfo.name + '</strong><br>' + customerInfo.address + '<br>' + customerInfo.city + ', TX ' + customerInfo.zip + '<br>📞 ' + customerInfo.phone + '<br>✉️ ' + customerInfo.email + '</p></div>';
     var total = 0;
     cart.forEach(function(item) {
         total += item.total;
-        var deliveryDate = new Date(item.deliveryDate).toLocaleDateString('en-US', { 
-            weekday: 'short', 
-            month: 'short', 
-            day: 'numeric' 
-        });
-        summaryHtml += '<div class="checkout-order-item">' +
-            '<div>' +
-                '<strong>' + item.product + '</strong><br>' +
-                '<small>' + item.tons.toFixed(1) + ' tons</small><br>' +
-                '<small>📅 ' + deliveryDate + '</small>' +
-            '</div>' +
-            '<strong>$' + item.total.toFixed(2) + '</strong>' +
-        '</div>';
+        var deliveryDate = new Date(item.deliveryDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        summaryHtml += '<div class="checkout-order-item"><div><strong>' + item.product + '</strong><br><small>' + item.quantity + ' yd³ (' + item.tons.toFixed(1) + ' tons)</small><br><small>📅 ' + deliveryDate + '</small></div><strong>$' + item.total.toFixed(2) + '</strong></div>';
     });
-    
-    summaryHtml += '<div class="checkout-order-total">' +
-        '<span>Total (FREE Delivery)</span>' +
-        '<span>$' + total.toFixed(2) + '</span>' +
-    '</div>';
-    
+    summaryHtml += '<div class="checkout-order-total"><span>Total (FREE Delivery)</span><span>$' + total.toFixed(2) + '</span></div>';
     document.getElementById('checkoutOrderSummary').innerHTML = summaryHtml;
     showCheckoutStep(3);
 }
 
-function addMoreFromCheckout() {
-    document.getElementById('checkoutModal').classList.remove('active');
-    openCalculatorModal();
-}
-
-function closeCheckoutModal() {
-    document.getElementById('checkoutModal').classList.remove('active');
-}
+function closeCheckoutModal() { document.getElementById('checkoutModal').classList.remove('active'); }
 
 function processPayment() {
     if (cart.length === 0) return;
-    
     const total = cart.reduce((sum, item) => sum + item.total, 0);
-    
     document.getElementById('checkoutModal').classList.remove('active');
-    
-    showToast('success', 'Order Placed!', `$${total.toFixed(2)} - We'll contact you to confirm delivery details.`);
+    showToast('success', 'Order Placed!', '$' + total.toFixed(2) + " - We'll contact you to confirm delivery details.");
     
     let orderDetails = 'ORDER CONFIRMED!\n\n';
     cart.forEach((item, index) => {
-        const deliveryDate = new Date(item.deliveryDate).toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            month: 'long', 
-            day: 'numeric' 
-        });
-        orderDetails += `Item ${index + 1}: ${item.tons.toFixed(1)} tons ${item.product}\n`;
-        orderDetails += `  → Delivery to ${item.city} (${item.zip})\n`;
-        orderDetails += `  → Scheduled: ${deliveryDate}\n`;
-        orderDetails += `  → Truck: ${item.truckConfig}\n`;
-        orderDetails += `  → Price: $${item.total.toFixed(2)}\n\n`;
+        const deliveryDate = new Date(item.deliveryDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+        orderDetails += 'Item ' + (index + 1) + ': ' + item.quantity + ' yd³ (' + item.tons.toFixed(1) + ' tons) ' + item.product + '\n';
+        orderDetails += '  → Delivery to ' + item.city + ' (' + item.zip + ')\n';
+        orderDetails += '  → Scheduled: ' + deliveryDate + '\n';
+        orderDetails += '  → Truck: ' + item.truckConfig + '\n';
+        orderDetails += '  → Price: $' + item.total.toFixed(2) + '\n\n';
     });
-    orderDetails += `TOTAL: $${total.toFixed(2)} (FREE DELIVERY)\n\n`;
+    orderDetails += 'TOTAL: $' + total.toFixed(2) + ' (FREE DELIVERY)\n\n';
     orderDetails += "We'll send a confirmation email and text with tracking info!";
-    
     alert(orderDetails);
-    
     cart = [];
     updateCartCount();
     updateCartDrawer();
@@ -1123,6 +984,10 @@ function resetCalculatorForm() {
     document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
     document.getElementById('quoteTotalSection').classList.add('hidden');
     document.getElementById('needAProSection').classList.add('hidden');
+    const minimumWarning = document.getElementById('quoteMinimumWarning');
+    const upsellSection = document.getElementById('quoteUpsellSection');
+    if (minimumWarning) minimumWarning.classList.add('hidden');
+    if (upsellSection) upsellSection.classList.add('hidden');
     document.getElementById('quoteCtaButton').disabled = true;
     document.getElementById('quoteCtaButton').textContent = 'Enter ZIP Code to Get Quote';
     currentZipData = null;
@@ -1132,7 +997,6 @@ function resetCalculatorForm() {
 // =====================================================
 // INLINE MATERIAL CALCULATOR
 // =====================================================
-
 let calculatedMaterial = null;
 
 function calculateInlineMaterial() {
@@ -1141,88 +1005,88 @@ function calculateInlineMaterial() {
     const width = parseFloat(document.getElementById('inline-calc-width').value) || 0;
     const depth = parseFloat(document.getElementById('inline-calc-depth').value) || 0;
     
-    if (!materialSelect.value) {
-        showToast('error', 'Select Material', 'Please select a material type first');
-        return;
-    }
-    
-    if (length <= 0 || width <= 0 || depth <= 0) {
-        showToast('error', 'Missing Info', 'Please enter length, width, and depth');
-        return;
-    }
+    if (!materialSelect.value) { showToast('error', 'Select Material', 'Please select a material type first'); return; }
+    if (length <= 0 || width <= 0 || depth <= 0) { showToast('error', 'Missing Info', 'Please enter length, width, and depth'); return; }
     
     const selectedOption = materialSelect.options[materialSelect.selectedIndex];
     const weightPerYard = parseFloat(selectedOption.dataset.weight) || 1.4;
     const materialName = selectedOption.text;
     
-    // Calculate cubic yards: (L ft × W ft × D in) / 324 = cubic yards
-    const cubicYards = (length * width * depth) / 324;
-    const tons = cubicYards * weightPerYard;
+    let cubicYards = (length * width * depth) / 324;
+    if (cubicYards < TRUCK_CONFIG.minimumYards) {
+        cubicYards = TRUCK_CONFIG.minimumYards;
+        showToast('info', '2 Yard Minimum', 'Adjusted to minimum order of ' + TRUCK_CONFIG.minimumYards + ' yards');
+    }
     
+    const tons = cubicYards * weightPerYard;
     document.getElementById('inline-result-yards').textContent = cubicYards.toFixed(1);
     document.getElementById('inline-result-tons').textContent = tons.toFixed(1);
     
     const noteEl = document.getElementById('result-material-note');
-    noteEl.innerHTML = `Based on <strong>${materialName}</strong> (${weightPerYard} tons/yd³)`;
+    noteEl.innerHTML = 'Based on <strong>' + materialName + '</strong> (' + weightPerYard + ' tons/yd³)';
     noteEl.style.display = 'block';
     
-    calculatedMaterial = {
-        materialValue: materialSelect.value,
-        materialName: materialName,
-        cubicYards: cubicYards,
-        tons: tons,
-        weightPerYard: weightPerYard
-    };
-    
+    calculatedMaterial = { materialValue: materialSelect.value, materialName, cubicYards, tons, weightPerYard };
     document.getElementById('inline-calc-result').style.display = 'block';
     document.getElementById('inline-calc-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function getDeliveryPrice() {
-    if (!calculatedMaterial) {
-        showToast('error', 'Calculate First', 'Please calculate your material needs first');
-        return;
-    }
-    
+    if (!calculatedMaterial) { showToast('error', 'Calculate First', 'Please calculate your material needs first'); return; }
     openCalculatorModal();
-    
-    if (calculatedMaterial.materialValue) {
-        const quoteProductSelect = document.getElementById('quoteProduct');
-        quoteProductSelect.value = calculatedMaterial.materialValue;
-    }
-    
-    const quantity = Math.ceil(calculatedMaterial.cubicYards * 2) / 2;
+    if (calculatedMaterial.materialValue) document.getElementById('quoteProduct').value = calculatedMaterial.materialValue;
+    let quantity = Math.ceil(calculatedMaterial.cubicYards * 2) / 2;
+    if (quantity < TRUCK_CONFIG.minimumYards) quantity = TRUCK_CONFIG.minimumYards;
     document.getElementById('quoteQuantity').value = quantity;
-    
-    if (calculatedMaterial.materialName) {
-        showToast('info', 'Material Pre-filled', `${quantity} yd³ of ${calculatedMaterial.materialName} - enter your ZIP for pricing!`);
-    } else {
-        showToast('info', 'Quantity Pre-filled', `${quantity} cubic yards - select a material and enter your ZIP!`);
-    }
-    
+    showToast('info', 'Material Pre-filled', quantity + ' yd³ of ' + calculatedMaterial.materialName + ' - enter your ZIP for pricing!');
     recalculateQuote();
 }
 
 function requestInlineCallback() {
     const name = document.getElementById('inline-callback-name').value;
     const phone = document.getElementById('inline-callback-phone').value;
-    
-    if (!name || !phone) {
-        showToast('error', 'Missing Info', 'Please enter your name and phone number');
-        return;
-    }
-    
+    if (!name || !phone) { showToast('error', 'Missing Info', 'Please enter your name and phone number'); return; }
     console.log('Callback requested:', { name, phone });
     showToast('success', 'Callback Requested!', "We'll call you during business hours.");
-    
     document.getElementById('inline-callback-name').value = '';
     document.getElementById('inline-callback-phone').value = '';
 }
 
 // =====================================================
+// CLOUDFLARE TURNSTILE
+// =====================================================
+let turnstileStatus = { visualizer: false, price: false, quote: false };
+
+function onTurnstileVisualizer(token) { turnstileStatus.visualizer = true; const btn = document.getElementById('visualizerBtn'); if (btn) btn.disabled = false; }
+function onTurnstilePrice(token) { turnstileStatus.price = true; const btn = document.getElementById('getPriceBtn'); if (btn) btn.disabled = false; }
+function onTurnstileQuote(token) { turnstileStatus.quote = true; if (typeof recalculateQuote === 'function') recalculateQuote(); }
+function openVisualizerWithCaptcha() { if (turnstileStatus.visualizer) openVisualizer(); else alert('Please complete the verification first.'); }
+function getDeliveryPriceWithCaptcha() { if (turnstileStatus.price) getDeliveryPrice(); else alert('Please complete the verification first.'); }
+function addToCartWithCaptcha() { if (turnstileStatus.quote) addToCart(); else alert('Please complete the verification first.'); }
+
+// =====================================================
+// MOBILE MENU
+// =====================================================
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+const navLinks = document.querySelector('.nav-links');
+
+if (mobileMenuBtn && navLinks) {
+    mobileMenuBtn.addEventListener('click', function() { this.classList.toggle('active'); navLinks.classList.toggle('active'); });
+    navLinks.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => { mobileMenuBtn.classList.remove('active'); navLinks.classList.remove('active'); }); });
+    const navDropdown = document.querySelector('.nav-dropdown > a');
+    if (navDropdown) { navDropdown.addEventListener('click', function(e) { if (window.innerWidth <= 968) { e.preventDefault(); this.parentElement.classList.toggle('active'); } }); }
+}
+
+document.addEventListener('click', function(e) {
+    if (navLinks && mobileMenuBtn && !e.target.closest('.nav-links') && !e.target.closest('.mobile-menu-btn')) {
+        mobileMenuBtn.classList.remove('active');
+        navLinks.classList.remove('active');
+    }
+});
+
+// =====================================================
 // MATERIAL VISUALIZER
 // =====================================================
-
 const vizState = {
     image: null,
     selectedMaterial: { id: 'black-mulch', name: 'Black Mulch', color: '#1a1a1a', price: 25, image: '/images/materials/black-mulch.jpg' },
@@ -1242,68 +1106,33 @@ const vizMaterials = [
     { id: 'topsoil', name: 'Topsoil', color: '#3d3225', price: 24, image: '/images/materials/top-soil.jpg' }
 ];
 
-const vizMaterialWeights = {
-    'black-mulch': 0.5,
-    'brown-mulch': 0.5,
-    'blackstar-gravel': 1.4,
-    'decomposed-granite': 1.4,
-    'bull-rock': 1.4,
-    'topsoil': 1.4
-};
-
-const vizToQuoteMaterialMapping = {
-    'black-mulch': 'mulch-black',
-    'brown-mulch': 'mulch-brown',
-    'blackstar-gravel': 'blackstar',
-    'decomposed-granite': 'decomposed-granite',
-    'bull-rock': 'bull-rock-3x5',
-    'topsoil': 'topsoil'
-};
+const vizMaterialWeights = { 'black-mulch': 0.5, 'brown-mulch': 0.5, 'blackstar-gravel': 1.4, 'decomposed-granite': 1.4, 'bull-rock': 1.4, 'topsoil': 1.4 };
+const vizToQuoteMaterialMapping = { 'black-mulch': 'mulch-black', 'brown-mulch': 'mulch-brown', 'blackstar-gravel': 'blackstar', 'decomposed-granite': 'decomposed-granite', 'bull-rock': 'bull-rock-3x5', 'topsoil': 'topsoil' };
 
 let vizCalculatedQuantity = null;
 let vizCalculatedTons = null;
 let vizCanvasDimensions = { width: 0, height: 0 };
 
-function openVisualizer() {
-    document.getElementById('visualizerModal').classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeVisualizer() {
-    document.getElementById('visualizerModal').classList.remove('active');
-    document.body.style.overflow = '';
-}
+function openVisualizer() { document.getElementById('visualizerModal').classList.add('active'); document.body.style.overflow = 'hidden'; }
+function closeVisualizer() { document.getElementById('visualizerModal').classList.remove('active'); document.body.style.overflow = ''; }
 
 var pendingPhotoFile = null;
 var photoConsentGiven = false;
 
-function openPhotoConsent() {
-    document.getElementById('photoConsentModal').classList.add('active');
-}
-
-function closePhotoConsent() {
-    document.getElementById('photoConsentModal').classList.remove('active');
-}
+function openPhotoConsent() { document.getElementById('photoConsentModal').classList.add('active'); }
+function closePhotoConsent() { document.getElementById('photoConsentModal').classList.remove('active'); }
 
 function handleVisualizerUpload(event) {
     var file = event.target.files[0];
     if (!file) return;
-    
-    if (photoConsentGiven) {
-        processVisualizerFile(file);
-    } else {
-        pendingPhotoFile = file;
-        openPhotoConsent();
-    }
+    if (photoConsentGiven) processVisualizerFile(file);
+    else { pendingPhotoFile = file; openPhotoConsent(); }
 }
 
 function acceptPhotoConsent() {
     photoConsentGiven = true;
     closePhotoConsent();
-    if (pendingPhotoFile) {
-        processVisualizerFile(pendingPhotoFile);
-        pendingPhotoFile = null;
-    }
+    if (pendingPhotoFile) { processVisualizerFile(pendingPhotoFile); pendingPhotoFile = null; }
 }
 
 function declinePhotoConsent() {
@@ -1315,170 +1144,89 @@ function declinePhotoConsent() {
 
 function processVisualizerFile(file) {
     if (!file || !file.type.startsWith('image/')) return;
-    
     const reader = new FileReader();
     reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
             const maxDim = 800;
-            let width = img.width;
-            let height = img.height;
-            
+            let width = img.width, height = img.height;
             if (width > maxDim || height > maxDim) {
-                if (width > height) {
-                    height = (height / width) * maxDim;
-                    width = maxDim;
-                } else {
-                    width = (width / height) * maxDim;
-                    height = maxDim;
-                }
+                if (width > height) { height = (height / width) * maxDim; width = maxDim; }
+                else { width = (width / height) * maxDim; height = maxDim; }
             }
-            
             const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = width;
-            tempCanvas.height = height;
+            tempCanvas.width = width; tempCanvas.height = height;
             const tempCtx = tempCanvas.getContext('2d');
             tempCtx.drawImage(img, 0, 0, width, height);
-            
             vizState.image = tempCanvas.toDataURL('image/jpeg', 0.8);
-            vizState.points = [];
-            vizState.isComplete = false;
+            vizState.points = []; vizState.isComplete = false;
             vizCanvasDimensions = { width: 0, height: 0 };
-            
-            updateVisualizerUI();
-            drawVisualizerCanvas();
+            updateVisualizerUI(); drawVisualizerCanvas();
         };
         img.src = e.target.result;
     };
     reader.readAsDataURL(file);
 }
 
-function handleVizDragOver(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    document.getElementById('vizCanvasContainer').classList.add('dragging');
-}
-
-function handleVizDragLeave(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    document.getElementById('vizCanvasContainer').classList.remove('dragging');
-}
-
+function handleVizDragOver(event) { event.preventDefault(); event.stopPropagation(); document.getElementById('vizCanvasContainer').classList.add('dragging'); }
+function handleVizDragLeave(event) { event.preventDefault(); event.stopPropagation(); document.getElementById('vizCanvasContainer').classList.remove('dragging'); }
 function handleVizDrop(event) {
-    event.preventDefault();
-    event.stopPropagation();
+    event.preventDefault(); event.stopPropagation();
     document.getElementById('vizCanvasContainer').classList.remove('dragging');
-    
     var file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
-    if (file) {
-        if (photoConsentGiven) {
-            processVisualizerFile(file);
-        } else {
-            pendingPhotoFile = file;
-            openPhotoConsent();
-        }
-    }
+    if (file) { if (photoConsentGiven) processVisualizerFile(file); else { pendingPhotoFile = file; openPhotoConsent(); } }
 }
 
 function handleVisualizerClick(event) {
-    if (!vizState.image) return;
-    if (vizState.isComplete) return;
-    
+    if (!vizState.image || vizState.isComplete) return;
     const canvas = document.getElementById('vizMainCanvas');
     const rect = canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left) * (canvas.width / rect.width);
     const y = (event.clientY - rect.top) * (canvas.height / rect.height);
-    
     if (vizState.points.length > 2) {
         const first = vizState.points[0];
         const dist = Math.sqrt((x - first.x) ** 2 + (y - first.y) ** 2);
-        if (dist < 25) {
-            vizState.isComplete = true;
-            updateVisualizerUI();
-            drawVisualizerCanvas();
-            return;
-        }
+        if (dist < 25) { vizState.isComplete = true; updateVisualizerUI(); drawVisualizerCanvas(); return; }
     }
-    
-    vizState.points.push({x, y});
-    updateVisualizerUI();
-    drawVisualizerCanvas();
+    vizState.points.push({x, y}); updateVisualizerUI(); drawVisualizerCanvas();
 }
 
 function drawVisualizerCanvas() {
     if (!vizState.image) return;
-    
     const canvas = document.getElementById('vizMainCanvas');
     const ctx = canvas.getContext('2d');
-    
     const img = new Image();
     img.onload = function() {
         if (vizCanvasDimensions.width === 0) {
-            const maxDim = 500;
-            let w = img.width, h = img.height;
-            if (w > maxDim || h > maxDim) {
-                if (w > h) { h = (h/w) * maxDim; w = maxDim; }
-                else { w = (w/h) * maxDim; h = maxDim; }
-            }
-            vizCanvasDimensions.width = Math.floor(w);
-            vizCanvasDimensions.height = Math.floor(h);
+            const maxDim = 500; let w = img.width, h = img.height;
+            if (w > maxDim || h > maxDim) { if (w > h) { h = (h/w) * maxDim; w = maxDim; } else { w = (w/h) * maxDim; h = maxDim; } }
+            vizCanvasDimensions.width = Math.floor(w); vizCanvasDimensions.height = Math.floor(h);
         }
-        
-        canvas.width = vizCanvasDimensions.width;
-        canvas.height = vizCanvasDimensions.height;
+        canvas.width = vizCanvasDimensions.width; canvas.height = vizCanvasDimensions.height;
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        
         if (vizState.points.length > 0) {
-            ctx.strokeStyle = '#E85D04';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(vizState.points[0].x, vizState.points[0].y);
-            for (let i = 1; i < vizState.points.length; i++) {
-                ctx.lineTo(vizState.points[i].x, vizState.points[i].y);
-            }
-            if (vizState.isComplete) {
-                ctx.closePath();
-            }
+            ctx.strokeStyle = '#E85D04'; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(vizState.points[0].x, vizState.points[0].y);
+            for (let i = 1; i < vizState.points.length; i++) ctx.lineTo(vizState.points[i].x, vizState.points[i].y);
+            if (vizState.isComplete) ctx.closePath();
             ctx.stroke();
-            
             if (!vizState.isComplete) {
                 vizState.points.forEach(function(p, i) {
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
+                    ctx.beginPath(); ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
                     ctx.fillStyle = (i === 0 && vizState.points.length > 2) ? '#22c55e' : '#E85D04';
-                    ctx.fill();
-                    ctx.strokeStyle = 'white';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
+                    ctx.fill(); ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.stroke();
                 });
             }
-            
             if (vizState.isComplete && vizState.showOverlay) {
                 ctx.globalAlpha = vizState.opacity;
-                
-                if (vizState.materialPattern) {
-                    ctx.fillStyle = vizState.materialPattern;
-                } else {
-                    ctx.fillStyle = vizState.selectedMaterial.color;
-                }
-                
-                ctx.beginPath();
-                ctx.moveTo(vizState.points[0].x, vizState.points[0].y);
-                for (let i = 1; i < vizState.points.length; i++) {
-                    ctx.lineTo(vizState.points[i].x, vizState.points[i].y);
-                }
-                ctx.closePath();
-                ctx.fill();
-                ctx.globalAlpha = 1;
+                ctx.fillStyle = vizState.materialPattern || vizState.selectedMaterial.color;
+                ctx.beginPath(); ctx.moveTo(vizState.points[0].x, vizState.points[0].y);
+                for (let i = 1; i < vizState.points.length; i++) ctx.lineTo(vizState.points[i].x, vizState.points[i].y);
+                ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1;
             }
         }
     };
     img.src = vizState.image;
-}
-
-function drawVisualizerOverlay() {
-    // Overlay is now drawn directly on main canvas
 }
 
 function updateVisualizerUI() {
@@ -1493,44 +1241,24 @@ function updateVisualizerUI() {
     const calcSection = document.getElementById('vizCalcSection');
     
     if (!vizState.image) {
-        placeholder.style.display = 'block';
-        canvasWrapper.style.display = 'none';
-        startOverBtn.style.display = 'none';
+        placeholder.style.display = 'block'; canvasWrapper.style.display = 'none'; startOverBtn.style.display = 'none';
         instructionsDiv.innerHTML = '<p class="viz-instruction">Upload a photo to get started</p>';
-        instructionsDiv.style.display = 'block';
-        controlsDiv.style.display = 'none';
-        calcSection.style.display = 'none';
+        instructionsDiv.style.display = 'block'; controlsDiv.style.display = 'none'; calcSection.style.display = 'none';
         return;
     }
-    
-    placeholder.style.display = 'none';
-    canvasWrapper.style.display = 'block';
-    startOverBtn.style.display = 'block';
-    
+    placeholder.style.display = 'none'; canvasWrapper.style.display = 'block'; startOverBtn.style.display = 'block';
     if (vizState.isComplete) {
-        step3Title.textContent = '3. Adjust Preview';
-        instructionsDiv.style.display = 'none';
-        controlsDiv.style.display = 'block';
-        pointCounter.style.display = 'none';
-        materialBadge.style.display = 'block';
+        step3Title.textContent = '3. Adjust Preview'; instructionsDiv.style.display = 'none'; controlsDiv.style.display = 'block';
+        pointCounter.style.display = 'none'; materialBadge.style.display = 'block';
         document.getElementById('vizBadgeName').textContent = vizState.selectedMaterial.name;
         calcSection.style.display = 'block';
         document.getElementById('vizCalcMaterial').innerHTML = 'Calculating for: <strong>' + vizState.selectedMaterial.name + '</strong>';
     } else {
         step3Title.textContent = '3. Outline Area';
-        instructionsDiv.innerHTML = '<p class="viz-instruction">Tap to add points. Tap the <span class="green">green point</span> to close the shape.</p>' +
-            (vizState.points.length > 0 ? '<button class="viz-reset-btn" onclick="resetVisualizerPoints()">↺ Reset Points</button>' : '');
-        instructionsDiv.style.display = 'block';
-        controlsDiv.style.display = 'none';
-        materialBadge.style.display = 'none';
-        calcSection.style.display = 'none';
-        
-        if (vizState.points.length > 0) {
-            pointCounter.style.display = 'block';
-            pointCounter.innerHTML = vizState.points.length + ' point' + (vizState.points.length !== 1 ? 's' : '') + (vizState.points.length >= 3 ? ' • tap green to close' : '');
-        } else {
-            pointCounter.style.display = 'none';
-        }
+        instructionsDiv.innerHTML = '<p class="viz-instruction">Tap to add points. Tap the <span class="green">green point</span> to close the shape.</p>' + (vizState.points.length > 0 ? '<button class="viz-reset-btn" onclick="resetVisualizerPoints()">↺ Reset Points</button>' : '');
+        instructionsDiv.style.display = 'block'; controlsDiv.style.display = 'none'; materialBadge.style.display = 'none'; calcSection.style.display = 'none';
+        if (vizState.points.length > 0) { pointCounter.style.display = 'block'; pointCounter.innerHTML = vizState.points.length + ' point' + (vizState.points.length !== 1 ? 's' : '') + (vizState.points.length >= 3 ? ' • tap green to close' : ''); }
+        else pointCounter.style.display = 'none';
     }
 }
 
@@ -1538,399 +1266,80 @@ function calculateVisualizerMaterial() {
     const length = parseFloat(document.getElementById('vizCalcLength').value) || 0;
     const width = parseFloat(document.getElementById('vizCalcWidth').value) || 0;
     const depth = parseFloat(document.getElementById('vizCalcDepth').value) || 0;
-    
-    if (length <= 0 || width <= 0 || depth <= 0) {
-        showToast('error', 'Missing Info', 'Please enter length, width, and depth');
-        return;
-    }
-    
+    if (length <= 0 || width <= 0 || depth <= 0) { showToast('error', 'Missing Info', 'Please enter length, width, and depth'); return; }
     const cubicYards = (length * width * depth) / 324;
     const weight = vizMaterialWeights[vizState.selectedMaterial.id] || 1.4;
     const tons = cubicYards * weight;
-    
     document.getElementById('vizCalcYards').textContent = cubicYards.toFixed(1);
     document.getElementById('vizCalcTons').textContent = tons.toFixed(1);
-    
     vizCalculatedQuantity = Math.ceil(cubicYards * 2) / 2;
+    if (vizCalculatedQuantity < TRUCK_CONFIG.minimumYards) vizCalculatedQuantity = TRUCK_CONFIG.minimumYards;
     vizCalculatedTons = tons;
-    
     document.getElementById('vizCalcResult').style.display = 'block';
 }
 
 function getVisualizerQuoteWithQuantity() {
-    closeVisualizer();
-    openCalculatorModal();
-    
+    closeVisualizer(); openCalculatorModal();
     const mappedMaterial = vizToQuoteMaterialMapping[vizState.selectedMaterial.id] || '';
-    const quoteProductSelect = document.getElementById('quoteProduct');
-    
-    if (quoteProductSelect && mappedMaterial) {
-        quoteProductSelect.value = mappedMaterial;
-    }
-    
-    if (vizCalculatedQuantity) {
-        document.getElementById('quoteQuantity').value = vizCalculatedQuantity;
-    }
-    
+    if (mappedMaterial) document.getElementById('quoteProduct').value = mappedMaterial;
+    if (vizCalculatedQuantity) document.getElementById('quoteQuantity').value = vizCalculatedQuantity;
     recalculateQuote();
-    showToast('info', 'Ready for Quote', `${vizCalculatedQuantity} yd³ of ${vizState.selectedMaterial.name} - enter your ZIP!`);
+    showToast('info', 'Ready for Quote', vizCalculatedQuantity + ' yd³ of ' + vizState.selectedMaterial.name + ' - enter your ZIP!');
 }
 
 function getVisualizerQuote() {
-    closeVisualizer();
-    openCalculatorModal();
-    
+    closeVisualizer(); openCalculatorModal();
     const mappedMaterial = vizToQuoteMaterialMapping[vizState.selectedMaterial.id] || '';
-    const quoteProductSelect = document.getElementById('quoteProduct');
-    
-    if (quoteProductSelect && mappedMaterial) {
-        quoteProductSelect.value = mappedMaterial;
-        recalculateQuote();
-    }
-    
-    showToast('info', 'Material Selected', `${vizState.selectedMaterial.name} - Enter your ZIP and quantity for pricing!`);
+    if (mappedMaterial) { document.getElementById('quoteProduct').value = mappedMaterial; recalculateQuote(); }
+    showToast('info', 'Material Selected', vizState.selectedMaterial.name + ' - Enter your ZIP and quantity for pricing!');
 }
 
-// Material Selection Event Listener
 document.addEventListener('DOMContentLoaded', function() {
     const materialGrid = document.getElementById('vizMaterialGrid');
     if (materialGrid) {
         materialGrid.addEventListener('click', function(e) {
             const btn = e.target.closest('.material-btn');
             if (!btn) return;
-            
             document.querySelectorAll('.material-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            
             const materialId = btn.dataset.id;
             vizState.selectedMaterial = vizMaterials.find(m => m.id === materialId);
-            
             if (vizState.selectedMaterial && vizState.selectedMaterial.image) {
                 const textureImg = new Image();
                 textureImg.onload = function() {
                     const canvas = document.getElementById('vizMainCanvas');
-                    if (canvas) {
-                        const ctx = canvas.getContext('2d');
-                        vizState.materialPattern = ctx.createPattern(textureImg, 'repeat');
-                        drawVisualizerCanvas();
-                    }
+                    if (canvas) { vizState.materialPattern = canvas.getContext('2d').createPattern(textureImg, 'repeat'); drawVisualizerCanvas(); }
                 };
                 textureImg.src = vizState.selectedMaterial.image;
             }
-            
-            document.getElementById('vizMaterialPrice').textContent = `$${vizState.selectedMaterial.price}/ton`;
-            
+            document.getElementById('vizMaterialPrice').textContent = '$' + vizState.selectedMaterial.price + '/ton';
             const calcMaterial = document.getElementById('vizCalcMaterial');
-            if (calcMaterial) {
-                calcMaterial.innerHTML = `Calculating for: <strong>${vizState.selectedMaterial.name}</strong>`;
-            }
-            
-            if (vizState.isComplete) {
-                document.getElementById('vizBadgeName').textContent = vizState.selectedMaterial.name;
-                drawVisualizerCanvas();
-            }
+            if (calcMaterial) calcMaterial.innerHTML = 'Calculating for: <strong>' + vizState.selectedMaterial.name + '</strong>';
+            if (vizState.isComplete) { document.getElementById('vizBadgeName').textContent = vizState.selectedMaterial.name; drawVisualizerCanvas(); }
         });
     }
 });
 
-function toggleVisualizerOverlay() {
-    vizState.showOverlay = document.getElementById('vizShowOverlay').checked;
-    drawVisualizerCanvas();
-}
-
-function updateVisualizerOpacity() {
-    const slider = document.getElementById('vizOpacitySlider');
-    vizState.opacity = slider.value / 100;
-    document.getElementById('vizOpacityValue').textContent = slider.value + '%';
-    drawVisualizerCanvas();
-}
+function toggleVisualizerOverlay() { vizState.showOverlay = document.getElementById('vizShowOverlay').checked; drawVisualizerCanvas(); }
+function updateVisualizerOpacity() { const slider = document.getElementById('vizOpacitySlider'); vizState.opacity = slider.value / 100; document.getElementById('vizOpacityValue').textContent = slider.value + '%'; drawVisualizerCanvas(); }
 
 function resetVisualizerPoints() {
-    vizState.points = [];
-    vizState.isComplete = false;
-    vizCalculatedQuantity = null;
-    vizCalculatedTons = null;
+    vizState.points = []; vizState.isComplete = false; vizCalculatedQuantity = null; vizCalculatedTons = null;
     vizCanvasDimensions = { width: 0, height: 0 };
-    
-    document.getElementById('vizCalcLength').value = '';
-    document.getElementById('vizCalcWidth').value = '';
-    document.getElementById('vizCalcDepth').value = '';
+    document.getElementById('vizCalcLength').value = ''; document.getElementById('vizCalcWidth').value = ''; document.getElementById('vizCalcDepth').value = '';
     document.getElementById('vizCalcResult').style.display = 'none';
-    
-    updateVisualizerUI();
-    drawVisualizerCanvas();
+    updateVisualizerUI(); drawVisualizerCanvas();
 }
 
 function resetVisualizer() {
-    vizState.image = null;
-    vizState.points = [];
-    vizState.isComplete = false;
-    vizCalculatedQuantity = null;
-    vizCalculatedTons = null;
-    vizCanvasDimensions = { width: 0, height: 0 };
-    
-    document.getElementById('vizCalcLength').value = '';
-    document.getElementById('vizCalcWidth').value = '';
-    document.getElementById('vizCalcDepth').value = '';
+    vizState.image = null; vizState.points = []; vizState.isComplete = false;
+    vizCalculatedQuantity = null; vizCalculatedTons = null; vizCanvasDimensions = { width: 0, height: 0 };
+    document.getElementById('vizCalcLength').value = ''; document.getElementById('vizCalcWidth').value = ''; document.getElementById('vizCalcDepth').value = '';
     document.getElementById('vizCalcResult').style.display = 'none';
-    
-    document.getElementById('vizFileInput').value = '';
-    document.getElementById('vizCameraInput').value = '';
+    document.getElementById('vizFileInput').value = ''; document.getElementById('vizCameraInput').value = '';
     updateVisualizerUI();
 }
-
-// =====================================================
-// MOBILE MENU TOGGLE
-// =====================================================
-const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-const navLinks = document.querySelector('.nav-links');
-
-if (mobileMenuBtn && navLinks) {
-    mobileMenuBtn.addEventListener('click', function() {
-        this.classList.toggle('active');
-        navLinks.classList.toggle('active');
-    });
-    
-    navLinks.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            mobileMenuBtn.classList.remove('active');
-            navLinks.classList.remove('active');
-        });
-    });
-    
-    const navDropdown = document.querySelector('.nav-dropdown > a');
-    if (navDropdown) {
-        navDropdown.addEventListener('click', function(e) {
-            if (window.innerWidth <= 968) {
-                e.preventDefault();
-                this.parentElement.classList.toggle('active');
-            }
-        });
-    }
-}
-
-document.addEventListener('click', function(e) {
-    if (navLinks && mobileMenuBtn) {
-        if (!e.target.closest('.nav-links') && !e.target.closest('.mobile-menu-btn')) {
-            mobileMenuBtn.classList.remove('active');
-            navLinks.classList.remove('active');
-        }
-    }
-});
-
-// =====================================================
-// INITIALIZATION
-// =====================================================
-console.log('🪨 Texas Got Rocks loaded successfully!');
-console.log('📍 ZIP coverage: ~150 ZIP codes across 20+ service areas');
-console.log('🚚 Truck selection: Smart routing with minimums ($75 Tandem, $100 End Dump)');
-console.log('📦 Order cap: 48 tons max (over redirects to contractor portal)');
-
-// =====================================================
-// BEFORE/AFTER SLIDER
-// =====================================================
-function initBeforeAfterSlider() {
-    const slider = document.getElementById('beforeAfterSlider');
-    if (!slider) return;
-    
-    const container = slider.querySelector('.ba-image-container');
-    const beforeWrapper = slider.querySelector('.ba-before-wrapper');
-    const handle = slider.querySelector('.ba-slider-handle');
-    const beforeLabel = slider.querySelector('.ba-label-before');
-    const afterLabel = slider.querySelector('.ba-label-after');
-    
-    let isDragging = false;
-    
-    function updateSliderPosition(x) {
-        const rect = container.getBoundingClientRect();
-        let position = (x - rect.left) / rect.width;
-        position = Math.max(0.05, Math.min(0.95, position));
-        
-        const percentage = position * 100;
-        beforeWrapper.style.width = percentage + '%';
-        handle.style.left = percentage + '%';
-        
-        if (position < 0.3) {
-            beforeLabel.style.opacity = '0';
-            afterLabel.style.opacity = '1';
-        } else if (position > 0.7) {
-            beforeLabel.style.opacity = '1';
-            afterLabel.style.opacity = '0';
-        } else {
-            beforeLabel.style.opacity = '1';
-            afterLabel.style.opacity = '1';
-        }
-    }
-    
-    slider.addEventListener('mousedown', function(e) {
-        isDragging = true;
-        updateSliderPosition(e.clientX);
-    });
-    
-    document.addEventListener('mousemove', function(e) {
-        if (!isDragging) return;
-        e.preventDefault();
-        updateSliderPosition(e.clientX);
-    });
-    
-    document.addEventListener('mouseup', function() {
-        isDragging = false;
-    });
-    
-    slider.addEventListener('touchstart', function(e) {
-        isDragging = true;
-        updateSliderPosition(e.touches[0].clientX);
-    });
-    
-    document.addEventListener('touchmove', function(e) {
-        if (!isDragging) return;
-        updateSliderPosition(e.touches[0].clientX);
-    });
-    
-    document.addEventListener('touchend', function() {
-        isDragging = false;
-    });
-}
-
-document.addEventListener('DOMContentLoaded', initBeforeAfterSlider);
-if (document.readyState !== 'loading') {
-    initBeforeAfterSlider();
-}
-
-// =====================================================
-// CLOUDFLARE TURNSTILE FUNCTIONS
-// =====================================================
-
-let turnstileStatus = {
-    visualizer: false,
-    price: false,
-    quote: false
-};
-
-function onTurnstileVisualizer(token) {
-    turnstileStatus.visualizer = true;
-    const btn = document.getElementById('visualizerBtn');
-    if (btn) {
-        btn.disabled = false;
-    }
-}
-
-function onTurnstilePrice(token) {
-    turnstileStatus.price = true;
-    const btn = document.getElementById('getPriceBtn');
-    if (btn) {
-        btn.disabled = false;
-    }
-}
-
-function onTurnstileQuote(token) {
-    turnstileStatus.quote = true;
-    if (typeof recalculateQuote === 'function') {
-        recalculateQuote();
-    }
-}
-
-function openVisualizerWithCaptcha() {
-    if (turnstileStatus.visualizer) {
-        openVisualizer();
-    } else {
-        alert('Please complete the verification first.');
-    }
-}
-
-function getDeliveryPriceWithCaptcha() {
-    if (turnstileStatus.price) {
-        getDeliveryPrice();
-    } else {
-        alert('Please complete the verification first.');
-    }
-}
-
-function addToCartWithCaptcha() {
-    if (turnstileStatus.quote) {
-        addToCart();
-    } else {
-        alert('Please complete the verification first.');
-    }
-}
-
-// =====================================================
-// SCROLL NAVIGATION ARROWS
-// =====================================================
-document.addEventListener('DOMContentLoaded', function() {
-    const scrollUpBtn = document.getElementById('scrollUpBtn');
-    const scrollDownBtn = document.getElementById('scrollDownBtn');
-    
-    if (!scrollUpBtn || !scrollDownBtn) return;
-    
-    const sections = document.querySelectorAll('section');
-    
-    function updateArrowVisibility() {
-        const scrollY = window.scrollY;
-        const windowHeight = window.innerHeight;
-        const documentHeight = document.documentElement.scrollHeight;
-        
-        if (scrollY > 300) {
-            scrollUpBtn.classList.add('visible');
-        } else {
-            scrollUpBtn.classList.remove('visible');
-        }
-        
-        if (scrollY + windowHeight >= documentHeight - 200) {
-            scrollDownBtn.classList.add('hidden');
-        } else {
-            scrollDownBtn.classList.remove('hidden');
-        }
-    }
-    
-    scrollUpBtn.addEventListener('click', function() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-    
-    scrollDownBtn.addEventListener('click', function() {
-        const scrollY = window.scrollY;
-        const windowHeight = window.innerHeight;
-        
-        let nextSection = null;
-        for (let i = 0; i < sections.length; i++) {
-            const sectionTop = sections[i].offsetTop;
-            if (sectionTop > scrollY + 100) {
-                nextSection = sections[i];
-                break;
-            }
-        }
-        
-        if (nextSection) {
-            nextSection.scrollIntoView({ behavior: 'smooth' });
-        } else {
-            window.scrollBy({ top: windowHeight * 0.8, behavior: 'smooth' });
-        }
-    });
-    
-    window.addEventListener('scroll', updateArrowVisibility);
-    updateArrowVisibility();
-});
-
-// =====================================================
-// AUTO-OPEN QUOTE MODAL IF RETURNING FROM CONTRACTORS PAGE
-// =====================================================
-document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const openQuote = urlParams.get('openQuote');
-    const materialParam = urlParams.get('material');
-    
-    if (openQuote === 'true') {
-        setTimeout(function() {
-            if (typeof openCalculatorModal === 'function') {
-                openCalculatorModal();
-                
-                if (materialParam) {
-                    const quoteProductSelect = document.getElementById('quoteProduct');
-                    if (quoteProductSelect) {
-                        for (let i = 0; i < quoteProductSelect.options.length; i++) {
-                            if (quoteProductSelect.options[i].value === materialParam) {
-                                quoteProductSelect.value = materialParam;
-                                quoteProductSelect.dispatchEvent(new Event('change'));
+change'));
                                 break;
                             }
                         }
@@ -1938,20 +1347,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         }, 300);
-        
-        if (window.history.replaceState) {
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
+        if (window.history.replaceState) window.history.replaceState({}, document.title, window.location.pathname);
     }
 });
 
 // =====================================================
 // SELF-HOSTED VIDEO PLAYER
 // =====================================================
-
 let promoVideo = null;
 let videoOverlay = null;
-let videoControls = null;
 let videoProgress = null;
 let videoTime = null;
 let playPauseBtn = null;
@@ -1959,11 +1363,9 @@ let playPauseBtn = null;
 document.addEventListener('DOMContentLoaded', function() {
     promoVideo = document.getElementById('promoVideo');
     videoOverlay = document.getElementById('videoOverlay');
-    videoControls = document.getElementById('videoControls');
     videoProgress = document.getElementById('videoProgress');
     videoTime = document.getElementById('videoTime');
     playPauseBtn = document.getElementById('playPauseBtn');
-    
     if (promoVideo) {
         promoVideo.addEventListener('timeupdate', updateVideoProgress);
         promoVideo.addEventListener('loadedmetadata', updateVideoTime);
@@ -1973,42 +1375,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-function togglePromoVideo() {
-    if (!promoVideo) return;
-    
-    if (promoVideo.paused) {
-        promoVideo.play();
-    } else {
-        promoVideo.pause();
-    }
-}
-
-function onVideoPlay() {
-    trackVideoPlay();
-    if (videoOverlay) videoOverlay.classList.add('hidden');
-    if (playPauseBtn) {
-        playPauseBtn.querySelector('.play-icon').style.display = 'none';
-        playPauseBtn.querySelector('.pause-icon').style.display = 'inline';
-    }
-    promoVideo.parentElement.classList.add('playing');
-}
-
-function onVideoPause() {
-    if (playPauseBtn) {
-        playPauseBtn.querySelector('.play-icon').style.display = 'inline';
-        playPauseBtn.querySelector('.pause-icon').style.display = 'none';
-    }
-}
-
-function onVideoEnded() {
-    trackVideoComplete();
-    if (videoOverlay) videoOverlay.classList.remove('hidden');
-    promoVideo.parentElement.classList.remove('playing');
-    if (playPauseBtn) {
-        playPauseBtn.querySelector('.play-icon').style.display = 'inline';
-        playPauseBtn.querySelector('.pause-icon').style.display = 'none';
-    }
-}
+function togglePromoVideo() { if (!promoVideo) return; if (promoVideo.paused) promoVideo.play(); else promoVideo.pause(); }
+function onVideoPlay() { trackVideoPlay(); if (videoOverlay) videoOverlay.classList.add('hidden'); if (playPauseBtn) { playPauseBtn.querySelector('.play-icon').style.display = 'none'; playPauseBtn.querySelector('.pause-icon').style.display = 'inline'; } promoVideo.parentElement.classList.add('playing'); }
+function onVideoPause() { if (playPauseBtn) { playPauseBtn.querySelector('.play-icon').style.display = 'inline'; playPauseBtn.querySelector('.pause-icon').style.display = 'none'; } }
+function onVideoEnded() { trackVideoComplete(); if (videoOverlay) videoOverlay.classList.remove('hidden'); promoVideo.parentElement.classList.remove('playing'); if (playPauseBtn) { playPauseBtn.querySelector('.play-icon').style.display = 'inline'; playPauseBtn.querySelector('.pause-icon').style.display = 'none'; } }
 
 function updateVideoProgress() {
     if (!promoVideo || !videoProgress) return;
@@ -2019,9 +1389,7 @@ function updateVideoProgress() {
 
 function updateVideoTime() {
     if (!promoVideo || !videoTime) return;
-    const current = formatTime(promoVideo.currentTime);
-    const duration = formatTime(promoVideo.duration);
-    videoTime.textContent = current + ' / ' + duration;
+    videoTime.textContent = formatTime(promoVideo.currentTime) + ' / ' + formatTime(promoVideo.duration);
 }
 
 function formatTime(seconds) {
@@ -2033,106 +1401,47 @@ function formatTime(seconds) {
 
 function seekVideo(event) {
     if (!promoVideo) return;
-    const progressContainer = event.currentTarget;
-    const rect = progressContainer.getBoundingClientRect();
-    const percent = (event.clientX - rect.left) / rect.width;
-    promoVideo.currentTime = percent * promoVideo.duration;
+    const rect = event.currentTarget.getBoundingClientRect();
+    promoVideo.currentTime = ((event.clientX - rect.left) / rect.width) * promoVideo.duration;
 }
 
 function toggleMute() {
     if (!promoVideo) return;
     promoVideo.muted = !promoVideo.muted;
     const muteIcon = document.getElementById('muteIcon');
-    if (muteIcon) {
-        muteIcon.textContent = promoVideo.muted ? '🔇' : '🔊';
-    }
+    if (muteIcon) muteIcon.textContent = promoVideo.muted ? '🔇' : '🔊';
 }
 
 function toggleFullscreen() {
     const container = document.querySelector('.self-hosted-video-container');
     if (!container) return;
-    
-    if (document.fullscreenElement) {
-        document.exitFullscreen();
-    } else {
-        container.requestFullscreen();
-    }
+    if (document.fullscreenElement) document.exitFullscreen();
+    else container.requestFullscreen();
 }
 
 // =====================================================
 // GOOGLE ANALYTICS EVENT TRACKING
 // =====================================================
-
-function trackEvent(eventName, eventParams = {}) {
+function trackEvent(eventName, eventParams) {
+    eventParams = eventParams || {};
     eventParams.site_version = typeof SITE_VERSION !== 'undefined' ? SITE_VERSION : 'unknown';
-    if (typeof gtag !== 'undefined') {
-        gtag('event', eventName, eventParams);
-    }
+    if (typeof gtag !== 'undefined') gtag('event', eventName, eventParams);
 }
 
-function trackCalculatorOpen(source) {
-    trackEvent('calculator_opened', {
-        event_category: 'engagement',
-        trigger_source: source || 'unknown'
-    });
-}
-
-function trackQuoteViewed(material, quantity, price, zip) {
-    trackEvent('quote_viewed', {
-        event_category: 'conversion',
-        material: material,
-        quantity: quantity,
-        value: price,
-        zip_code: zip
-    });
-}
-
-function trackAddToCart(material, quantity, price) {
-    trackEvent('add_to_cart', {
-        event_category: 'ecommerce',
-        currency: 'USD',
-        value: price,
-        items: [{ item_name: material, quantity: quantity, price: price }]
-    });
-}
-
-function trackPhoneClick(location) {
-    trackEvent('phone_click', {
-        event_category: 'conversion',
-        click_location: location || 'unknown'
-    });
-}
-
-function trackTextClick(location) {
-    trackEvent('text_click', {
-        event_category: 'conversion',
-        click_location: location || 'unknown'
-    });
-}
-
-function trackVideoPlay() {
-    trackEvent('video_play', {
-        event_category: 'engagement',
-        event_label: 'How It Works Video'
-    });
-}
-
-function trackVideoComplete() {
-    trackEvent('video_complete', {
-        event_category: 'engagement',
-        event_label: 'How It Works Video'
-    });
-}
+function trackCalculatorOpen(source) { trackEvent('calculator_opened', { event_category: 'engagement', trigger_source: source || 'unknown' }); }
+function trackQuoteViewed(material, quantity, price, zip) { trackEvent('quote_viewed', { event_category: 'conversion', material: material, quantity: quantity, value: price, zip_code: zip }); }
+function trackAddToCart(material, quantity, price) { trackEvent('add_to_cart', { event_category: 'ecommerce', currency: 'USD', value: price, items: [{ item_name: material, quantity: quantity, price: price }] }); }
+function trackPhoneClick(location) { trackEvent('phone_click', { event_category: 'conversion', click_location: location || 'unknown' }); }
+function trackTextClick(location) { trackEvent('text_click', { event_category: 'conversion', click_location: location || 'unknown' }); }
+function trackVideoPlay() { trackEvent('video_play', { event_category: 'engagement', event_label: 'How It Works Video' }); }
+function trackVideoComplete() { trackEvent('video_complete', { event_category: 'engagement', event_label: 'How It Works Video' }); }
 
 document.addEventListener('DOMContentLoaded', function() {
     const howItWorks = document.getElementById('how-it-works');
     if (howItWorks) {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    trackEvent('section_view', { section_name: 'How It Works' });
-                    observer.unobserve(entry.target);
-                }
+                if (entry.isIntersecting) { trackEvent('section_view', { section_name: 'How It Works' }); observer.unobserve(entry.target); }
             });
         }, { threshold: 0.5 });
         observer.observe(howItWorks);
