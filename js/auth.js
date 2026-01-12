@@ -5,7 +5,7 @@
     tokenKey: 'tgr_token',
     userKey: 'tgr_user',
     loginPage: '/login.html',
-    verifyEndpoint: '/api/auth-verify'
+    verifyEndpoint: '/.netlify/functions/auth-verify'
   };
 
   function getAllowedRoles() {
