@@ -99,10 +99,16 @@
     .stat-value.deliveries { color: #3b82f6; }
     .stat-value.trucks { color: #f59e0b; }
     .stat-value.customers { color: #8b5cf6; }
+    .section-title {
+      font-size: 18px;
+      margin-bottom: 16px;
+      color: rgba(255,255,255,0.9);
+    }
     .quick-links {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 16px;
+      margin-bottom: 32px;
     }
     .quick-link {
       display: flex;
@@ -115,6 +121,7 @@
       text-decoration: none;
       color: #fff;
       transition: all 0.2s;
+      cursor: pointer;
     }
     .quick-link:hover { background: rgba(255, 255, 255, 0.06); border-color: rgba(59, 130, 246, 0.3); transform: translateY(-2px); }
     .quick-link-icon {
@@ -127,8 +134,218 @@
       justify-content: center;
       font-size: 20px;
     }
+    .quick-link-icon.admin { background: rgba(139, 92, 246, 0.2); }
     .quick-link-text h3 { font-size: 15px; margin-bottom: 4px; }
     .quick-link-text p { font-size: 12px; color: rgba(255, 255, 255, 0.5); }
+
+    /* Admin Panel Styles */
+    .admin-panel {
+      display: none;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 24px;
+    }
+    .admin-panel.active { display: block; }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .admin-header h2 { font-size: 20px; }
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #fff;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .btn-danger:hover { background: rgba(239, 68, 68, 0.3); }
+    .btn-success {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .btn-success:hover { background: rgba(16, 185, 129, 0.3); }
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+    /* Users Table */
+    .users-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .users-table th,
+    .users-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .users-table th {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .users-table td { font-size: 14px; }
+    .users-table tr:hover { background: rgba(255, 255, 255, 0.02); }
+    .role-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .role-badge.owner { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
+    .role-badge.sales { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .role-badge.dispatch { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    .role-badge.driver { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .status-badge.active { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .status-badge.inactive { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .action-btns { display: flex; gap: 8px; }
+
+    /* Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: #1a1a2e;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h3 { font-size: 18px; }
+    .modal-close {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+    .modal-close:hover { color: #fff; }
+    .modal-body { padding: 24px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 8px;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      font-size: 14px;
+      color: #fff;
+      transition: all 0.2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    .form-group input::placeholder { color: rgba(255, 255, 255, 0.3); }
+    .form-group select option { background: #1a1a2e; color: #fff; }
+    .form-group small {
+      display: block;
+      margin-top: 6px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    .alert-error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+    }
+    .alert-success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+    .loading-row td {
+      text-align: center;
+      padding: 40px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .users-table { display: block; overflow-x: auto; }
+      .admin-header { flex-direction: column; align-items: flex-start; }
+      .action-btns { flex-direction: column; }
+    }
   </style>
 </head>
 <body>
@@ -180,7 +397,7 @@
         </div>
       </div>
 
-      <h2 style="font-size: 18px; margin-bottom: 16px; color: rgba(255,255,255,0.9);">Quick Access</h2>
+      <h2 class="section-title">Quick Access</h2>
       <div class="quick-links">
         <a href="/sales-dashboard.html" class="quick-link">
           <div class="quick-link-icon">💰</div>
@@ -194,12 +411,115 @@
           <div class="quick-link-icon">📱</div>
           <div class="quick-link-text"><h3>Driver App</h3><p>View driver interface</p></div>
         </a>
+        <div class="quick-link" onclick="toggleAdminPanel()">
+          <div class="quick-link-icon admin">👥</div>
+          <div class="quick-link-text"><h3>Manage Team</h3><p>Add & manage users</p></div>
+        </div>
+      </div>
+
+      <!-- Admin Panel -->
+      <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+          <h2>👥 Team Management</h2>
+          <button class="btn btn-primary" onclick="openAddUserModal()">+ Add User</button>
+        </div>
+        
+        <div id="adminAlert"></div>
+
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Username</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <tr class="loading-row">
+              <td colspan="5">Loading users...</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </main>
   </div>
 
+  <!-- Add/Edit User Modal -->
+  <div class="modal-overlay" id="userModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add New User</h3>
+        <button class="modal-close" onclick="closeUserModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="modalAlert"></div>
+        <form id="userForm">
+          <input type="hidden" id="editUserId">
+          
+          <div class="form-group">
+            <label for="inputName">Full Name</label>
+            <input type="text" id="inputName" placeholder="e.g., John Smith" required>
+          </div>
+
+          <div class="form-group">
+            <label for="inputUsername">Username</label>
+            <input type="text" id="inputUsername" placeholder="e.g., john" required>
+            <small>Used for login. Letters and numbers only.</small>
+          </div>
+
+          <div class="form-group">
+            <label for="inputPassword">Password</label>
+            <input type="password" id="inputPassword" placeholder="Enter password">
+            <small id="passwordHint">Minimum 6 characters</small>
+          </div>
+
+          <div class="form-group">
+            <label for="inputRole">Role</label>
+            <select id="inputRole" required>
+              <option value="">Select a role...</option>
+              <option value="owner">Owner - Full access to all dashboards</option>
+              <option value="sales">Sales - Sales dashboard only</option>
+              <option value="dispatch">Dispatch - Dispatch & Driver apps</option>
+              <option value="driver">Driver - Driver app only</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeUserModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveUser()" id="saveUserBtn">Add User</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Delete Modal -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3>Confirm Deactivation</h3>
+        <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color: rgba(255,255,255,0.7); line-height: 1.6;">
+          Are you sure you want to deactivate <strong id="deleteUserName">this user</strong>? 
+          They will no longer be able to log in, but their account can be reactivated later.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+        <button class="btn btn-danger" onclick="confirmDelete()" id="confirmDeleteBtn">Deactivate</button>
+      </div>
+    </div>
+  </div>
+
   <script src="/js/auth.js" data-required-roles="owner"></script>
   <script>
+    let currentUsers = [];
+    let deleteUserId = null;
+
+    // Initialize on auth
     window.addEventListener('tgr:authenticated', (e) => {
       const user = e.detail.user;
       document.getElementById('userAvatar').textContent = user.name.split(' ').map(n => n[0]).join('');
@@ -212,14 +532,262 @@
     async function loadDashboardData() {
       try {
         const [trucksRes, customersRes] = await Promise.all([
-          fetch('/api/trucks').then(r => r.json()).catch(() => []),
-          fetch('/api/customers').then(r => r.json()).catch(() => [])
+          fetch('/.netlify/functions/trucks').then(r => r.json()).catch(() => []),
+          fetch('/.netlify/functions/customers').then(r => r.json()).catch(() => [])
         ]);
         document.getElementById('statTrucks').textContent = trucksRes.length || 0;
         document.getElementById('statCustomers').textContent = customersRes.length || 0;
         document.getElementById('statRevenue').textContent = '$2,450';
         document.getElementById('statDeliveries').textContent = '8';
-      } catch (error) { console.error('Failed to load dashboard data:', error); }
+      } catch (error) { 
+        console.error('Failed to load dashboard data:', error); 
+      }
+    }
+
+    // Admin Panel Functions
+    function toggleAdminPanel() {
+      const panel = document.getElementById('adminPanel');
+      panel.classList.toggle('active');
+      if (panel.classList.contains('active')) {
+        loadUsers();
+      }
+    }
+
+    async function loadUsers() {
+      const tbody = document.getElementById('usersTableBody');
+      tbody.innerHTML = '<tr class="loading-row"><td colspan="5">Loading users...</td></tr>';
+
+      try {
+        const token = localStorage.getItem('tgr_token');
+        const response = await fetch('/.netlify/functions/auth-users', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) throw new Error('Failed to load users');
+
+        currentUsers = await response.json();
+        renderUsersTable();
+      } catch (error) {
+        tbody.innerHTML = '<tr class="loading-row"><td colspan="5">Failed to load users. Please try again.</td></tr>';
+        console.error('Load users error:', error);
+      }
+    }
+
+    function renderUsersTable() {
+      const tbody = document.getElementById('usersTableBody');
+      
+      if (currentUsers.length === 0) {
+        tbody.innerHTML = '<tr class="loading-row"><td colspan="5">No users found.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = currentUsers.map(user => `
+        <tr>
+          <td><strong>${escapeHtml(user.name)}</strong></td>
+          <td>${escapeHtml(user.username)}</td>
+          <td><span class="role-badge ${user.role}">${user.role}</span></td>
+          <td><span class="status-badge ${user.active ? 'active' : 'inactive'}">${user.active ? 'Active' : 'Inactive'}</span></td>
+          <td>
+            <div class="action-btns">
+              <button class="btn btn-secondary btn-sm" onclick="openEditUserModal('${user._id}')">Edit</button>
+              ${user.active 
+                ? `<button class="btn btn-danger btn-sm" onclick="openDeleteModal('${user._id}', '${escapeHtml(user.name)}')">Deactivate</button>`
+                : `<button class="btn btn-success btn-sm" onclick="reactivateUser('${user._id}')">Activate</button>`
+              }
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Modal Functions
+    function openAddUserModal() {
+      document.getElementById('modalTitle').textContent = 'Add New User';
+      document.getElementById('saveUserBtn').textContent = 'Add User';
+      document.getElementById('editUserId').value = '';
+      document.getElementById('inputName').value = '';
+      document.getElementById('inputUsername').value = '';
+      document.getElementById('inputPassword').value = '';
+      document.getElementById('inputPassword').required = true;
+      document.getElementById('passwordHint').textContent = 'Minimum 6 characters';
+      document.getElementById('inputRole').value = '';
+      document.getElementById('inputUsername').disabled = false;
+      document.getElementById('modalAlert').innerHTML = '';
+      document.getElementById('userModal').classList.add('active');
+    }
+
+    function openEditUserModal(userId) {
+      const user = currentUsers.find(u => u._id === userId);
+      if (!user) return;
+
+      document.getElementById('modalTitle').textContent = 'Edit User';
+      document.getElementById('saveUserBtn').textContent = 'Save Changes';
+      document.getElementById('editUserId').value = userId;
+      document.getElementById('inputName').value = user.name;
+      document.getElementById('inputUsername').value = user.username;
+      document.getElementById('inputUsername').disabled = true;
+      document.getElementById('inputPassword').value = '';
+      document.getElementById('inputPassword').required = false;
+      document.getElementById('passwordHint').textContent = 'Leave blank to keep current password';
+      document.getElementById('inputRole').value = user.role;
+      document.getElementById('modalAlert').innerHTML = '';
+      document.getElementById('userModal').classList.add('active');
+    }
+
+    function closeUserModal() {
+      document.getElementById('userModal').classList.remove('active');
+    }
+
+    async function saveUser() {
+      const userId = document.getElementById('editUserId').value;
+      const name = document.getElementById('inputName').value.trim();
+      const username = document.getElementById('inputUsername').value.trim().toLowerCase();
+      const password = document.getElementById('inputPassword').value;
+      const role = document.getElementById('inputRole').value;
+      const modalAlert = document.getElementById('modalAlert');
+
+      // Validation
+      if (!name || !role) {
+        modalAlert.innerHTML = '<div class="alert alert-error">Please fill in all required fields.</div>';
+        return;
+      }
+
+      if (!userId && !username) {
+        modalAlert.innerHTML = '<div class="alert alert-error">Username is required.</div>';
+        return;
+      }
+
+      if (!userId && password.length < 6) {
+        modalAlert.innerHTML = '<div class="alert alert-error">Password must be at least 6 characters.</div>';
+        return;
+      }
+
+      if (userId && password && password.length < 6) {
+        modalAlert.innerHTML = '<div class="alert alert-error">Password must be at least 6 characters.</div>';
+        return;
+      }
+
+      const btn = document.getElementById('saveUserBtn');
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      try {
+        const token = localStorage.getItem('tgr_token');
+        const isEdit = !!userId;
+
+        const body = isEdit 
+          ? { userId, name, role, ...(password && { newPassword: password }) }
+          : { username, password, name, role };
+
+        const response = await fetch('/.netlify/functions/auth-users', {
+          method: isEdit ? 'PUT' : 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(body)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to save user');
+        }
+
+        closeUserModal();
+        showAdminAlert('success', isEdit ? 'User updated successfully!' : 'User created successfully!');
+        loadUsers();
+
+      } catch (error) {
+        modalAlert.innerHTML = `<div class="alert alert-error">${escapeHtml(error.message)}</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = userId ? 'Save Changes' : 'Add User';
+      }
+    }
+
+    // Delete Functions
+    function openDeleteModal(userId, userName) {
+      deleteUserId = userId;
+      document.getElementById('deleteUserName').textContent = userName;
+      document.getElementById('deleteModal').classList.add('active');
+    }
+
+    function closeDeleteModal() {
+      deleteUserId = null;
+      document.getElementById('deleteModal').classList.remove('active');
+    }
+
+    async function confirmDelete() {
+      if (!deleteUserId) return;
+
+      const btn = document.getElementById('confirmDeleteBtn');
+      btn.disabled = true;
+      btn.textContent = 'Deactivating...';
+
+      try {
+        const token = localStorage.getItem('tgr_token');
+        const response = await fetch('/.netlify/functions/auth-users', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ userId: deleteUserId })
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || 'Failed to deactivate user');
+        }
+
+        closeDeleteModal();
+        showAdminAlert('success', 'User deactivated successfully.');
+        loadUsers();
+
+      } catch (error) {
+        showAdminAlert('error', error.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Deactivate';
+      }
+    }
+
+    async function reactivateUser(userId) {
+      try {
+        const token = localStorage.getItem('tgr_token');
+        const response = await fetch('/.netlify/functions/auth-users', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ userId, active: true })
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || 'Failed to reactivate user');
+        }
+
+        showAdminAlert('success', 'User reactivated successfully!');
+        loadUsers();
+
+      } catch (error) {
+        showAdminAlert('error', error.message);
+      }
+    }
+
+    function showAdminAlert(type, message) {
+      const alertDiv = document.getElementById('adminAlert');
+      alertDiv.innerHTML = `<div class="alert alert-${type}">${escapeHtml(message)}</div>`;
+      setTimeout(() => { alertDiv.innerHTML = ''; }, 5000);
     }
   </script>
 </body>
