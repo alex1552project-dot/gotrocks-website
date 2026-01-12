@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Command Center | Texas Got Rocks</title>
-  <link rel="icon" type="image/svg+xml" href="/images/rock-logo.svg">
+  <link rel="icon" type="image/png" href="/favicon-512x512.png">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -43,7 +43,7 @@
       gap: 16px;
     }
     .header-left { display: flex; align-items: center; gap: 16px; }
-    .logo { width: 40px; height: 40px; }
+    .logo { width: 40px; height: 40px; border-radius: 8px; }
     .header-title { font-size: 20px; font-weight: 600; }
     .header-right { display: flex; align-items: center; gap: 16px; }
     .user-info { display: flex; align-items: center; gap: 12px; }
@@ -140,17 +140,7 @@
   <div class="protected-content">
     <header class="header">
       <div class="header-left">
-        <svg class="logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="45" fill="url(#rockGrad)" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-          <path d="M30 65 L50 30 L70 65 Z" fill="rgba(255,255,255,0.9)"/>
-          <circle cx="50" cy="52" r="8" fill="#3b82f6"/>
-          <defs>
-            <linearGradient id="rockGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#374151"/>
-              <stop offset="100%" style="stop-color:#1f2937"/>
-            </linearGradient>
-          </defs>
-        </svg>
+        <img src="/favicon-512x512.png" alt="Texas Got Rocks" class="logo">
         <h1 class="header-title">Command Center</h1>
       </div>
       <div class="header-right">
