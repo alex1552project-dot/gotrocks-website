@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Command Center | Texas Got Rocks</title>
-  <link rel="icon" type="image/svg+xml" href="/images/rock-logo.svg">
+  <link rel="icon" type="image/png" href="/favicon-512x512.png">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -43,7 +43,7 @@
       gap: 16px;
     }
     .header-left { display: flex; align-items: center; gap: 16px; }
-    .logo { width: 40px; height: 40px; }
+    .logo { width: 40px; height: 40px; border-radius: 8px; }
     .header-title { font-size: 20px; font-weight: 600; }
     .header-right { display: flex; align-items: center; gap: 16px; }
     .user-info { display: flex; align-items: center; gap: 12px; }
@@ -120,12 +120,8 @@
     .quick-link-icon {
       width: 44px;
       height: 44px;
-      background: rgba(59, 130, 246, 0.2);
       border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
+      object-fit: cover;
     }
     .quick-link-text h3 { font-size: 15px; margin-bottom: 4px; }
     .quick-link-text p { font-size: 12px; color: rgba(255, 255, 255, 0.5); }
@@ -140,17 +136,7 @@
   <div class="protected-content">
     <header class="header">
       <div class="header-left">
-        <svg class="logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="45" fill="url(#rockGrad)" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-          <path d="M30 65 L50 30 L70 65 Z" fill="rgba(255,255,255,0.9)"/>
-          <circle cx="50" cy="52" r="8" fill="#3b82f6"/>
-          <defs>
-            <linearGradient id="rockGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#374151"/>
-              <stop offset="100%" style="stop-color:#1f2937"/>
-            </linearGradient>
-          </defs>
-        </svg>
+        <img src="/favicon-512x512.png" alt="Texas Got Rocks" class="logo">
         <h1 class="header-title">Command Center</h1>
       </div>
       <div class="header-right">
@@ -174,63 +160,4 @@
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-label">Today's Revenue</div>
-          <div class="stat-value revenue" id="statRevenue">$0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Deliveries Today</div>
-          <div class="stat-value deliveries" id="statDeliveries">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Active Trucks</div>
-          <div class="stat-value trucks" id="statTrucks">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Total Customers</div>
-          <div class="stat-value customers" id="statCustomers">0</div>
-        </div>
-      </div>
-
-      <h2 style="font-size: 18px; margin-bottom: 16px; color: rgba(255,255,255,0.9);">Quick Access</h2>
-      <div class="quick-links">
-        <a href="/sales-dashboard.html" class="quick-link">
-          <div class="quick-link-icon">💰</div>
-          <div class="quick-link-text"><h3>Sales Dashboard</h3><p>Manage customers & quotes</p></div>
-        </a>
-        <a href="/dispatch-ui.html" class="quick-link">
-          <div class="quick-link-icon">🚚</div>
-          <div class="quick-link-text"><h3>Dispatch</h3><p>Schedule deliveries</p></div>
-        </a>
-        <a href="/drivers-app.html" class="quick-link">
-          <div class="quick-link-icon">📱</div>
-          <div class="quick-link-text"><h3>Driver App</h3><p>View driver interface</p></div>
-        </a>
-      </div>
-    </main>
-  </div>
-
-  <script src="/js/auth.js" data-required-roles="owner"></script>
-  <script>
-    window.addEventListener('tgr:authenticated', (e) => {
-      const user = e.detail.user;
-      document.getElementById('userAvatar').textContent = user.name.split(' ').map(n => n[0]).join('');
-      document.getElementById('userName').textContent = user.name;
-      document.getElementById('userRole').textContent = user.role;
-      document.getElementById('welcomeName').textContent = user.name.split(' ')[0];
-      loadDashboardData();
-    });
-
-    async function loadDashboardData() {
-      try {
-        const [trucksRes, customersRes] = await Promise.all([
-          fetch('/api/trucks').then(r => r.json()).catch(() => []),
-          fetch('/api/customers').then(r => r.json()).catch(() => [])
-        ]);
-        document.getElementById('statTrucks').textContent = trucksRes.length || 0;
-        document.getElementById('statCustomers').textContent = customersRes.length || 0;
-        document.getElementById('statRevenue').textContent = '$2,450';
-        document.getElementById('statDeliveries').textContent = '8';
-      } catch (error) { console.error('Failed to load dashboard data:', error); }
-    }
-  </script>
-</body>
-</html>
+          <div
