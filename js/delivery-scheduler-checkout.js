@@ -224,17 +224,6 @@ function renderDeliveryCalendar() {
   
   html += `
         </div>
-        
-        <div style="display: flex; justify-content: center; gap: 32px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #e0e0e0;">
-          <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: #555;">
-            <div style="width: 12px; height: 12px; border-radius: 50%; background: #4A7C59;"></div>
-            <span>Available</span>
-          </div>
-          <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: #555;">
-            <div style="width: 12px; height: 12px; border-radius: 50%; background: #E9A23B;"></div>
-            <span>Limited</span>
-          </div>
-        </div>
       </div>
       
       <div class="scheduler-slots" id="schedulerSlotsContainer">
@@ -758,47 +747,22 @@ function injectSchedulerStyles() {
     .calendar-day.disabled { color: #ccc; cursor: not-allowed; }
     .calendar-day.weekend { color: #bbb; opacity: 0.5; }
     .calendar-day.today { background: #f5f1e8; }
-    .calendar-day.selected { background: var(--warm-orange, #C45C26); color: white; }
+    .calendar-day.selected { background: var(--warm-orange, #C45C26); color: white; font-weight: 700; }
     
-    .calendar-day.available::after {
-      content: '';
-      position: absolute;
-      bottom: 3px;
-      width: 4px;
-      height: 4px;
-      background: #4A7C59;
-      border-radius: 50%;
+    .calendar-day.available {
+      color: #4A7C59;
+      font-weight: 600;
     }
     
-    .calendar-day.limited::after { background: #E9A23B; }
-    .calendar-day.selected::after { background: white; }
-    
-    .calendar-legend {
-      display: flex;
-      justify-content: center;
-      gap: 24px;
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid #e0e0e0;
-      font-size: 12px;
-      color: #666;
+    .calendar-day.limited {
+      color: #E9A23B;
+      font-weight: 600;
     }
     
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .calendar-day.selected.available,
+    .calendar-day.selected.limited {
+      color: white;
     }
-    
-    .legend-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    
-    .legend-dot.available { background: #4A7C59; }
-    .legend-dot.limited { background: #E9A23B; }
     
     .scheduler-slots {
       background: white;
