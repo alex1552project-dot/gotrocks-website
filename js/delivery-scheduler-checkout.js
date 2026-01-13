@@ -487,9 +487,9 @@ function formatSchedulerTime(time24) {
 // ============================================
 
 // Override the existing goToDeliveryStep function
-const originalGoToDeliveryStep = typeof goToDeliveryStep === 'function' ? goToDeliveryStep : null;
+const originalGoToDeliveryStep = typeof window.goToDeliveryStep === 'function' ? window.goToDeliveryStep : null;
 
-function goToDeliveryStep() {
+window.goToDeliveryStep = function() {
   // Validate contact form first
   const name = document.getElementById('checkoutName')?.value;
   const email = document.getElementById('checkoutEmail')?.value;
@@ -522,9 +522,9 @@ function goToDeliveryStep() {
 }
 
 // Override goToPaymentStep to include delivery data
-const originalGoToPaymentStep = typeof goToPaymentStep === 'function' ? goToPaymentStep : null;
+const originalGoToPaymentStep = typeof window.goToPaymentStep === 'function' ? window.goToPaymentStep : null;
 
-function goToPaymentStep() {
+window.goToPaymentStep = function() {
   // Validate delivery selection
   if (!window.selectedDelivery || !window.selectedDelivery.date || !window.selectedDelivery.slotId) {
     showToast('Please select a delivery date and time', 'error');
