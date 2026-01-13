@@ -72,7 +72,7 @@ exports.handler = async (event) => {
 
   try {
     await client.connect();
-    const db = client.db('txgotrocks');
+    const db = client.db('gotrocks');
     
     const { type } = JSON.parse(event.body);
 
@@ -109,7 +109,7 @@ exports.handler = async (event) => {
       const prompt = `Analyze this inventory and recent sales data:
 
 CURRENT INVENTORY:
-${inventory.map(i => `- ${i.product.name}: ${i.stockTons} tons (threshold: ${i.lowStockThreshold} tons, weight: ${i.product.weight} tons/yd)`).join('\n')}
+${inventory.map(i => `- ${i.productName}: ${i.quantity} tons (reorder point: ${i.reorderPoint} tons, weight: ${i.product.weight} tons/yd)`).join('\n')}
 
 RECENT ORDERS (Last 30 Days):
 ${recentOrders.length > 0 ? recentOrders.map(o => `- ${o.product}: ${o.quantity} yards on ${o.createdAt.split('T')[0]}`).join('\n') : 'No orders yet'}
@@ -224,4 +224,26 @@ Consider: Morning Houston traffic (avoid I-45 south 7-9am), ZIP code clustering,
       try {
         parsed = JSON.parse(suggestion);
       } catch {
-        parsed
+        parsed = { summary: suggestion, optimizedRoute: [], truckAssignments: [], warnings: [] };
+      }
+
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ type: 'logistics', suggestions: parsed })
+      };
+    }
+
+    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid suggestion type. Use: inventory, pricing, or logistics' }) };
+
+  } catch (error) {
+    console.error('AI Suggestions API error:', error);
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ error: 'Internal server error', details: error.message })
+    };
+  } finally {
+    await client.close();
+  }
+};
