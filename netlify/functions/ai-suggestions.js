@@ -37,13 +37,22 @@ async function getClaudeSuggestion(prompt, systemPrompt) {
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 1500,
-      system: systemPrompt,
+      system: systemPrompt + '\n\nCRITICAL: Return ONLY valid JSON. No markdown, no backticks, no code blocks, no explanations before or after. Just the raw JSON object starting with { and ending with }.',
       messages: [{ role: 'user', content: prompt }]
     })
   });
 
   const data = await response.json();
-  return data.content[0].text;
+  let text = data.content[0].text;
+  
+  // Clean up common JSON formatting issues
+  text = text.trim();
+  // Remove markdown code blocks if present
+  text = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '');
+  // Remove any leading/trailing whitespace again
+  text = text.trim();
+  
+  return text;
 }
 
 exports.handler = async (event) => {
@@ -98,13 +107,15 @@ exports.handler = async (event) => {
         paymentStatus: 'approved'
       }).toArray();
 
-      const systemPrompt = `You are an inventory management AI assistant for Texas Got Rocks, a construction aggregates delivery company in the Houston area. Analyze inventory levels and sales data to provide actionable recommendations. Be specific with numbers and prioritize by urgency. Format your response as JSON with these fields:
-      {
-        "alerts": [{ "severity": "high|medium|low", "product": "name", "message": "..." }],
-        "reorderSuggestions": [{ "product": "name", "currentTons": X, "suggestedOrder": X, "reason": "..." }],
-        "demandInsights": ["insight1", "insight2"],
-        "summary": "Brief overall assessment"
-      }`;
+      const systemPrompt = `You are an inventory management AI assistant for Texas Got Rocks, a construction aggregates delivery company in the Houston area. Analyze inventory levels and sales data to provide actionable recommendations. Be specific with numbers and prioritize by urgency.
+
+Return your response as a JSON object with this exact structure:
+{
+  "alerts": [{ "severity": "high", "product": "Product Name", "message": "Alert message" }],
+  "reorderSuggestions": [{ "product": "Product Name", "currentTons": 50, "suggestedOrder": 100, "reason": "Reason for suggestion" }],
+  "demandInsights": ["Insight 1", "Insight 2"],
+  "summary": "Brief overall assessment"
+}`;
 
       const prompt = `Analyze this inventory and recent sales data:
 
@@ -141,13 +152,15 @@ Current month: January (typically slower season). Provide inventory recommendati
         paymentStatus: 'approved'
       }).toArray();
 
-      const systemPrompt = `You are a pricing strategy AI assistant for Texas Got Rocks, a construction aggregates delivery company competing against national services like HelloGravel in the Houston market. Their key differentiator is "always free delivery" (delivery cost bundled into material price). Analyze pricing data and provide recommendations. Format your response as JSON:
-      {
-        "priceAdjustments": [{ "product": "name", "currentPrice": X, "suggestedPrice": X, "reason": "..." }],
-        "marginInsights": ["insight1", "insight2"],
-        "competitiveNotes": ["note1", "note2"],
-        "summary": "Brief overall assessment"
-      }`;
+      const systemPrompt = `You are a pricing strategy AI assistant for Texas Got Rocks, a construction aggregates delivery company competing against national services like HelloGravel in the Houston market. Their key differentiator is "always free delivery" (delivery cost bundled into material price). Analyze pricing data and provide recommendations.
+
+Return your response as a JSON object with this exact structure:
+{
+  "priceAdjustments": [{ "product": "Product Name", "currentPrice": 50, "suggestedPrice": 55, "reason": "Reason for adjustment" }],
+  "marginInsights": ["Insight 1", "Insight 2"],
+  "competitiveNotes": ["Note 1", "Note 2"],
+  "summary": "Brief overall assessment"
+}`;
 
       const prompt = `Analyze pricing for Texas Got Rocks:
 
@@ -198,15 +211,17 @@ Provide pricing optimization recommendations considering local market competitio
         }).toArray();
       }
 
-      const systemPrompt = `You are a logistics optimization AI for Texas Got Rocks, a delivery company based in Conroe, TX serving the Greater Houston area. Optimize delivery routes considering: ZIP code clustering, truck capacity (tandem vs end dump), Houston traffic patterns, and delivery time windows. Format your response as JSON:
-      {
-        "optimizedRoute": [{ "order": 1, "delivery": "address/customer", "reason": "..." }],
-        "truckAssignments": [{ "truck": "name", "deliveries": ["delivery1", "delivery2"], "totalTons": X }],
-        "timeEstimate": "X hours",
-        "fuelSavings": "estimated X miles saved vs naive routing",
-        "warnings": ["any concerns"],
-        "summary": "Brief route overview"
-      }`;
+      const systemPrompt = `You are a logistics optimization AI for Texas Got Rocks, a delivery company based in Conroe, TX serving the Greater Houston area. Optimize delivery routes considering: ZIP code clustering, truck capacity (tandem vs end dump), Houston traffic patterns, and delivery time windows.
+
+Return your response as a JSON object with this exact structure:
+{
+  "optimizedRoute": [{ "order": 1, "delivery": "Customer/Address", "reason": "Why this order" }],
+  "truckAssignments": [{ "truck": "Truck Name", "deliveries": ["Delivery 1", "Delivery 2"], "totalTons": 10 }],
+  "timeEstimate": "X hours",
+  "fuelSavings": "Estimated savings description",
+  "warnings": ["Any concerns"],
+  "summary": "Brief route overview"
+}`;
 
       const prompt = `Optimize today's deliveries for Texas Got Rocks (based in Conroe, TX):
 
