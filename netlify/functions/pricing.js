@@ -41,7 +41,7 @@ exports.handler = async (event) => {
 
   try {
     await client.connect();
-    const db = client.db('txgotrocks');
+    const db = client.db('gotrocks');
     const productsCollection = db.collection('products');
     const pricingConfigCollection = db.collection('pricing_config');
 
