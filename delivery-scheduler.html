@@ -669,6 +669,7 @@
 
     // State
     let availabilityData = null;
+    let selectedDateDetails = null;
     let selectedDate = null;
     let selectedSlot = null;
     let selectedPrecisionWindow = null;
@@ -821,19 +822,39 @@
     }
 
     // Select a date
-    function selectDate(dateStr) {
+    async function selectDate(dateStr) {
       selectedDate = dateStr;
       selectedSlot = null;
       selectedPrecisionWindow = null;
       renderCalendar();
-      renderSlots(dateStr);
+      
+      // Fetch detailed slot info for this specific date (includes precision windows)
+      try {
+        const params = new URLSearchParams({
+          date: dateStr,
+          customerLat: customerLocation.lat,
+          customerLng: customerLocation.lng
+        });
+        const response = await fetch(`${API_BASE}/schedule?${params}`);
+        const dateDetails = await response.json();
+        
+        // Store the detailed slot info
+        selectedDateDetails = dateDetails;
+        renderSlots(dateStr);
+      } catch (error) {
+        console.error('Failed to fetch date details:', error);
+        renderSlots(dateStr);
+      }
+      
       updateSummary();
     }
 
     // Render time slots for selected date
     function renderSlots(dateStr) {
       const container = document.getElementById('slots-container');
-      const dayData = availabilityData?.days?.find(d => d.date === dateStr);
+      
+      // Use detailed date info if available, otherwise fall back to range data
+      const dayData = selectedDateDetails || availabilityData?.days?.find(d => d.date === dateStr);
 
       if (!dayData) {
         container.innerHTML = `
@@ -844,10 +865,13 @@
         return;
       }
 
+      // Get slots from the right place (single date query has slots array directly)
+      const slots = dayData.slots || [];
+      
       let html = '';
 
       // Same-day badge
-      if (dayData.isToday && availabilityData.sameDayMaxDistance) {
+      if (dayData.isToday && (dayData.sameDayEligible || availabilityData?.sameDayMaxDistance)) {
         html += `
           <div class="same-day-badge">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -860,7 +884,7 @@
 
       html += '<div class="slots-container">';
 
-      dayData.slots.forEach(slot => {
+      slots.forEach(slot => {
         const isSelected = selectedSlot === slot.id;
         const isAvailable = slot.available;
         const isLimited = slot.bookedCount >= slot.capacity - 2;
@@ -892,8 +916,10 @@
 
       // Precision Delivery upsell (only show if a slot is selected)
       if (selectedSlot) {
-        const slot = dayData.slots.find(s => s.id === selectedSlot);
-        if (slot?.precisionWindows?.length) {
+        const slot = slots.find(s => s.id === selectedSlot);
+        const precisionWindows = slot?.precisionWindows || [];
+        
+        if (precisionWindows.length > 0) {
           html += `
             <div class="precision-upsell">
               <div class="precision-header">
@@ -912,10 +938,10 @@
               <div class="precision-windows">
           `;
 
-          slot.precisionWindows.forEach(window => {
-            const isSelected = selectedPrecisionWindow === window.id;
+          precisionWindows.forEach(window => {
+            const isWindowSelected = selectedPrecisionWindow === window.id;
             html += `
-              <div class="precision-window ${isSelected ? 'selected' : ''}" onclick="selectPrecisionWindow('${window.id}')">
+              <div class="precision-window ${isWindowSelected ? 'selected' : ''}" onclick="selectPrecisionWindow('${window.id}')">
                 <span class="precision-window-time">${window.label}</span>
                 <div class="precision-window-check">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -986,9 +1012,10 @@
       const options = { weekday: 'long', month: 'long', day: 'numeric' };
       dateEl.textContent = dateObj.toLocaleDateString('en-US', options);
 
-      // Get slot info
-      const dayData = availabilityData.days.find(d => d.date === selectedDate);
-      const slot = dayData?.slots.find(s => s.id === selectedSlot);
+      // Get slot info - use selectedDateDetails if available
+      const dayData = selectedDateDetails || availabilityData.days.find(d => d.date === selectedDate);
+      const slots = dayData?.slots || [];
+      const slot = slots.find(s => s.id === selectedSlot);
 
       if (slot) {
         slotEl.textContent = `${slot.label} (${formatTime(slot.start)} - ${formatTime(slot.end)})`;
@@ -996,7 +1023,8 @@
 
       // Precision delivery
       if (selectedPrecisionWindow) {
-        const precisionWindow = slot?.precisionWindows?.find(w => w.id === selectedPrecisionWindow);
+        const precisionWindows = slot?.precisionWindows || [];
+        const precisionWindow = precisionWindows.find(w => w.id === selectedPrecisionWindow);
         precisionEl.style.display = 'inline-flex';
         precisionTextEl.textContent = `Precision: ${precisionWindow?.label || ''}`;
         feeEl.textContent = `+$${PRECISION_FEE}`;
