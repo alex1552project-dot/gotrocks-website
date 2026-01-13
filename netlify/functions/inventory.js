@@ -1,103 +1,228 @@
-const { connectToDatabase, headers, handleOptions } = require('./utils/db');
+const { MongoClient, ObjectId } = require('mongodb');
+const jwt = require('jsonwebtoken');
 
-exports.handler = async (event, context) => {
+const uri = process.env.MONGODB_URI;
+const JWT_SECRET = process.env.JWT_SECRET;
+
+// Verify JWT and check role permissions
+function verifyToken(authHeader, allowedRoles) {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return { valid: false, error: 'No token provided' };
+  }
+  
+  try {
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+    
+    if (!allowedRoles.includes(decoded.role)) {
+      return { valid: false, error: 'Insufficient permissions' };
+    }
+    
+    return { valid: true, user: decoded };
+  } catch (err) {
+    return { valid: false, error: 'Invalid token' };
+  }
+}
+
+exports.handler = async (event) => {
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Content-Type': 'application/json'
+  };
+
+  // Handle preflight
   if (event.httpMethod === 'OPTIONS') {
-    return handleOptions();
+    return { statusCode: 200, headers, body: '' };
   }
 
+  const client = new MongoClient(uri);
+
   try {
-    const { db } = await connectToDatabase();
-    const collection = db.collection('inventory');
+    await client.connect();
+    const db = client.db('txgotrocks');
+    const inventoryCollection = db.collection('inventory');
+    const productsCollection = db.collection('products');
 
-    // GET - Retrieve inventory
+    // GET - List inventory (owners, dispatch can view)
     if (event.httpMethod === 'GET') {
-      const params = event.queryStringParameters || {};
-      
-      let query = {};
-      
-      // Filter by product if specified
-      if (params.productId) {
-        query.productId = params.productId;
-      }
-      
-      // Filter by low stock
-      if (params.lowStock === 'true') {
-        query.$expr = { $lte: ['$quantity', '$reorderPoint'] };
+      const auth = verifyToken(event.headers.authorization, ['owner', 'dispatch', 'dispatcher']);
+      if (!auth.valid) {
+        return { statusCode: 401, headers, body: JSON.stringify({ error: auth.error }) };
       }
 
-      const inventory = await collection.find(query).toArray();
-
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify(inventory)
-      };
-    }
-
-    // POST - Update inventory
-    if (event.httpMethod === 'POST') {
-      const { productId, quantity, reorderPoint, location, action, notes } = JSON.parse(event.body);
-      
-      if (!productId) {
-        return {
-          statusCode: 400,
-          headers,
-          body: JSON.stringify({ error: 'Missing required field: productId' })
-        };
-      }
-
-      // If action is 'adjust', add/subtract from current quantity
-      if (action === 'adjust' && quantity !== undefined) {
-        const result = await collection.updateOne(
-          { productId },
-          { 
-            $inc: { quantity: quantity },
-            $set: { updatedAt: new Date() },
-            $push: { 
-              history: {
-                action: 'adjust',
-                amount: quantity,
-                notes,
-                timestamp: new Date()
-              }
-            }
+      // Join inventory with products for full details
+      const inventory = await inventoryCollection.aggregate([
+        {
+          $lookup: {
+            from: 'products',
+            localField: 'productId',
+            foreignField: 'id',
+            as: 'product'
           }
-        );
-
-        return {
-          statusCode: 200,
-          headers,
-          body: JSON.stringify({ success: true, result })
-        };
-      }
-
-      // Otherwise, set absolute values
-      const updateData = { updatedAt: new Date() };
-      if (quantity !== undefined) updateData.quantity = quantity;
-      if (reorderPoint !== undefined) updateData.reorderPoint = reorderPoint;
-      if (location !== undefined) updateData.location = location;
-
-      const result = await collection.updateOne(
-        { productId },
-        { 
-          $set: updateData,
-          $setOnInsert: { createdAt: new Date(), history: [] }
         },
-        { upsert: true }
-      );
+        { $unwind: '$product' },
+        {
+          $project: {
+            _id: 1,
+            productId: 1,
+            stockTons: 1,
+            lowStockThreshold: 1,
+            lastUpdated: 1,
+            lastUpdatedBy: 1,
+            name: '$product.name',
+            category: '$product.category',
+            weight: '$product.weight',
+            price: '$product.price',
+            active: '$product.active'
+          }
+        },
+        { $sort: { category: 1, name: 1 } }
+      ]).toArray();
+
+      // Calculate yards equivalent for display
+      const inventoryWithYards = inventory.map(item => ({
+        ...item,
+        stockYards: item.weight > 0 ? Math.round((item.stockTons / item.weight) * 10) / 10 : 0,
+        belowThreshold: item.stockTons < item.lowStockThreshold
+      }));
 
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify({ success: true, result })
+        body: JSON.stringify({
+          inventory: inventoryWithYards,
+          totalItems: inventory.length,
+          lowStockCount: inventoryWithYards.filter(i => i.belowThreshold).length
+        })
       };
     }
 
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
+    // POST - Initialize inventory for a product (owners only)
+    if (event.httpMethod === 'POST') {
+      const auth = verifyToken(event.headers.authorization, ['owner']);
+      if (!auth.valid) {
+        return { statusCode: 401, headers, body: JSON.stringify({ error: auth.error }) };
+      }
+
+      const { productId, stockTons, lowStockThreshold } = JSON.parse(event.body);
+
+      if (!productId || stockTons === undefined) {
+        return { statusCode: 400, headers, body: JSON.stringify({ error: 'productId and stockTons required' }) };
+      }
+
+      // Check if product exists
+      const product = await productsCollection.findOne({ id: productId });
+      if (!product) {
+        return { statusCode: 404, headers, body: JSON.stringify({ error: 'Product not found' }) };
+      }
+
+      // Check if inventory record already exists
+      const existing = await inventoryCollection.findOne({ productId });
+      if (existing) {
+        return { statusCode: 400, headers, body: JSON.stringify({ error: 'Inventory record already exists. Use PUT to update.' }) };
+      }
+
+      const inventoryRecord = {
+        productId,
+        stockTons: parseFloat(stockTons),
+        lowStockThreshold: parseFloat(lowStockThreshold) || 50,
+        lastUpdated: new Date().toISOString(),
+        lastUpdatedBy: auth.user.username,
+        createdAt: new Date().toISOString()
+      };
+
+      await inventoryCollection.insertOne(inventoryRecord);
+
+      return {
+        statusCode: 201,
+        headers,
+        body: JSON.stringify({ success: true, inventory: inventoryRecord })
+      };
+    }
+
+    // PUT - Update inventory (owners, dispatch can update)
+    if (event.httpMethod === 'PUT') {
+      const auth = verifyToken(event.headers.authorization, ['owner', 'dispatch', 'dispatcher']);
+      if (!auth.valid) {
+        return { statusCode: 401, headers, body: JSON.stringify({ error: auth.error }) };
+      }
+
+      const { productId, stockTons, adjustment, lowStockThreshold, reason } = JSON.parse(event.body);
+
+      if (!productId) {
+        return { statusCode: 400, headers, body: JSON.stringify({ error: 'productId required' }) };
+      }
+
+      const existing = await inventoryCollection.findOne({ productId });
+      if (!existing) {
+        return { statusCode: 404, headers, body: JSON.stringify({ error: 'Inventory record not found' }) };
+      }
+
+      const updateFields = {
+        lastUpdated: new Date().toISOString(),
+        lastUpdatedBy: auth.user.username
+      };
+
+      // Either set absolute value or adjust
+      if (stockTons !== undefined) {
+        updateFields.stockTons = parseFloat(stockTons);
+      } else if (adjustment !== undefined) {
+        updateFields.stockTons = existing.stockTons + parseFloat(adjustment);
+      }
+
+      if (lowStockThreshold !== undefined) {
+        updateFields.lowStockThreshold = parseFloat(lowStockThreshold);
+      }
+
+      // Log the adjustment for audit trail
+      const adjustmentLog = {
+        productId,
+        previousTons: existing.stockTons,
+        newTons: updateFields.stockTons,
+        adjustment: adjustment || (updateFields.stockTons - existing.stockTons),
+        reason: reason || 'Manual adjustment',
+        updatedBy: auth.user.username,
+        timestamp: new Date().toISOString()
+      };
+
+      await inventoryCollection.updateOne({ productId }, { $set: updateFields });
+      
+      // Optional: Log to separate audit collection
+      const auditCollection = db.collection('inventory_audit');
+      await auditCollection.insertOne(adjustmentLog);
+
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ success: true, updated: updateFields, audit: adjustmentLog })
+      };
+    }
+
+    // DELETE - Remove inventory record (owners only)
+    if (event.httpMethod === 'DELETE') {
+      const auth = verifyToken(event.headers.authorization, ['owner']);
+      if (!auth.valid) {
+        return { statusCode: 401, headers, body: JSON.stringify({ error: auth.error }) };
+      }
+
+      const { productId } = JSON.parse(event.body);
+
+      if (!productId) {
+        return { statusCode: 400, headers, body: JSON.stringify({ error: 'productId required' }) };
+      }
+
+      const result = await inventoryCollection.deleteOne({ productId });
+
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ success: true, deleted: result.deletedCount })
+      };
+    }
+
+    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
 
   } catch (error) {
     console.error('Inventory API error:', error);
@@ -106,5 +231,7 @@ exports.handler = async (event, context) => {
       headers,
       body: JSON.stringify({ error: 'Internal server error', details: error.message })
     };
+  } finally {
+    await client.close();
   }
 };
