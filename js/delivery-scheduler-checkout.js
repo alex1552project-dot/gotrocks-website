@@ -433,6 +433,13 @@ function updateDeliverySelection() {
     continueBtn.textContent = 'Continue to Payment →';
   }
   
+  // Get precision window label if selected
+  let precisionWindowLabel = '';
+  if (selectedPrecisionWindow && slot?.precisionWindows) {
+    const pw = slot.precisionWindows.find(w => w.id === selectedPrecisionWindow);
+    precisionWindowLabel = pw?.label || '';
+  }
+  
   // Store in window for checkout to access
   window.selectedDelivery = {
     date: selectedDate,
@@ -440,6 +447,7 @@ function updateDeliverySelection() {
     slotLabel: slot?.label || '',
     window: slot ? `${formatSchedulerTime(slot.start)} - ${formatSchedulerTime(slot.end)}` : '',
     precisionWindowId: selectedPrecisionWindow,
+    precisionWindowLabel: precisionWindowLabel,
     precisionDelivery: !!selectedPrecisionWindow,
     precisionFee: selectedPrecisionWindow ? PRECISION_DELIVERY_FEE : 0
   };
