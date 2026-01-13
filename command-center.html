@@ -90,10 +90,7 @@
       align-items: center;
       margin-bottom: 16px;
     }
-    .stats-title {
-      font-size: 18px;
-      color: rgba(255,255,255,0.9);
-    }
+    .stats-title { font-size: 18px; color: rgba(255,255,255,0.9); }
     .stats-period {
       font-size: 12px;
       color: rgba(255,255,255,0.5);
@@ -128,10 +125,7 @@
     .stat-card.deliveries::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
     .stat-card.trucks::before { background: linear-gradient(90deg, #ec4899, #f472b6); }
     .stat-card.customers::before { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
-    .stat-icon {
-      font-size: 24px;
-      margin-bottom: 12px;
-    }
+    .stat-icon { font-size: 24px; margin-bottom: 12px; }
     .stat-label { 
       font-size: 12px; 
       color: rgba(255, 255, 255, 0.5); 
@@ -146,22 +140,9 @@
     .stat-value.deliveries { color: #8b5cf6; }
     .stat-value.trucks { color: #ec4899; }
     .stat-value.customers { color: #06b6d4; }
-    .stat-subtext {
-      font-size: 11px;
-      color: rgba(255,255,255,0.4);
-      margin-top: 4px;
-    }
-    .stat-empty {
-      font-size: 11px;
-      color: rgba(255,255,255,0.3);
-      font-style: italic;
-    }
+    .stat-subtext { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 4px; }
 
-    .section-title {
-      font-size: 18px;
-      margin-bottom: 16px;
-      color: rgba(255,255,255,0.9);
-    }
+    .section-title { font-size: 18px; margin-bottom: 16px; color: rgba(255,255,255,0.9); }
     .quick-links {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -193,6 +174,9 @@
       font-size: 20px;
     }
     .quick-link-icon.admin { background: rgba(139, 92, 246, 0.2); }
+    .quick-link-icon.inventory { background: rgba(245, 158, 11, 0.2); }
+    .quick-link-icon.pricing { background: rgba(16, 185, 129, 0.2); }
+    .quick-link-icon.ai { background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.3)); }
     .quick-link-text h3 { font-size: 15px; margin-bottom: 4px; }
     .quick-link-text p { font-size: 12px; color: rgba(255, 255, 255, 0.5); }
 
@@ -247,29 +231,36 @@
       border: 1px solid rgba(16, 185, 129, 0.3);
     }
     .btn-success:hover { background: rgba(16, 185, 129, 0.3); }
+    .btn-ai {
+      background: linear-gradient(135deg, #8b5cf6, #ec4899);
+      color: #fff;
+      border: none;
+    }
+    .btn-ai:hover { opacity: 0.9; transform: translateY(-1px); }
     .btn-sm { padding: 6px 12px; font-size: 12px; }
 
-    /* Users Table */
-    .users-table {
+    /* Tables */
+    .data-table {
       width: 100%;
       border-collapse: collapse;
     }
-    .users-table th,
-    .users-table td {
+    .data-table th,
+    .data-table td {
       padding: 12px 16px;
       text-align: left;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
-    .users-table th {
+    .data-table th {
       font-size: 12px;
       font-weight: 600;
       color: rgba(255, 255, 255, 0.5);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    .users-table td { font-size: 14px; }
-    .users-table tr:hover { background: rgba(255, 255, 255, 0.02); }
-    .role-badge {
+    .data-table td { font-size: 14px; }
+    .data-table tr:hover { background: rgba(255, 255, 255, 0.02); }
+    
+    .role-badge, .status-badge {
       display: inline-block;
       padding: 4px 10px;
       border-radius: 20px;
@@ -284,15 +275,10 @@
     .role-badge.admin { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
     .role-badge.dispatcher { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
     .role-badge.yard { background: rgba(6, 182, 212, 0.2); color: #22d3ee; }
-    .status-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 600;
-    }
-    .status-badge.active { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .status-badge.active, .status-badge.ok { background: rgba(16, 185, 129, 0.2); color: #34d399; }
     .status-badge.inactive { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .status-badge.low { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    .status-badge.critical { background: rgba(239, 68, 68, 0.2); color: #f87171; }
     .action-btns { display: flex; gap: 8px; }
 
     /* Modal Styles */
@@ -401,12 +387,116 @@
       color: rgba(255, 255, 255, 0.5);
     }
 
+    /* AI Suggestions Box */
+    .ai-suggestions-box {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+      display: none;
+    }
+    .ai-suggestions-box.active { display: block; }
+    .ai-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .ai-header h3 { font-size: 16px; display: flex; align-items: center; gap: 8px; }
+    .ai-content {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      padding: 16px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .ai-content h4 { color: #a78bfa; margin: 16px 0 8px 0; font-size: 14px; }
+    .ai-content h4:first-child { margin-top: 0; }
+    .ai-content ul { margin: 0; padding-left: 20px; }
+    .ai-content li { margin-bottom: 6px; font-size: 13px; color: rgba(255,255,255,0.8); }
+    .ai-content p { font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.5; }
+    .ai-alert {
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .ai-alert.high { background: rgba(239, 68, 68, 0.2); border-left: 3px solid #f87171; }
+    .ai-alert.medium { background: rgba(245, 158, 11, 0.2); border-left: 3px solid #fbbf24; }
+    .ai-alert.low { background: rgba(59, 130, 246, 0.2); border-left: 3px solid #60a5fa; }
+
+    /* Config Cards */
+    .config-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .config-card {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .config-card h3 { font-size: 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .config-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+    .config-row label { flex: 1; font-size: 13px; color: rgba(255,255,255,0.7); }
+    .config-input {
+      width: 100px;
+      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      font-size: 14px;
+      color: #fff;
+      text-align: right;
+    }
+    .config-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+    .config-suffix { font-size: 13px; color: rgba(255,255,255,0.5); width: 30px; }
+
+    /* Low Stock Alerts */
+    .low-stock-alerts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .low-stock-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .low-stock-badge.warning {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .low-stock-badge.critical {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
-      .users-table { display: block; overflow-x: auto; }
+      .data-table { display: block; overflow-x: auto; }
       .admin-header { flex-direction: column; align-items: flex-start; }
       .action-btns { flex-direction: column; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .config-cards { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -510,22 +600,28 @@
           <div class="quick-link-icon">📱</div>
           <div class="quick-link-text"><h3>Driver App</h3><p>View driver interface</p></div>
         </a>
-        <div class="quick-link" onclick="toggleAdminPanel()">
+        <div class="quick-link" onclick="togglePanel('teamPanel')">
           <div class="quick-link-icon admin">👥</div>
           <div class="quick-link-text"><h3>Manage Team</h3><p>Add & manage users</p></div>
         </div>
+        <div class="quick-link" onclick="togglePanel('inventoryPanel')">
+          <div class="quick-link-icon inventory">📦</div>
+          <div class="quick-link-text"><h3>Inventory</h3><p>Stock levels & alerts</p></div>
+        </div>
+        <div class="quick-link" onclick="togglePanel('pricingPanel')">
+          <div class="quick-link-icon pricing">💲</div>
+          <div class="quick-link-text"><h3>Pricing</h3><p>Material & trucking rates</p></div>
+        </div>
       </div>
 
-      <!-- Admin Panel -->
-      <div class="admin-panel" id="adminPanel">
+      <!-- Team Management Panel -->
+      <div class="admin-panel" id="teamPanel">
         <div class="admin-header">
           <h2>👥 Team Management</h2>
           <button class="btn btn-primary" onclick="openAddUserModal()">+ Add User</button>
         </div>
-        
         <div id="adminAlert"></div>
-
-        <table class="users-table">
+        <table class="data-table">
           <thead>
             <tr>
               <th>Name</th>
@@ -536,9 +632,127 @@
             </tr>
           </thead>
           <tbody id="usersTableBody">
-            <tr class="loading-row">
-              <td colspan="5">Loading users...</td>
+            <tr class="loading-row"><td colspan="5">Loading users...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Inventory Management Panel -->
+      <div class="admin-panel" id="inventoryPanel">
+        <div class="admin-header">
+          <h2>📦 Inventory Management</h2>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-ai" onclick="getAISuggestions('inventory')">🤖 AI Suggestions</button>
+            <button class="btn btn-secondary" onclick="loadInventory()">↻ Refresh</button>
+          </div>
+        </div>
+        
+        <div class="ai-suggestions-box" id="inventoryAI">
+          <div class="ai-header">
+            <h3>🤖 AI Inventory Analysis</h3>
+            <button class="btn btn-sm btn-secondary" onclick="closeAI('inventoryAI')">✕</button>
+          </div>
+          <div class="ai-content" id="inventoryAIContent">Loading...</div>
+        </div>
+
+        <div class="low-stock-alerts" id="lowStockAlerts"></div>
+        
+        <div id="inventoryAlert"></div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Material</th>
+              <th>Category</th>
+              <th>Stock (Tons)</th>
+              <th>≈ Yards</th>
+              <th>Reorder Point</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
+          </thead>
+          <tbody id="inventoryTableBody">
+            <tr class="loading-row"><td colspan="7">Loading inventory...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pricing Management Panel -->
+      <div class="admin-panel" id="pricingPanel">
+        <div class="admin-header">
+          <h2>💲 Pricing Management</h2>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-ai" onclick="getAISuggestions('pricing')">🤖 AI Suggestions</button>
+            <button class="btn btn-secondary" onclick="loadPricing()">↻ Refresh</button>
+          </div>
+        </div>
+
+        <div class="ai-suggestions-box" id="pricingAI">
+          <div class="ai-header">
+            <h3>🤖 AI Pricing Analysis</h3>
+            <button class="btn btn-sm btn-secondary" onclick="closeAI('pricingAI')">✕</button>
+          </div>
+          <div class="ai-content" id="pricingAIContent">Loading...</div>
+        </div>
+
+        <div class="config-cards">
+          <div class="config-card">
+            <h3>🚛 Trucking Rates</h3>
+            <div class="config-row">
+              <label>Tandem (per hr):</label>
+              <span class="config-suffix">$</span>
+              <input type="number" class="config-input" id="tandemRate" value="100">
+            </div>
+            <div class="config-row">
+              <label>End Dump (per hr):</label>
+              <span class="config-suffix">$</span>
+              <input type="number" class="config-input" id="endDumpRate" value="130">
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="saveTruckingRates()" style="margin-top: 8px;">Save Rates</button>
+          </div>
+          <div class="config-card">
+            <h3>📊 Margins</h3>
+            <div class="config-row">
+              <label>Small (2-2.99 yds):</label>
+              <input type="number" class="config-input" id="marginSmall" value="30">
+              <span class="config-suffix">%</span>
+            </div>
+            <div class="config-row">
+              <label>Standard (3+ yds):</label>
+              <input type="number" class="config-input" id="marginStandard" value="20">
+              <span class="config-suffix">%</span>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="saveMargins()" style="margin-top: 8px;">Save Margins</button>
+          </div>
+          <div class="config-card">
+            <h3>📏 Minimums</h3>
+            <div class="config-row">
+              <label>Min Order (yds):</label>
+              <input type="number" class="config-input" id="minYards" value="2" step="0.5">
+              <span class="config-suffix">yds</span>
+            </div>
+            <div class="config-row">
+              <label>Fuel Surcharge:</label>
+              <span class="config-suffix">$</span>
+              <input type="number" class="config-input" id="fuelSurcharge" value="0">
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="saveMinimums()" style="margin-top: 8px;">Save</button>
+          </div>
+        </div>
+
+        <h3 style="margin-bottom: 16px;">Material Prices</h3>
+        <div id="pricingAlert"></div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Material</th>
+              <th>Category</th>
+              <th>Price/Yard</th>
+              <th>Weight (tons/yd)</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="pricingTableBody">
+            <tr class="loading-row"><td colspan="5">Loading pricing...</td></tr>
           </tbody>
         </table>
       </div>
@@ -556,24 +770,20 @@
         <div id="modalAlert"></div>
         <form id="userForm">
           <input type="hidden" id="editUserId">
-          
           <div class="form-group">
             <label for="inputName">Full Name</label>
             <input type="text" id="inputName" placeholder="e.g., John Smith" required>
           </div>
-
           <div class="form-group">
             <label for="inputUsername">Username</label>
             <input type="text" id="inputUsername" placeholder="e.g., john" required>
             <small>Used for login. Letters and numbers only.</small>
           </div>
-
           <div class="form-group">
             <label for="inputPassword">Password</label>
             <input type="password" id="inputPassword" placeholder="Enter password">
             <small id="passwordHint">Minimum 6 characters</small>
           </div>
-
           <div class="form-group">
             <label for="inputRole">Role</label>
             <select id="inputRole" required>
@@ -613,12 +823,96 @@
     </div>
   </div>
 
+  <!-- Adjust Inventory Modal -->
+  <div class="modal-overlay" id="inventoryModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Adjust Inventory</h3>
+        <button class="modal-close" onclick="closeInventoryModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="inventoryModalAlert"></div>
+        <form id="inventoryForm">
+          <input type="hidden" id="adjustProductId">
+          <div class="form-group">
+            <label>Material</label>
+            <p id="adjustProductName" style="font-size: 16px; font-weight: 600;"></p>
+          </div>
+          <div class="form-group">
+            <label>Current Stock</label>
+            <p id="adjustCurrentStock" style="font-size: 16px;"></p>
+          </div>
+          <div class="form-group">
+            <label for="adjustType">Adjustment Type</label>
+            <select id="adjustType" onchange="toggleAdjustFields()">
+              <option value="add">Add Stock (Delivery Received)</option>
+              <option value="subtract">Subtract Stock (Correction)</option>
+              <option value="set">Set Exact Amount</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="adjustAmount">Amount (Tons)</label>
+            <input type="number" id="adjustAmount" step="0.1" min="0" required>
+          </div>
+          <div class="form-group">
+            <label for="adjustReason">Reason</label>
+            <input type="text" id="adjustReason" placeholder="e.g., Supplier delivery, Inventory count">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeInventoryModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveInventoryAdjustment()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Price Modal -->
+  <div class="modal-overlay" id="priceModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Edit Price</h3>
+        <button class="modal-close" onclick="closePriceModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="priceModalAlert"></div>
+        <form id="priceForm">
+          <input type="hidden" id="editPriceProductId">
+          <div class="form-group">
+            <label>Material</label>
+            <p id="editPriceProductName" style="font-size: 16px; font-weight: 600;"></p>
+          </div>
+          <div class="form-group">
+            <label for="editPrice">Price per Yard ($)</label>
+            <input type="number" id="editPrice" step="0.01" min="0" required>
+          </div>
+          <div class="form-group">
+            <label for="editWeight">Weight (tons per yard)</label>
+            <input type="number" id="editWeight" step="0.01" min="0" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closePriceModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="savePrice()">Save</button>
+      </div>
+    </div>
+  </div>
+
   <script src="/js/auth.js" data-required-roles="owner"></script>
   <script>
+    // ==========================================
+    // GLOBALS
+    // ==========================================
     let currentUsers = [];
+    let currentInventory = [];
+    let currentPricing = [];
+    let pricingConfig = null;
     let deleteUserId = null;
 
-    // Initialize on auth
+    // ==========================================
+    // AUTH & INIT
+    // ==========================================
     window.addEventListener('tgr:authenticated', (e) => {
       const user = e.detail.user;
       document.getElementById('userAvatar').textContent = user.name.split(' ').map(n => n[0]).join('');
@@ -628,21 +922,32 @@
       loadDashboardData();
     });
 
+    function getToken() {
+      return localStorage.getItem('tgr_token');
+    }
+
+    function authHeaders() {
+      return {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getToken()}`
+      };
+    }
+
+    // ==========================================
+    // DASHBOARD DATA
+    // ==========================================
     async function loadDashboardData() {
       try {
-        // Load TGR Orders (sales data)
         const ordersRes = await fetch('/.netlify/functions/tgr-orders?period=today')
           .then(r => r.ok ? r.json() : { orders: [], totals: { revenue: 0, count: 0, volume: 0, deliveries: 0 } })
           .catch(() => ({ orders: [], totals: { revenue: 0, count: 0, volume: 0, deliveries: 0 } }));
         
-        // Update TGR Sales stats
         const totals = ordersRes.totals || { revenue: 0, count: 0, volume: 0, deliveries: 0 };
         document.getElementById('statRevenue').textContent = '$' + totals.revenue.toLocaleString();
         document.getElementById('statOrders').textContent = totals.count;
         document.getElementById('statVolume').textContent = totals.volume;
         document.getElementById('statDeliveries').textContent = totals.deliveries;
         
-        // Update subtexts based on data
         if (totals.count > 0) {
           document.getElementById('revenueSubtext').textContent = `From ${totals.count} order${totals.count > 1 ? 's' : ''}`;
           document.getElementById('ordersSubtext').textContent = 'Online orders today';
@@ -651,7 +956,6 @@
           document.getElementById('ordersSubtext').textContent = 'No orders yet today';
         }
 
-        // Load Operations data
         const [trucksRes, customersRes] = await Promise.all([
           fetch('/.netlify/functions/trucks').then(r => r.json()).catch(() => []),
           fetch('/.netlify/functions/customers').then(r => r.json()).catch(() => [])
@@ -659,49 +963,53 @@
         
         document.getElementById('statTrucks').textContent = trucksRes.length || 0;
         document.getElementById('statCustomers').textContent = customersRes.length || 0;
-        
       } catch (error) { 
         console.error('Failed to load dashboard data:', error); 
       }
     }
 
-    // Admin Panel Functions
-    function toggleAdminPanel() {
-      const panel = document.getElementById('adminPanel');
-      panel.classList.toggle('active');
-      if (panel.classList.contains('active')) {
-        loadUsers();
+    // ==========================================
+    // PANEL TOGGLE
+    // ==========================================
+    function togglePanel(panelId) {
+      const panel = document.getElementById(panelId);
+      const isActive = panel.classList.contains('active');
+      
+      // Close all panels
+      document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+      
+      // Open clicked panel if it wasn't active
+      if (!isActive) {
+        panel.classList.add('active');
+        if (panelId === 'teamPanel') loadUsers();
+        if (panelId === 'inventoryPanel') loadInventory();
+        if (panelId === 'pricingPanel') loadPricing();
       }
     }
 
+    // ==========================================
+    // TEAM MANAGEMENT
+    // ==========================================
     async function loadUsers() {
       const tbody = document.getElementById('usersTableBody');
       tbody.innerHTML = '<tr class="loading-row"><td colspan="5">Loading users...</td></tr>';
 
       try {
-        const token = localStorage.getItem('tgr_token');
-        const response = await fetch('/.netlify/functions/auth-users', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-
+        const response = await fetch('/.netlify/functions/auth-users', { headers: authHeaders() });
         if (!response.ok) throw new Error('Failed to load users');
-
         currentUsers = await response.json();
         renderUsersTable();
       } catch (error) {
-        tbody.innerHTML = '<tr class="loading-row"><td colspan="5">Failed to load users. Please try again.</td></tr>';
-        console.error('Load users error:', error);
+        tbody.innerHTML = '<tr class="loading-row"><td colspan="5">Failed to load users.</td></tr>';
       }
     }
 
     function renderUsersTable() {
       const tbody = document.getElementById('usersTableBody');
-      
       if (currentUsers.length === 0) {
         tbody.innerHTML = '<tr class="loading-row"><td colspan="5">No users found.</td></tr>';
         return;
       }
-
       tbody.innerHTML = currentUsers.map(user => `
         <tr>
           <td><strong>${escapeHtml(user.name)}</strong></td>
@@ -713,8 +1021,7 @@
               <button class="btn btn-secondary btn-sm" onclick="openEditUserModal('${user._id}')">Edit</button>
               ${user.active 
                 ? `<button class="btn btn-danger btn-sm" onclick="openDeleteModal('${user._id}', '${escapeHtml(user.name)}')">Deactivate</button>`
-                : `<button class="btn btn-success btn-sm" onclick="reactivateUser('${user._id}')">Activate</button>`
-              }
+                : `<button class="btn btn-success btn-sm" onclick="reactivateUser('${user._id}')">Activate</button>`}
             </div>
           </td>
         </tr>
@@ -727,7 +1034,6 @@
       return div.innerHTML;
     }
 
-    // Modal Functions
     function openAddUserModal() {
       document.getElementById('modalTitle').textContent = 'Add New User';
       document.getElementById('saveUserBtn').textContent = 'Add User';
@@ -746,7 +1052,6 @@
     function openEditUserModal(userId) {
       const user = currentUsers.find(u => u._id === userId);
       if (!user) return;
-
       document.getElementById('modalTitle').textContent = 'Edit User';
       document.getElementById('saveUserBtn').textContent = 'Save Changes';
       document.getElementById('editUserId').value = userId;
@@ -761,9 +1066,7 @@
       document.getElementById('userModal').classList.add('active');
     }
 
-    function closeUserModal() {
-      document.getElementById('userModal').classList.remove('active');
-    }
+    function closeUserModal() { document.getElementById('userModal').classList.remove('active'); }
 
     async function saveUser() {
       const userId = document.getElementById('editUserId').value;
@@ -773,22 +1076,18 @@
       const role = document.getElementById('inputRole').value;
       const modalAlert = document.getElementById('modalAlert');
 
-      // Validation
       if (!name || !role) {
         modalAlert.innerHTML = '<div class="alert alert-error">Please fill in all required fields.</div>';
         return;
       }
-
       if (!userId && !username) {
         modalAlert.innerHTML = '<div class="alert alert-error">Username is required.</div>';
         return;
       }
-
       if (!userId && password.length < 6) {
         modalAlert.innerHTML = '<div class="alert alert-error">Password must be at least 6 characters.</div>';
         return;
       }
-
       if (userId && password && password.length < 6) {
         modalAlert.innerHTML = '<div class="alert alert-error">Password must be at least 6 characters.</div>';
         return;
@@ -799,32 +1098,23 @@
       btn.textContent = 'Saving...';
 
       try {
-        const token = localStorage.getItem('tgr_token');
         const isEdit = !!userId;
-
         const body = isEdit 
           ? { userId, name, role, ...(password && { newPassword: password }) }
           : { username, password, name, role };
 
         const response = await fetch('/.netlify/functions/auth-users', {
           method: isEdit ? 'PUT' : 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
+          headers: authHeaders(),
           body: JSON.stringify(body)
         });
 
         const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to save user');
-        }
+        if (!response.ok) throw new Error(data.error || 'Failed to save user');
 
         closeUserModal();
-        showAdminAlert('success', isEdit ? 'User updated successfully!' : 'User created successfully!');
+        showAlert('adminAlert', 'success', isEdit ? 'User updated!' : 'User created!');
         loadUsers();
-
       } catch (error) {
         modalAlert.innerHTML = `<div class="alert alert-error">${escapeHtml(error.message)}</div>`;
       } finally {
@@ -833,7 +1123,6 @@
       }
     }
 
-    // Delete Functions
     function openDeleteModal(userId, userName) {
       deleteUserId = userId;
       document.getElementById('deleteUserName').textContent = userName;
@@ -847,33 +1136,23 @@
 
     async function confirmDelete() {
       if (!deleteUserId) return;
-
       const btn = document.getElementById('confirmDeleteBtn');
       btn.disabled = true;
       btn.textContent = 'Deactivating...';
 
       try {
-        const token = localStorage.getItem('tgr_token');
         const response = await fetch('/.netlify/functions/auth-users', {
           method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
+          headers: authHeaders(),
           body: JSON.stringify({ userId: deleteUserId })
         });
-
-        if (!response.ok) {
-          const data = await response.json();
-          throw new Error(data.error || 'Failed to deactivate user');
-        }
+        if (!response.ok) throw new Error('Failed to deactivate user');
 
         closeDeleteModal();
-        showAdminAlert('success', 'User deactivated successfully.');
+        showAlert('adminAlert', 'success', 'User deactivated.');
         loadUsers();
-
       } catch (error) {
-        showAdminAlert('error', error.message);
+        showAlert('adminAlert', 'error', error.message);
       } finally {
         btn.disabled = false;
         btn.textContent = 'Deactivate';
@@ -882,33 +1161,329 @@
 
     async function reactivateUser(userId) {
       try {
-        const token = localStorage.getItem('tgr_token');
         const response = await fetch('/.netlify/functions/auth-users', {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
+          headers: authHeaders(),
           body: JSON.stringify({ userId, active: true })
         });
-
-        if (!response.ok) {
-          const data = await response.json();
-          throw new Error(data.error || 'Failed to reactivate user');
-        }
-
-        showAdminAlert('success', 'User reactivated successfully!');
+        if (!response.ok) throw new Error('Failed to reactivate user');
+        showAlert('adminAlert', 'success', 'User reactivated!');
         loadUsers();
-
       } catch (error) {
-        showAdminAlert('error', error.message);
+        showAlert('adminAlert', 'error', error.message);
       }
     }
 
-    function showAdminAlert(type, message) {
-      const alertDiv = document.getElementById('adminAlert');
-      alertDiv.innerHTML = `<div class="alert alert-${type}">${escapeHtml(message)}</div>`;
-      setTimeout(() => { alertDiv.innerHTML = ''; }, 5000);
+    // ==========================================
+    // INVENTORY MANAGEMENT
+    // ==========================================
+    async function loadInventory() {
+      const tbody = document.getElementById('inventoryTableBody');
+      tbody.innerHTML = '<tr class="loading-row"><td colspan="7">Loading inventory...</td></tr>';
+
+      try {
+        const response = await fetch('/.netlify/functions/inventory', { headers: authHeaders() });
+        if (!response.ok) throw new Error('Failed to load inventory');
+        const data = await response.json();
+        currentInventory = data.inventory || [];
+        renderInventoryTable();
+        renderLowStockAlerts();
+      } catch (error) {
+        tbody.innerHTML = '<tr class="loading-row"><td colspan="7">Failed to load inventory.</td></tr>';
+      }
+    }
+
+    function renderInventoryTable() {
+      const tbody = document.getElementById('inventoryTableBody');
+      if (currentInventory.length === 0) {
+        tbody.innerHTML = '<tr class="loading-row"><td colspan="7">No inventory records.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = currentInventory.map(item => {
+        const status = item.stockTons < item.lowStockThreshold * 0.5 ? 'critical' : item.belowThreshold ? 'low' : 'ok';
+        const statusText = status === 'critical' ? 'Critical' : status === 'low' ? 'Low' : 'OK';
+        return `
+          <tr>
+            <td><strong>${escapeHtml(item.name || item.productName)}</strong></td>
+            <td>${escapeHtml(item.category || '-')}</td>
+            <td>${item.stockTons.toFixed(1)}</td>
+            <td>≈ ${item.stockYards.toFixed(1)}</td>
+            <td>${item.lowStockThreshold} tons</td>
+            <td><span class="status-badge ${status}">${statusText}</span></td>
+            <td>
+              <button class="btn btn-secondary btn-sm" onclick="openInventoryModal('${item.productId}')">Adjust</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderLowStockAlerts() {
+      const container = document.getElementById('lowStockAlerts');
+      const lowStock = currentInventory.filter(i => i.belowThreshold);
+      if (lowStock.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+      container.innerHTML = lowStock.map(item => {
+        const level = item.stockTons < item.lowStockThreshold * 0.5 ? 'critical' : 'warning';
+        return `<span class="low-stock-badge ${level}">⚠️ ${item.name || item.productName}: ${item.stockTons.toFixed(1)} tons</span>`;
+      }).join('');
+    }
+
+    function openInventoryModal(productId) {
+      const item = currentInventory.find(i => i.productId === productId);
+      if (!item) return;
+      document.getElementById('adjustProductId').value = productId;
+      document.getElementById('adjustProductName').textContent = item.name || item.productName;
+      document.getElementById('adjustCurrentStock').textContent = `${item.stockTons.toFixed(1)} tons (≈ ${item.stockYards.toFixed(1)} yards)`;
+      document.getElementById('adjustType').value = 'add';
+      document.getElementById('adjustAmount').value = '';
+      document.getElementById('adjustReason').value = '';
+      document.getElementById('inventoryModalAlert').innerHTML = '';
+      document.getElementById('inventoryModal').classList.add('active');
+    }
+
+    function closeInventoryModal() { document.getElementById('inventoryModal').classList.remove('active'); }
+
+    function toggleAdjustFields() {
+      const type = document.getElementById('adjustType').value;
+      document.querySelector('label[for="adjustAmount"]').textContent = type === 'set' ? 'New Stock Level (Tons)' : 'Amount (Tons)';
+    }
+
+    async function saveInventoryAdjustment() {
+      const productId = document.getElementById('adjustProductId').value;
+      const type = document.getElementById('adjustType').value;
+      const amount = parseFloat(document.getElementById('adjustAmount').value);
+      const reason = document.getElementById('adjustReason').value;
+
+      if (isNaN(amount) || amount < 0) {
+        document.getElementById('inventoryModalAlert').innerHTML = '<div class="alert alert-error">Please enter a valid amount.</div>';
+        return;
+      }
+
+      let body = { productId, reason };
+      if (type === 'set') body.stockTons = amount;
+      else if (type === 'add') body.adjustment = amount;
+      else body.adjustment = -amount;
+
+      try {
+        const response = await fetch('/.netlify/functions/inventory', {
+          method: 'PUT',
+          headers: authHeaders(),
+          body: JSON.stringify(body)
+        });
+        if (!response.ok) throw new Error('Failed to update inventory');
+        closeInventoryModal();
+        showAlert('inventoryAlert', 'success', 'Inventory updated!');
+        loadInventory();
+      } catch (error) {
+        document.getElementById('inventoryModalAlert').innerHTML = `<div class="alert alert-error">${error.message}</div>`;
+      }
+    }
+
+    // ==========================================
+    // PRICING MANAGEMENT
+    // ==========================================
+    async function loadPricing() {
+      const tbody = document.getElementById('pricingTableBody');
+      tbody.innerHTML = '<tr class="loading-row"><td colspan="5">Loading pricing...</td></tr>';
+
+      try {
+        const response = await fetch('/.netlify/functions/pricing', { headers: authHeaders() });
+        if (!response.ok) throw new Error('Failed to load pricing');
+        const data = await response.json();
+        currentPricing = data.products || [];
+        pricingConfig = data.config;
+        
+        // Populate config fields
+        if (pricingConfig) {
+          document.getElementById('tandemRate').value = pricingConfig.trucking?.tandemRate || 100;
+          document.getElementById('endDumpRate').value = pricingConfig.trucking?.endDumpRate || 130;
+          document.getElementById('marginSmall').value = (pricingConfig.margins?.small || 0.30) * 100;
+          document.getElementById('marginStandard').value = (pricingConfig.margins?.standard || 0.20) * 100;
+          document.getElementById('minYards').value = pricingConfig.minimums?.orderYards || 2;
+          document.getElementById('fuelSurcharge').value = pricingConfig.fees?.fuelSurcharge || 0;
+        }
+        
+        renderPricingTable();
+      } catch (error) {
+        tbody.innerHTML = '<tr class="loading-row"><td colspan="5">Failed to load pricing.</td></tr>';
+      }
+    }
+
+    function renderPricingTable() {
+      const tbody = document.getElementById('pricingTableBody');
+      if (currentPricing.length === 0) {
+        tbody.innerHTML = '<tr class="loading-row"><td colspan="5">No products found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = currentPricing.map(p => `
+        <tr>
+          <td><strong>${escapeHtml(p.name)}</strong></td>
+          <td>${escapeHtml(p.category)}</td>
+          <td>$${p.price.toFixed(2)}</td>
+          <td>${p.weight}</td>
+          <td>
+            <button class="btn btn-secondary btn-sm" onclick="openPriceModal('${p.id}')">Edit</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openPriceModal(productId) {
+      const product = currentPricing.find(p => p.id === productId);
+      if (!product) return;
+      document.getElementById('editPriceProductId').value = productId;
+      document.getElementById('editPriceProductName').textContent = product.name;
+      document.getElementById('editPrice').value = product.price;
+      document.getElementById('editWeight').value = product.weight;
+      document.getElementById('priceModalAlert').innerHTML = '';
+      document.getElementById('priceModal').classList.add('active');
+    }
+
+    function closePriceModal() { document.getElementById('priceModal').classList.remove('active'); }
+
+    async function savePrice() {
+      const productId = document.getElementById('editPriceProductId').value;
+      const price = parseFloat(document.getElementById('editPrice').value);
+      const weight = parseFloat(document.getElementById('editWeight').value);
+
+      try {
+        const response = await fetch('/.netlify/functions/pricing', {
+          method: 'PUT',
+          headers: authHeaders(),
+          body: JSON.stringify({ type: 'product', productId, updates: { price, weight } })
+        });
+        if (!response.ok) throw new Error('Failed to update price');
+        closePriceModal();
+        showAlert('pricingAlert', 'success', 'Price updated!');
+        loadPricing();
+      } catch (error) {
+        document.getElementById('priceModalAlert').innerHTML = `<div class="alert alert-error">${error.message}</div>`;
+      }
+    }
+
+    async function saveTruckingRates() {
+      const trucking = {
+        tandemRate: parseFloat(document.getElementById('tandemRate').value),
+        endDumpRate: parseFloat(document.getElementById('endDumpRate').value),
+        loadTime: pricingConfig?.trucking?.loadTime || 0.25,
+        avgSpeed: pricingConfig?.trucking?.avgSpeed || 35
+      };
+      await updatePricingConfig({ trucking });
+    }
+
+    async function saveMargins() {
+      const margins = {
+        small: parseFloat(document.getElementById('marginSmall').value) / 100,
+        standard: parseFloat(document.getElementById('marginStandard').value) / 100
+      };
+      await updatePricingConfig({ margins });
+    }
+
+    async function saveMinimums() {
+      const minimums = { orderYards: parseFloat(document.getElementById('minYards').value), orderDollars: 0 };
+      const fees = { smallOrderFee: 0, fuelSurcharge: parseFloat(document.getElementById('fuelSurcharge').value) };
+      await updatePricingConfig({ minimums, fees });
+    }
+
+    async function updatePricingConfig(updates) {
+      try {
+        const response = await fetch('/.netlify/functions/pricing', {
+          method: 'PUT',
+          headers: authHeaders(),
+          body: JSON.stringify({ type: 'config', updates })
+        });
+        if (!response.ok) throw new Error('Failed to save config');
+        showAlert('pricingAlert', 'success', 'Settings saved!');
+        loadPricing();
+      } catch (error) {
+        showAlert('pricingAlert', 'error', error.message);
+      }
+    }
+
+    // ==========================================
+    // AI SUGGESTIONS
+    // ==========================================
+    async function getAISuggestions(type) {
+      const boxId = type + 'AI';
+      const contentId = type + 'AIContent';
+      const box = document.getElementById(boxId);
+      const content = document.getElementById(contentId);
+      
+      box.classList.add('active');
+      content.innerHTML = '<p>🤖 Analyzing data...</p>';
+
+      try {
+        const response = await fetch('/.netlify/functions/ai-suggestions', {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify({ type })
+        });
+        if (!response.ok) throw new Error('Failed to get suggestions');
+        const data = await response.json();
+        renderAISuggestions(type, data.suggestions, contentId);
+      } catch (error) {
+        content.innerHTML = `<p>❌ ${error.message}</p><p style="font-size:12px; margin-top:8px;">Make sure ANTHROPIC_API_KEY is set in Netlify.</p>`;
+      }
+    }
+
+    function renderAISuggestions(type, suggestions, contentId) {
+      const content = document.getElementById(contentId);
+      let html = '';
+
+      if (type === 'inventory') {
+        if (suggestions.alerts?.length) {
+          html += '<h4>⚠️ Alerts</h4>';
+          html += suggestions.alerts.map(a => `<div class="ai-alert ${a.severity}">${a.product}: ${a.message}</div>`).join('');
+        }
+        if (suggestions.reorderSuggestions?.length) {
+          html += '<h4>📦 Reorder Suggestions</h4><ul>';
+          html += suggestions.reorderSuggestions.map(r => `<li><strong>${r.product}</strong>: Order ${r.suggestedOrder} tons (${r.reason})</li>`).join('');
+          html += '</ul>';
+        }
+        if (suggestions.demandInsights?.length) {
+          html += '<h4>📊 Demand Insights</h4><ul>';
+          html += suggestions.demandInsights.map(i => `<li>${i}</li>`).join('');
+          html += '</ul>';
+        }
+        html += `<h4>Summary</h4><p>${suggestions.summary || 'No summary.'}</p>`;
+      }
+
+      if (type === 'pricing') {
+        if (suggestions.priceAdjustments?.length) {
+          html += '<h4>💰 Price Suggestions</h4><ul>';
+          html += suggestions.priceAdjustments.map(p => `<li><strong>${p.product}</strong>: $${p.currentPrice} → $${p.suggestedPrice} (${p.reason})</li>`).join('');
+          html += '</ul>';
+        }
+        if (suggestions.marginInsights?.length) {
+          html += '<h4>📊 Margin Insights</h4><ul>';
+          html += suggestions.marginInsights.map(i => `<li>${i}</li>`).join('');
+          html += '</ul>';
+        }
+        if (suggestions.competitiveNotes?.length) {
+          html += '<h4>🏆 Competitive Notes</h4><ul>';
+          html += suggestions.competitiveNotes.map(n => `<li>${n}</li>`).join('');
+          html += '</ul>';
+        }
+        html += `<h4>Summary</h4><p>${suggestions.summary || 'No summary.'}</p>`;
+      }
+
+      content.innerHTML = html || '<p>No suggestions available.</p>';
+    }
+
+    function closeAI(boxId) {
+      document.getElementById(boxId).classList.remove('active');
+    }
+
+    // ==========================================
+    // UTILITIES
+    // ==========================================
+    function showAlert(containerId, type, message) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = `<div class="alert alert-${type}">${escapeHtml(message)}</div>`;
+      setTimeout(() => { container.innerHTML = ''; }, 5000);
     }
   </script>
 </body>
