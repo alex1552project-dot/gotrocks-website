@@ -229,7 +229,7 @@ function goToPaymentStep() {
             <div class="delivery-schedule-box">
                 <div class="delivery-date-display">
                     <strong>${dateStr}</strong>
-                    <span>${delivery.slotLabel} (${delivery.window})</span>
+                    <span>${delivery.precisionDelivery && delivery.precisionWindowLabel ? delivery.precisionWindowLabel : `${delivery.slotLabel} (${delivery.window})`}</span>
                 </div>
                 ${delivery.precisionDelivery ? `
                     <div class="precision-delivery-display">
