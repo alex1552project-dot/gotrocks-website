@@ -225,9 +225,15 @@ function renderDeliveryCalendar() {
   html += `
         </div>
         
-        <div class="calendar-legend">
-          <div class="legend-item"><div class="legend-dot available"></div> Available</div>
-          <div class="legend-item"><div class="legend-dot limited"></div> Limited</div>
+        <div style="display: flex; justify-content: center; gap: 32px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #e0e0e0;">
+          <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: #555;">
+            <div style="width: 12px; height: 12px; border-radius: 50%; background: #4A7C59;"></div>
+            <span>Available</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: #555;">
+            <div style="width: 12px; height: 12px; border-radius: 50%; background: #E9A23B;"></div>
+            <span>Limited</span>
+          </div>
         </div>
       </div>
       
