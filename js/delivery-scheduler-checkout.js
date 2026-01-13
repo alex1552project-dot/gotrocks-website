@@ -769,24 +769,26 @@ function injectSchedulerStyles() {
     
     .calendar-legend {
       display: flex;
-      gap: 16px;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid #eee;
-      font-size: 11px;
-      color: #888;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #e0e0e0;
+      font-size: 12px;
+      color: #666;
     }
     
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
     
     .legend-dot {
-      width: 6px;
-      height: 6px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
+      flex-shrink: 0;
     }
     
     .legend-dot.available { background: #4A7C59; }
