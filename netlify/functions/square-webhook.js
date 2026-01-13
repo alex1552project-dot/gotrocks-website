@@ -61,7 +61,7 @@ exports.handler = async (event) => {
     }
 
     await client.connect();
-    const db = client.db('txgotrocks');
+    const db = client.db('gotrocks');
     
     const orderRef = payment.reference_id || payment.note;
     
@@ -133,7 +133,8 @@ exports.handler = async (event) => {
       console.error('No inventory record for product:', product.id);
     }
 
-    const previousStock = currentInventory?.stockTons || 0;
+    // Use 'quantity' field (your existing field name)
+    const previousStock = currentInventory?.quantity || 0;
     const newStock = previousStock - tonsToDeduct;
 
     if (currentInventory) {
@@ -141,9 +142,8 @@ exports.handler = async (event) => {
         { productId: product.id },
         { 
           $set: { 
-            stockTons: newStock,
-            lastUpdated: new Date().toISOString(),
-            lastUpdatedBy: 'square-webhook'
+            quantity: newStock,
+            updatedAt: new Date().toISOString()
           }
         }
       );
@@ -162,8 +162,9 @@ exports.handler = async (event) => {
 
       console.log(`Inventory updated: ${product.name} ${previousStock} → ${newStock} tons`);
 
-      if (currentInventory.lowStockThreshold && newStock < currentInventory.lowStockThreshold) {
-        console.log(`LOW STOCK ALERT: ${product.name} is below threshold (${newStock} < ${currentInventory.lowStockThreshold})`);
+      // Use 'reorderPoint' field (your existing field name)
+      if (currentInventory.reorderPoint && newStock < currentInventory.reorderPoint) {
+        console.log(`LOW STOCK ALERT: ${product.name} is below threshold (${newStock} < ${currentInventory.reorderPoint})`);
       }
     }
 
