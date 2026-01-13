@@ -104,7 +104,7 @@ function buildEmailHTML(order) {
   <div style="background: #eff6ff; border: 1px solid #3b82f6; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
     <h3 style="margin: 0 0 10px 0; color: #1e40af;">📞 Questions?</h3>
     <p style="margin: 0;">Call us at <a href="tel:9365551234" style="color: #3b82f6;">(936) 555-1234</a></p>
-    <p style="margin: 5px 0 0 0;">Email: <a href="mailto:orders@texasgotrocks.com" style="color: #3b82f6;">orders@texasgotrocks.com</a></p>
+    <p style="margin: 5px 0 0 0;">Email: <a href="mailto:info@texasgotrocks.com" style="color: #3b82f6;">info@texasgotrocks.com</a></p>
   </div>
 
   <div style="text-align: center; color: #666; font-size: 12px; margin-top: 30px;">
@@ -141,7 +141,7 @@ async function sendEmail(order) {
     body: JSON.stringify({
       sender: { 
         name: 'Texas Got Rocks', 
-        email: 'orders@texasgotrocks.com' 
+        email: 'info@texasgotrocks.com' 
       },
       to: [{ 
         email: order.email, 
