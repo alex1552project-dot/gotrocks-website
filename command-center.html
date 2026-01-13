@@ -670,15 +670,16 @@
             <tr>
               <th>Material</th>
               <th>Category</th>
-              <th>Stock (Tons)</th>
-              <th>≈ Yards</th>
-              <th>Reorder Point</th>
+              <th>Physical</th>
+              <th>Committed</th>
+              <th>Available</th>
+              <th>Reorder</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody id="inventoryTableBody">
-            <tr class="loading-row"><td colspan="7">Loading inventory...</td></tr>
+            <tr class="loading-row"><td colspan="8">Loading inventory...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1193,7 +1194,7 @@
     // ==========================================
     async function loadInventory() {
       const tbody = document.getElementById('inventoryTableBody');
-      tbody.innerHTML = '<tr class="loading-row"><td colspan="7">Loading inventory...</td></tr>';
+      tbody.innerHTML = '<tr class="loading-row"><td colspan="8">Loading inventory...</td></tr>';
 
       try {
         const response = await fetch('/.netlify/functions/inventory', { headers: authHeaders() });
@@ -1203,25 +1204,28 @@
         renderInventoryTable();
         renderLowStockAlerts();
       } catch (error) {
-        tbody.innerHTML = '<tr class="loading-row"><td colspan="7">Failed to load inventory.</td></tr>';
+        tbody.innerHTML = '<tr class="loading-row"><td colspan="8">Failed to load inventory.</td></tr>';
       }
     }
 
     function renderInventoryTable() {
       const tbody = document.getElementById('inventoryTableBody');
       if (currentInventory.length === 0) {
-        tbody.innerHTML = '<tr class="loading-row"><td colspan="7">No inventory records.</td></tr>';
+        tbody.innerHTML = '<tr class="loading-row"><td colspan="8">No inventory records.</td></tr>';
         return;
       }
       tbody.innerHTML = currentInventory.map(item => {
-        const status = item.stockTons < item.lowStockThreshold * 0.5 ? 'critical' : item.belowThreshold ? 'low' : 'ok';
+        const availableTons = item.availableTons !== undefined ? item.availableTons : item.stockTons;
+        const status = availableTons < item.lowStockThreshold * 0.5 ? 'critical' : item.belowThreshold ? 'low' : 'ok';
         const statusText = status === 'critical' ? 'Critical' : status === 'low' ? 'Low' : 'OK';
+        const committedTons = item.committedTons || 0;
         return `
           <tr>
             <td><strong>${escapeHtml(item.name || item.productName)}</strong></td>
             <td>${escapeHtml(item.category || '-')}</td>
-            <td>${item.stockTons.toFixed(1)}</td>
-            <td>≈ ${item.stockYards.toFixed(1)}</td>
+            <td>${item.stockTons.toFixed(1)} tons<br><small style="color:rgba(255,255,255,0.5)">≈ ${item.stockYards.toFixed(1)} yds</small></td>
+            <td style="color: ${committedTons > 0 ? '#fbbf24' : 'rgba(255,255,255,0.5)'}">${committedTons.toFixed(1)} tons${item.committedOrders ? `<br><small>${item.committedOrders} order${item.committedOrders > 1 ? 's' : ''}</small>` : ''}</td>
+            <td style="color: #34d399; font-weight: 600;">${availableTons.toFixed(1)} tons<br><small style="color:rgba(255,255,255,0.5)">≈ ${(item.availableYards || item.stockYards).toFixed(1)} yds</small></td>
             <td>${item.lowStockThreshold} tons</td>
             <td><span class="status-badge ${status}">${statusText}</span></td>
             <td>
@@ -1240,8 +1244,9 @@
         return;
       }
       container.innerHTML = lowStock.map(item => {
-        const level = item.stockTons < item.lowStockThreshold * 0.5 ? 'critical' : 'warning';
-        return `<span class="low-stock-badge ${level}">⚠️ ${item.name || item.productName}: ${item.stockTons.toFixed(1)} tons</span>`;
+        const availableTons = item.availableTons !== undefined ? item.availableTons : item.stockTons;
+        const level = availableTons < item.lowStockThreshold * 0.5 ? 'critical' : 'warning';
+        return `<span class="low-stock-badge ${level}">⚠️ ${item.name || item.productName}: ${availableTons.toFixed(1)} tons available</span>`;
       }).join('');
     }
 
