@@ -179,6 +179,16 @@ function goToPaymentStep() {
         return;
     }
     
+    // Get customer info from form
+    const customerInfo = {
+        name: document.getElementById('checkoutName')?.value || '',
+        email: document.getElementById('checkoutEmail')?.value || '',
+        phone: document.getElementById('checkoutPhone')?.value || '',
+        address: document.getElementById('checkoutAddress')?.value || '',
+        city: document.getElementById('checkoutCity')?.value || '',
+        zip: document.getElementById('checkoutZipConfirm')?.value || ''
+    };
+    
     // Update cart items with delivery dates (for legacy support)
     cart.forEach(function(item, index) {
         item.deliveryDate = window.selectedDelivery.date;
@@ -255,22 +265,22 @@ function goToPaymentStep() {
     
     summaryHtml += `
         </div>
-        <div class="checkout-order-total">
-            <div class="total-line">
+        <div style="margin-top: 20px; padding-top: 16px; border-top: 2px solid #2C2416;">
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; font-size: 14px;">
                 <span>Subtotal</span>
                 <span>$${subtotal.toFixed(2)}</span>
             </div>
             ${precisionFee > 0 ? `
-                <div class="total-line">
+                <div style="display: flex; justify-content: space-between; padding: 10px 0; font-size: 14px;">
                     <span>Precision Delivery</span>
                     <span>$${precisionFee.toFixed(2)}</span>
                 </div>
             ` : ''}
-            <div class="total-line">
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; font-size: 14px;">
                 <span>Delivery</span>
-                <span class="free-text">FREE</span>
+                <span style="color: #4A7C59; font-weight: 600;">FREE</span>
             </div>
-            <div class="total-line grand-total">
+            <div style="display: flex; justify-content: space-between; padding: 14px 0 0 0; margin-top: 10px; border-top: 1px solid #ddd; font-size: 20px; font-weight: 700;">
                 <span>Total</span>
                 <span>$${grandTotal.toFixed(2)}</span>
             </div>
