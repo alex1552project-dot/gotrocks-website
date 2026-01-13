@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Texas Got Rocks</title>
+  <!-- Favicons for browser tabs -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <!-- Apple Touch Icon for iOS home screen -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-180x180.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .login-container { width: 100%; max-width: 420px; }
+    .logo-section { text-align: center; margin-bottom: 32px; }
+    .logo { width: 100px; height: 100px; margin-bottom: 16px; border-radius: 20px; }
+    .company-name { font-size: 28px; font-weight: 700; color: #fff; text-shadow: 0 0 30px rgba(59, 130, 246, 0.3); }
+    .login-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 40px 32px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    .login-title { font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+    .login-subtitle { font-size: 14px; color: rgba(255, 255, 255, 0.5); margin-bottom: 32px; }
+    .form-group { margin-bottom: 20px; }
+    .form-label { display: block; font-size: 13px; font-weight: 500; color: rgba(255, 255, 255, 0.7); margin-bottom: 8px; }
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      font-size: 15px;
+      color: #fff;
+      transition: all 0.2s;
+    }
+    .form-input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+    .form-input::placeholder { color: rgba(255, 255, 255, 0.3); }
+    .error-message {
+      display: none;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .error-message.show { display: block; }
+    .login-btn {
+      width: 100%;
+      padding: 14px 24px;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
+    .login-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4); }
+    .login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .login-btn.loading { position: relative; color: transparent; }
+    .login-btn.loading::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      top: 50%;
+      left: 50%;
+      margin-left: -10px;
+      margin-top: -10px;
+      border: 2px solid #fff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .footer-text { text-align: center; margin-top: 24px; font-size: 13px; color: rgba(255, 255, 255, 0.4); }
+    .role-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 20px;
+      font-size: 12px;
+      color: #60a5fa;
+      text-transform: uppercase;
+    }
+    .success-message { display: none; text-align: center; padding: 20px; }
+    .success-message.show { display: block; }
+    .success-message h3 { color: #fff; margin-bottom: 8px; }
+    .success-message p { color: rgba(255, 255, 255, 0.6); font-size: 14px; }
+    .form-content.hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo-section">
+      <img src="/images/dashboard-icon-192x192.png" alt="Texas Got Rocks" class="logo">
+      <div class="company-name">Texas Got Rocks</div>
+    </div>
+
+    <div class="login-card">
+      <div class="form-content" id="formContent">
+        <h2 class="login-title">Welcome back</h2>
+        <p class="login-subtitle">Sign in to access your dashboard</p>
+        <div class="error-message" id="errorMessage"></div>
+        <form id="loginForm">
+          <div class="form-group">
+            <label class="form-label" for="username">Username</label>
+            <input type="text" id="username" class="form-input" placeholder="Enter your username" autocomplete="username" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <input type="password" id="password" class="form-input" placeholder="Enter your password" autocomplete="current-password" required>
+          </div>
+          <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+        </form>
+      </div>
+      <div class="success-message" id="successMessage">
+        <h3>Welcome, <span id="userName"></span>!</h3>
+        <p>Redirecting to your dashboard...</p>
+        <div style="margin-top: 12px;"><span class="role-badge" id="userRole"></span></div>
+      </div>
+    </div>
+    <p class="footer-text">T & C Materials, LLC &copy; 2026</p>
+  </div>
+
+  <script>
+    const dashboardRoutes = {
+      owner: '/command-center.html',
+      sales: '/sales-dashboard.html',
+      dispatch: '/dispatch-ui.html',
+      driver: '/drivers-app.html'
+    };
+
+    async function checkExistingSession() {
+      const token = localStorage.getItem('tgr_token');
+      if (!token) return;
+      try {
+        const response = await fetch('/.netlify/functions/auth-verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token })
+        });
+        const data = await response.json();
+        if (data.valid) {
+          window.location.href = dashboardRoutes[data.user.role] || '/command-center.html';
+        } else {
+          localStorage.removeItem('tgr_token');
+          localStorage.removeItem('tgr_user');
+        }
+      } catch (error) { console.error('Session check failed:', error); }
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const loginBtn = document.getElementById('loginBtn');
+      const errorMessage = document.getElementById('errorMessage');
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      errorMessage.classList.remove('show');
+      loginBtn.classList.add('loading');
+      loginBtn.disabled = true;
+
+      try {
+        const response = await fetch('/.netlify/functions/auth-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Login failed');
+
+        localStorage.setItem('tgr_token', data.token);
+        localStorage.setItem('tgr_user', JSON.stringify(data.user));
+
+        document.getElementById('formContent').classList.add('hidden');
+        document.getElementById('successMessage').classList.add('show');
+        document.getElementById('userName').textContent = data.user.name.split(' ')[0];
+        document.getElementById('userRole').textContent = data.user.role;
+
+        setTimeout(() => {
+          window.location.href = dashboardRoutes[data.user.role] || '/command-center.html';
+        }, 1500);
+      } catch (error) {
+        errorMessage.textContent = error.message;
+        errorMessage.classList.add('show');
+        loginBtn.classList.remove('loading');
+        loginBtn.disabled = false;
+      }
+    });
+
+    checkExistingSession();
+  </script>
+</body>
+</html>

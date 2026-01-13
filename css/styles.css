@@ -5812,3 +5812,271 @@ video.hero-combined-logo {
         margin: 0 auto;
     }
 }
+/* =====================================================
+   QUOTE CALCULATOR PRICING DISPLAY - ADD TO styles.css
+   Add this to the END of your styles.css file
+   ===================================================== */
+
+/* Conversion Display (yards to tons) */
+.quote-conversion {
+    text-align: center;
+    padding: 12px 16px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 15px;
+    color: #333;
+}
+
+.quote-conversion strong {
+    color: var(--orange-primary, #E85D04);
+}
+
+/* Line Items */
+.quote-line-items {
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 12px 0;
+    margin-bottom: 12px;
+}
+
+.quote-line-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 14px;
+}
+
+.quote-line-item .line-label {
+    color: #555;
+    flex: 1;
+    padding-right: 12px;
+}
+
+.quote-line-item .line-amount {
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+}
+
+/* Total Row */
+.quote-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: linear-gradient(135deg, #E85D04, #DC2F02);
+    border-radius: 8px;
+    color: white;
+}
+
+.quote-total-row .total-label {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.quote-total-row .total-amount {
+    font-size: 28px;
+    font-weight: 800;
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+    .quote-line-item {
+        font-size: 13px;
+    }
+    
+    .quote-line-item .line-label {
+        font-size: 12px;
+    }
+    
+    .quote-total-row .total-amount {
+        font-size: 24px;
+    }
+    
+    .quote-conversion {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+}
+/* =====================================================
+   ADD THESE STYLES TO styles.css
+   2-Yard Minimum Warning & Value Proposition Upsell
+   ===================================================== */
+
+/* Minimum Warning Box */
+.minimum-warning-box {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 16px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.minimum-warning-box.hidden {
+    display: none;
+}
+
+.minimum-warning-box .warning-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.minimum-warning-box .warning-content strong {
+    display: block;
+    color: #92400e;
+    font-size: 15px;
+    margin-bottom: 4px;
+}
+
+.minimum-warning-box .warning-content p {
+    color: #a16207;
+    font-size: 13px;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Value Proposition Upsell Section */
+.upsell-section {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 16px 0;
+}
+
+.upsell-section.hidden {
+    display: none;
+}
+
+.upsell-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: #047857;
+    font-size: 16px;
+}
+
+.upsell-icon {
+    font-size: 20px;
+}
+
+.upsell-comparison {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.upsell-option {
+    background: white;
+    border-radius: 10px;
+    padding: 14px 18px;
+    text-align: center;
+    min-width: 120px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.upsell-option.current {
+    border: 2px solid #d1d5db;
+}
+
+.upsell-option.upgrade {
+    border: 2px solid #10b981;
+    background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+}
+
+.upsell-option .option-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6b7280;
+    margin-bottom: 4px;
+}
+
+.upsell-option .option-qty {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1f2937;
+}
+
+.upsell-option .option-total {
+    font-size: 16px;
+    font-weight: 700;
+    color: #374151;
+    margin-top: 4px;
+}
+
+.upsell-option .option-per-yard {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+.upsell-option.upgrade .option-per-yard {
+    color: #047857;
+    font-weight: 600;
+}
+
+.upsell-arrow {
+    font-size: 24px;
+    color: #10b981;
+    font-weight: bold;
+}
+
+.upsell-savings {
+    text-align: center;
+    color: #047857;
+    font-size: 14px;
+    margin-bottom: 14px;
+}
+
+.upsell-savings strong {
+    color: #047857;
+}
+
+.btn-upsell {
+    width: 100%;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-upsell:hover {
+    background: linear-gradient(135deg, #059669, #047857);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+/* Mobile responsive for upsell */
+@media (max-width: 480px) {
+    .upsell-comparison {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .upsell-arrow {
+        transform: rotate(90deg);
+    }
+    
+    .upsell-option {
+        width: 100%;
+        min-width: unset;
+    }
+}

@@ -21,18 +21,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-    
-    <!-- Google Analytics 4 - A/B Testing -->
-    <!-- IMPORTANT: Replace G-9N8HZT4KRL with your actual GA4 Measurement ID -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9N8HZT4KRL"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'G-9N8HZT4KRL');
-        
-        // A/B Test Version Tracking
-        // Set to 'A' for original version, 'B' for video version
         const SITE_VERSION = 'B';
         gtag('set', 'user_properties', { 'site_version': SITE_VERSION });
     </script>
@@ -86,17 +79,13 @@
             </li>
         </ul>
         
-        <!-- Right side: Cart + Mobile Menu -->
         <div class="nav-right">
             <div class="nav-cart" onclick="openCartDrawer()">
                 <span class="nav-cart-icon">🛒</span>
                 <span class="cart-count hidden" id="navCartCount">0</span>
             </div>
-            
             <button class="mobile-menu-btn" id="mobile-menu-btn">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
         </div>
     </div>
@@ -111,40 +100,23 @@
 <section class="hero" id="home">
     <div class="hero-container">
         <div class="hero-content">
-            
-            <!-- Top Row: Video Mascot + Value Proposition Side by Side -->
             <div class="hero-top-row">
                 <div class="hero-mascot-wrapper animate-fade-in">
-                    <!-- VIDEO REPLACES THE ROCKY PNG IMAGE -->
-                    <video 
-                        autoplay 
-                        muted 
-                        playsinline
-                        id="heroRockyVideo"
-                        class="hero-combined-logo"
-                        poster="/images/rocky-logo-transparent.png"
-                    >
+                    <video autoplay muted playsinline id="heroRockyVideo" class="hero-combined-logo" poster="/images/rocky-logo-transparent.png">
                         <source src="/videos/RockyLetsGoTexas.mp4" type="video/mp4">
-                        <!-- Fallback for browsers that don't support video -->
                         <img src="/images/rocky-logo-transparent.png" alt="Rocky - Texas Got Rocks?">
                     </video>
                 </div>
-
-                <!-- Value Proposition Text -->
                 <div class="hero-text-content animate-fade-in delay-1">
                     <h1 class="hero-title">
                         The Woodlands and Conroe's Direct Rock, Gravel, Mulch & Topsoil Source—<span class="highlight">We're Your Neighbors, Not Brokers</span>
                     </h1>
-                    
                     <p class="hero-description">
                         <strong>We are local and one of your neighbors</strong>, so we can reduce your prices by eliminating broker markups. Instant online quotes, same day delivery in most cases and honest service from a family that owns their own trucks and inventory.
                     </p>
-
                     <div class="hero-ctas">
                         <div class="hero-dropdown">
-                            <button class="btn btn-primary hero-dropdown-btn">
-                                🏘️ The Communities We Serve ▾
-                            </button>
+                            <button class="btn btn-primary hero-dropdown-btn">🏘️ The Communities We Serve ▾</button>
                             <div class="hero-dropdown-menu">
                                 <div class="hero-dropdown-grid">
                                     <a href="/conroe/">📍 Conroe</a>
@@ -171,9 +143,7 @@
                             </div>
                         </div>
                         <div class="call-dropdown-container">
-                            <button class="btn btn-call-text" onclick="toggleHeroCallDropdown(event)">
-                                📞 Call Or Text Now ▾
-                            </button>
+                            <button class="btn btn-call-text" onclick="toggleHeroCallDropdown(event)">📞 Call Or Text Now ▾</button>
                             <div class="call-dropdown-menu" id="heroCallMenu">
                                 <a href="tel:9365551234">📞 Call (936) 555-1234</a>
                                 <a href="sms:9365551234">💬 Text (936) 555-1234</a>
@@ -183,9 +153,7 @@
                 </div>
             </div>
 
-            <!-- Bottom Row: Quote Form + Trust Indicators -->
             <div class="hero-bottom-row">
-                <!-- Quote Form Card -->
                 <div class="value-card animate-fade-in delay-2">
                     <div class="free-delivery-badge">
                         <span class="badge-icon">🚚</span>
@@ -208,50 +176,25 @@
                     </p>
                 </div>
 
-                <!-- Trust Indicators -->
                 <div class="trust-grid animate-fade-in delay-3">
-                    <div class="trust-item">
-                        <div class="trust-icon">🚚</div>
-                        <span><strong>Always FREE Delivery</strong></span>
-                    </div>
-                    <div class="trust-item">
-                        <div class="trust-icon">⚡</div>
-                        <span>Same/Next-Day in Conroe</span>
-                    </div>
-                    <div class="trust-item">
-                        <div class="trust-icon">💰</div>
-                        <span>Direct pricing—No broker markups</span>
-                    </div>
-                    <div class="trust-item">
-                        <div class="trust-icon">⭐</div>
-                        <span>4.9★ • 500+ local deliveries</span>
-                    </div>
-                    <div class="trust-item">
-                        <div class="trust-icon">👨‍👩‍👧‍👦</div>
-                        <span>Family-owned—Not a call center</span>
-                    </div>
-                    <div class="trust-item">
-                        <div class="trust-icon">✅</div>
-                        <span>Price locks at quote—No surprises</span>
-                    </div>
+                    <div class="trust-item"><div class="trust-icon">🚚</div><span><strong>Always FREE Delivery</strong></span></div>
+                    <div class="trust-item"><div class="trust-icon">⚡</div><span>Same/Next-Day in Conroe</span></div>
+                    <div class="trust-item"><div class="trust-icon">💰</div><span>Direct pricing—No broker markups</span></div>
+                    <div class="trust-item"><div class="trust-icon">⭐</div><span>4.9★ • 500+ local deliveries</span></div>
+                    <div class="trust-item"><div class="trust-icon">👨‍👩‍👧‍👦</div><span>Family-owned—Not a call center</span></div>
+                    <div class="trust-item"><div class="trust-icon">✅</div><span>Price locks at quote—No surprises</span></div>
                 </div>
             </div>
-
         </div>
     </div>
 </section>
+
 <!-- Field Photos Gallery -->
 <section class="field-gallery-section">
     <div class="field-gallery">
-        <div class="field-photo">
-            <img src="/images/field1.jpg" alt="Texas Got Rocks delivery">
-        </div>
-        <div class="field-photo">
-            <img src="/images/field2.jpg" alt="Texas Got Rocks materials">
-        </div>
-        <div class="field-photo">
-            <img src="/images/field3.jpg" alt="Texas Got Rocks project">
-        </div>
+        <div class="field-photo"><img src="/images/field1.jpg" alt="Texas Got Rocks delivery"></div>
+        <div class="field-photo"><img src="/images/field2.jpg" alt="Texas Got Rocks materials"></div>
+        <div class="field-photo"><img src="/images/field3.jpg" alt="Texas Got Rocks project"></div>
     </div>
 </section>
 
@@ -267,9 +210,7 @@
                     </div>
                     <div class="ba-slider-handle" id="baSliderHandle">
                         <div class="ba-handle-line"></div>
-                        <div class="ba-handle-circle">
-                            <span>◀ ▶</span>
-                        </div>
+                        <div class="ba-handle-circle"><span>◀ ▶</span></div>
                         <div class="ba-handle-line"></div>
                     </div>
                     <div class="ba-label ba-label-before">BEFORE</div>
@@ -279,9 +220,7 @@
             <div class="visualizer-feature-content">
                 <span class="section-label">Free Tool</span>
                 <h2 class="section-title">See It Before You Buy It</h2>
-                <p class="visualizer-feature-description">
-                    Upload a photo of your driveway, patio, or yard and preview exactly how different materials will look. No guessing—see the transformation before you order!
-                </p>
+                <p class="visualizer-feature-description">Upload a photo of your driveway, patio, or yard and preview exactly how different materials will look. No guessing—see the transformation before you order!</p>
                 <ul class="visualizer-feature-list">
                     <li>✓ Upload any photo of your space</li>
                     <li>✓ Choose from 6+ material types</li>
@@ -290,11 +229,9 @@
                     <li>✓ Get instant quote when ready</li>
                 </ul>
                 <div class="turnstile-wrapper">
-                    <div class="cf-turnstile" data-sitekey="0x4AAAAAACJoVjq7PPi3oxoA" data-callback="onTurnstileVisualizer"></div>
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAACLhbHDiLonhYq3P" data-callback="onTurnstileVisualizer"></div>
                 </div>
-                <button class="btn btn-primary btn-lg" id="visualizerBtn" onclick="openVisualizerWithCaptcha()" disabled>
-                    📸 Try the Visualizer Free →
-                </button>
+                <button class="btn btn-primary btn-lg" id="visualizerBtn" onclick="openVisualizerWithCaptcha()" disabled>📸 Try the Visualizer Free →</button>
             </div>
         </div>
     </div>
@@ -308,121 +245,77 @@
             <h2 class="section-title">Not Sure How Much Material You Need?</h2>
             <p class="section-subtitle">Enter your project dimensions and we'll calculate it for you</p>
         </div>
-
         <div class="material-calc-wrapper">
             <div class="material-calc-visual">
-                <!-- Inline SVG Garden Bed Illustration -->
                 <svg viewBox="0 0 450 320" xmlns="http://www.w3.org/2000/svg" class="bed-image" style="background: #fff; border-radius: 12px; padding: 20px;">
-                    <!-- Definitions for arrows -->
                     <defs>
-                        <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                            <polygon points="0 0, 10 3.5, 0 7" fill="#FF6F00"/>
-                        </marker>
-                        <marker id="arrow-start" markerWidth="10" markerHeight="7" refX="1" refY="3.5" orient="auto">
-                            <polygon points="10 0, 0 3.5, 10 7" fill="#FF6F00"/>
-                        </marker>
+                        <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#FF6F00"/></marker>
+                        <marker id="arrow-start" markerWidth="10" markerHeight="7" refX="1" refY="3.5" orient="auto"><polygon points="10 0, 0 3.5, 10 7" fill="#FF6F00"/></marker>
                     </defs>
-                    
-                    <!-- WIDTH arrow (left side, diagonal going back) -->
                     <line x1="70" y1="140" x2="130" y2="90" stroke="#FF6F00" stroke-width="3" marker-end="url(#arrow)" marker-start="url(#arrow-start)"/>
                     <text x="60" y="75" fill="#FF6F00" font-family="Arial, sans-serif" font-weight="700" font-size="14">WIDTH</text>
-                    
-                    <!-- Garden bed - 3D isometric box -->
-                    <!-- Top face (where gravel goes) -->
                     <polygon points="100,140 320,140 380,100 160,100" fill="#5D4037" stroke="#3E2723" stroke-width="2"/>
-                    <!-- Front face -->
                     <polygon points="100,140 320,140 320,240 100,240" fill="#8D6E63" stroke="#3E2723" stroke-width="2"/>
-                    <!-- Right face -->
                     <polygon points="320,140 380,100 380,200 320,240" fill="#6D4C41" stroke="#3E2723" stroke-width="2"/>
-                    
-                    <!-- Gravel texture on top -->
-                    <circle cx="140" cy="122" r="5" fill="#795548"/>
-                    <circle cx="180" cy="118" r="6" fill="#6D4C41"/>
-                    <circle cx="220" cy="125" r="5" fill="#8D6E63"/>
-                    <circle cx="260" cy="116" r="6" fill="#795548"/>
-                    <circle cx="300" cy="122" r="5" fill="#6D4C41"/>
-                    <circle cx="190" cy="110" r="4" fill="#8D6E63"/>
-                    <circle cx="240" cy="108" r="5" fill="#795548"/>
-                    <circle cx="280" cy="112" r="4" fill="#6D4C41"/>
-                    
-                    <!-- Wood plank lines on front -->
+                    <circle cx="140" cy="122" r="5" fill="#795548"/><circle cx="180" cy="118" r="6" fill="#6D4C41"/><circle cx="220" cy="125" r="5" fill="#8D6E63"/><circle cx="260" cy="116" r="6" fill="#795548"/><circle cx="300" cy="122" r="5" fill="#6D4C41"/><circle cx="190" cy="110" r="4" fill="#8D6E63"/><circle cx="240" cy="108" r="5" fill="#795548"/><circle cx="280" cy="112" r="4" fill="#6D4C41"/>
                     <line x1="100" y1="173" x2="320" y2="173" stroke="#5D4037" stroke-width="1.5"/>
                     <line x1="100" y1="206" x2="320" y2="206" stroke="#5D4037" stroke-width="1.5"/>
-                    
-                    <!-- LENGTH arrow (horizontal, below front face) -->
                     <line x1="100" y1="270" x2="320" y2="270" stroke="#FF6F00" stroke-width="3" marker-end="url(#arrow)" marker-start="url(#arrow-start)"/>
                     <text x="210" y="295" text-anchor="middle" fill="#FF6F00" font-family="Arial, sans-serif" font-weight="700" font-size="16">LENGTH</text>
-                    
-                    <!-- DEPTH arrow (vertical, right side) -->
                     <line x1="410" y1="100" x2="410" y2="200" stroke="#FF6F00" stroke-width="3" marker-end="url(#arrow)" marker-start="url(#arrow-start)"/>
                     <text x="420" y="155" fill="#FF6F00" font-family="Arial, sans-serif" font-weight="700" font-size="14">DEPTH</text>
                 </svg>
             </div>
-
             <div class="material-calc-form">
                 <div class="form-group">
                     <label>Material Type</label>
                     <select id="inline-calc-material">
                         <option value="" data-weight="1.4">-- Select Material --</option>
                         <optgroup label="Rock & Gravel">
-                            <option value="crushed-granite" data-weight="1.4">Crushed Granite</option>
-                            <option value="pea-gravel" data-weight="1.4">Pea Gravel</option>
-                            <option value="bull-rock" data-weight="1.3">2x3 Bull Rock</option>
-                            <option value="decomposed-granite" data-weight="1.5">Decomposed Granite</option>
-                            <option value="blackstar-gravel" data-weight="1.4">Blackstar Gravel</option>
-                            <option value="driveway-gravel" data-weight="1.4">Driveway Gravel</option>
-                            <option value="limestone" data-weight="1.5">Limestone</option>
-                        </optgroup>
-                        <optgroup label="Mulch">
-                            <option value="mulch-brown" data-weight="0.5">Brown Mulch</option>
-                            <option value="mulch-black" data-weight="0.5">Black Mulch</option>
-                            <option value="mulch-red" data-weight="0.5">Red Mulch</option>
+                            <option value="decomposed-granite" data-weight="1.4">1/4" Minus Decomposed Granite</option>
+                            <option value="granite-base" data-weight="1.4">Granite Base</option>
+                            <option value="limestone-1" data-weight="1.4">1" Limestone</option>
+                            <option value="limestone-3/4" data-weight="1.4">3/4" Limestone</option>
+                            <option value="limestone-3/8" data-weight="1.4">3/8" Limestone</option>
+                            <option value="limestone-base" data-weight="1.4">Limestone Base</option>
+                            <option value="bull-rock-3x5" data-weight="1.4">3x5 Bull Rock Gravel</option>
+                            <option value="gravel-2x3" data-weight="1.4">2x3 Gravel</option>
+                            <option value="gravel-1.5-minus" data-weight="1.4">1.5" Minus Gravel</option>
+                            <option value="pea-gravel" data-weight="1.4">3/8" Pea Gravel</option>
+                            <option value="rainbow-gravel" data-weight="1.4">Rainbow Gravel</option>
+                            <option value="blackstar" data-weight="1.4">5/8" Black Star</option>
+                            <option value="colorado-bull-rock" data-weight="1.4">1x3 Colorado Bull Rock</option>
+                            <option value="fairland-pink" data-weight="1.4">1x2 Fairland Pink</option>
                         </optgroup>
                         <optgroup label="Soil & Sand">
-                            <option value="topsoil" data-weight="1.1">Premium Topsoil</option>
-                            <option value="compost" data-weight="0.8">Compost</option>
-                            <option value="fill-dirt" data-weight="1.2">Fill Dirt</option>
-                            <option value="sand" data-weight="1.4">Sand</option>
+                            <option value="bank-sand" data-weight="1.4">Bank Sand</option>
+                            <option value="select-fill" data-weight="1.4">Select Fill</option>
+                            <option value="topsoil" data-weight="1.4">Topsoil</option>
+                            <option value="torpedo-sand" data-weight="1.4">Torpedo Sand</option>
+                            <option value="mason-sand" data-weight="1.4">Mason Sand</option>
+                        </optgroup>
+                        <optgroup label="Mulch">
+                            <option value="mulch-black" data-weight="0.5">Black Mulch</option>
+                            <option value="mulch-brown" data-weight="0.5">Brown Hardwood Mulch</option>
                         </optgroup>
                     </select>
                 </div>
-
                 <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
-                    <div class="form-group">
-                        <label>Length (ft)</label>
-                        <input type="number" id="inline-calc-length" placeholder="20" min="1" step="0.5">
-                    </div>
-                    <div class="form-group">
-                        <label>Width (ft)</label>
-                        <input type="number" id="inline-calc-width" placeholder="10" min="1" step="0.5">
-                    </div>
-                    <div class="form-group">
-                        <label>Depth (in)</label>
-                        <input type="number" id="inline-calc-depth" placeholder="3" min="1" step="0.5">
-                    </div>
+                    <div class="form-group"><label>Length (ft)</label><input type="number" id="inline-calc-length" placeholder="20" min="1" step="0.5"></div>
+                    <div class="form-group"><label>Width (ft)</label><input type="number" id="inline-calc-width" placeholder="10" min="1" step="0.5"></div>
+                    <div class="form-group"><label>Depth (in)</label><input type="number" id="inline-calc-depth" placeholder="3" min="1" step="0.5"></div>
                 </div>
-
-                <button type="button" class="btn btn-primary" style="width: 100%;" onclick="calculateInlineMaterial()">
-                    CALCULATE
-                </button>
-
+                <button type="button" class="btn btn-primary" style="width: 100%;" onclick="calculateInlineMaterial()">CALCULATE</button>
                 <div class="inline-calc-result" id="inline-calc-result" style="display: none;">
                     <div class="result-box">
                         <div class="result-label">You Need Approximately</div>
                         <div class="result-values">
-                            <div class="result-item">
-                                <span class="result-number" id="inline-result-yards">2.5</span>
-                                <span class="result-unit">Cubic Yards</span>
-                            </div>
+                            <div class="result-item"><span class="result-number" id="inline-result-yards">2.5</span><span class="result-unit">Cubic Yards</span></div>
                             <div class="result-divider">or</div>
-                            <div class="result-item">
-                                <span class="result-number" id="inline-result-tons">3.4</span>
-                                <span class="result-unit">Tons</span>
-                            </div>
+                            <div class="result-item"><span class="result-number" id="inline-result-tons">3.4</span><span class="result-unit">Tons</span></div>
                         </div>
                         <div class="result-material-note" id="result-material-note"></div>
                     </div>
-
                     <div class="quantity-recommendations">
                         <h4>📦 Quantity Recommendations</h4>
                         <ul>
@@ -430,34 +323,21 @@
                             <li><strong>5+ Ton Orders</strong> – Add around 10% to ensure enough additional material on hand.</li>
                         </ul>
                     </div>
-                    
-                    <!-- Get Delivery Price Button -->
                     <div class="get-price-box">
                         <h4>🚚 Ready to order?</h4>
                         <p>Get an instant delivery price for this material</p>
-                        <div class="turnstile-wrapper">
-                            <div class="cf-turnstile" data-sitekey="0x4AAAAAACJoVjq7PPi3oxoA" data-callback="onTurnstilePrice"></div>
-                        </div>
-                        <button type="button" class="btn btn-primary" id="getPriceBtn" style="width: 100%;" onclick="getDeliveryPriceWithCaptcha()" disabled>
-                            Get Delivery Price →
-                        </button>
+                        <div class="turnstile-wrapper"><div class="cf-turnstile" data-sitekey="0x4AAAAAACLhbHDiLonhYq3P" data-callback="onTurnstilePrice"></div></div>
+                        <button type="button" class="btn btn-primary" id="getPriceBtn" style="width: 100%;" onclick="getDeliveryPriceWithCaptcha()" disabled>Get Delivery Price →</button>
                     </div>
                 </div>
-
                 <div class="callback-box">
                     <h4>Want help from a specialist?</h4>
                     <p>Get a callback during business hours</p>
                     <div class="form-row">
-                        <div class="form-group">
-                            <input type="text" id="inline-callback-name" placeholder="Your Name">
-                        </div>
-                        <div class="form-group">
-                            <input type="tel" id="inline-callback-phone" placeholder="(936) 555-1234">
-                        </div>
+                        <div class="form-group"><input type="text" id="inline-callback-name" placeholder="Your Name"></div>
+                        <div class="form-group"><input type="tel" id="inline-callback-phone" placeholder="(936) 555-1234"></div>
                     </div>
-                    <button type="button" class="btn btn-secondary" style="width: 100%;" onclick="requestInlineCallback()">
-                        📞 Request Callback
-                    </button>
+                    <button type="button" class="btn btn-secondary" style="width: 100%;" onclick="requestInlineCallback()">📞 Request Callback</button>
                 </div>
             </div>
         </div>
@@ -472,119 +352,45 @@
             <h2 class="section-title">Browse Available Products</h2>
             <p class="section-subtitle">Premium landscape materials delivered direct from local suppliers—no middleman markups</p>
         </div>
-
         <div class="products-grid">
             <a href="/materials/black-mulch/" class="product-card" data-product="black-mulch">
-                <div class="product-image" style="background-image: url('/images/black-mulch.png'); background-size: cover; background-position: center;">
-                    <span class="product-badge">Popular</span>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">Black Mulch</h3>
-                    <p class="product-description">Creates dramatic contrast against greenery. Retains moisture and suppresses weeds naturally.</p>
-                    <div class="product-price">
-                        <span class="amount">$38</span>
-                        <span class="unit">per cubic yard</span>
-                    </div>
-                </div>
+                <div class="product-image" style="background-image: url('/images/black-mulch.png'); background-size: cover; background-position: center;"><span class="product-badge">Popular</span></div>
+                <div class="product-info"><h3 class="product-name">Black Mulch</h3><p class="product-description">Creates dramatic contrast against greenery. Retains moisture and suppresses weeds naturally.</p><div class="product-price"><span class="amount">$25</span><span class="unit">per ton</span></div></div>
             </a>
-
             <a href="/materials/brown-mulch/" class="product-card" data-product="brown-mulch">
-                <div class="product-image" style="background-image: url('/images/brown-mulch.png'); background-size: cover; background-position: center;">
-                    <span class="product-badge">Best Seller</span>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">Brown Mulch</h3>
-                    <p class="product-description">Classic natural look that mimics the forest floor. Blends seamlessly with wooded environments.</p>
-                    <div class="product-price">
-                        <span class="amount">$35</span>
-                        <span class="unit">per cubic yard</span>
-                    </div>
-                </div>
+                <div class="product-image" style="background-image: url('/images/brown-mulch.png'); background-size: cover; background-position: center;"><span class="product-badge">Best Seller</span></div>
+                <div class="product-info"><h3 class="product-name">Brown Mulch</h3><p class="product-description">Classic natural look that mimics the forest floor. Blends seamlessly with wooded environments.</p><div class="product-price"><span class="amount">$25</span><span class="unit">per ton</span></div></div>
             </a>
-
             <a href="/materials/blackstar-gravel/" class="product-card" data-product="blackstar-gravel">
-                <div class="product-image" style="background-image: url('/images/blackstar-gravel.png'); background-size: cover; background-position: center;">
-                    <span class="product-badge">Premium</span>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">Blackstar Gravel</h3>
-                    <p class="product-description">Stunning basalt volcanic rock. Dark, elegant, and incredibly durable for modern landscapes.</p>
-                    <div class="product-price">
-                        <span class="amount">$55</span>
-                        <span class="unit">per cubic yard</span>
-                    </div>
-                </div>
+                <div class="product-image" style="background-image: url('/images/blackstar-gravel.png'); background-size: cover; background-position: center;"><span class="product-badge">Premium</span></div>
+                <div class="product-info"><h3 class="product-name">5/8" Black Star</h3><p class="product-description">Stunning basalt volcanic rock. Dark, elegant, and incredibly durable for modern landscapes.</p><div class="product-price"><span class="amount">$96</span><span class="unit">per ton</span></div></div>
             </a>
-
             <a href="/materials/decomposed-granite/" class="product-card" data-product="decomposed-granite">
-                <div class="product-image" style="background-image: url('/images/decomposed-granite.png'); background-size: cover; background-position: center;">
-                    <span class="product-badge">Texas Favorite</span>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">Decomposed Granite</h3>
-                    <p class="product-description">Natural, rustic look that compacts well. Great for paths, patios, and xeriscaping.</p>
-                    <div class="product-price">
-                        <span class="amount">$48</span>
-                        <span class="unit">per cubic yard</span>
-                    </div>
-                </div>
+                <div class="product-image" style="background-image: url('/images/decomposed-granite.png'); background-size: cover; background-position: center;"><span class="product-badge">Texas Favorite</span></div>
+                <div class="product-info"><h3 class="product-name">Decomposed Granite</h3><p class="product-description">Natural, rustic look that compacts well. Great for paths, patios, and xeriscaping.</p><div class="product-price"><span class="amount">$48</span><span class="unit">per ton</span></div></div>
             </a>
-
             <a href="/materials/bull-rock/" class="product-card" data-product="bull-rock">
-                <div class="product-image" style="background-image: url('/images/bull-rock.png'); background-size: cover; background-position: center;">
-                    <span class="product-badge">Drainage</span>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">2x3 Bull Rock</h3>
-                    <p class="product-description">Large, rounded landscape stones perfect for borders, drainage, and accent areas.</p>
-                    <div class="product-price">
-                        <span class="amount">$68</span>
-                        <span class="unit">per cubic yard</span>
-                    </div>
-                </div>
+                <div class="product-image" style="background-image: url('/images/bull-rock.png'); background-size: cover; background-position: center;"><span class="product-badge">Drainage</span></div>
+                <div class="product-info"><h3 class="product-name">3x5 Bull Rock</h3><p class="product-description">Large, rounded landscape stones perfect for borders, drainage, and accent areas.</p><div class="product-price"><span class="amount">$41</span><span class="unit">per ton</span></div></div>
             </a>
-
             <a href="/materials/topsoil/" class="product-card" data-product="topsoil">
-                <div class="product-image" style="background-image: url('/images/topsoil.png'); background-size: cover; background-position: center;">
-                    <span class="product-badge">Garden Grade</span>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">Premium Topsoil</h3>
-                    <p class="product-description">Nutrient-rich screened topsoil for gardens, lawns, and raised beds.</p>
-                    <div class="product-price">
-                        <span class="amount">$38</span>
-                        <span class="unit">per cubic yard</span>
-                    </div>
-                </div>
+                <div class="product-image" style="background-image: url('/images/topsoil.png'); background-size: cover; background-position: center;"><span class="product-badge">Garden Grade</span></div>
+                <div class="product-info"><h3 class="product-name">Topsoil</h3><p class="product-description">Nutrient-rich screened topsoil for gardens, lawns, and raised beds.</p><div class="product-price"><span class="amount">$24</span><span class="unit">per ton</span></div></div>
             </a>
-
             <div class="product-card" data-product="more" onclick="openCalculatorModal()">
-                <div class="product-image" style="background-image: url('/images/more-materials.png'); background-size: cover; background-position: center;">
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">And Much More...</h3>
-                    <p class="product-description">Pea gravel, river rock, crushed concrete, fill dirt, and more. Call for availability and pricing.</p>
-                    <div class="product-price">
-                        <span class="amount">Call</span>
-                        <span class="unit">for pricing</span>
-                    </div>
-                </div>
+                <div class="product-image" style="background-image: url('/images/more-materials.png'); background-size: cover; background-position: center;"></div>
+                <div class="product-info"><h3 class="product-name">And Much More...</h3><p class="product-description">Pea gravel, river rock, crushed concrete, fill dirt, and more. Call for availability and pricing.</p><div class="product-price"><span class="amount">Call</span><span class="unit">for pricing</span></div></div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Commercial Projects Redirect -->
-<section class="commercial-section">
+<!-- Commercial Projects Redirect - UPDATED: 48+ Tons and added id="bulk-pricing" -->
+<section class="commercial-section" id="bulk-pricing">
     <div class="section-container">
         <div class="commercial-box">
-            <div class="commercial-content">
-                <h3>Commercial Project Needing 50+ Cubic Yards?</h3>
-                <p>For large-scale commercial projects, we offer bulk pricing and dedicated project support. Contact us for a custom quote.</p>
-            </div>
-            <a href="tel:9365551234" class="btn btn-yellow">
-                Get Bulk Commercial Pricing →
-            </a>
+            <div class="commercial-content"><h3>Commercial Project Needing 48+ Tons?</h3><p>For large-scale commercial projects, we offer bulk pricing and dedicated project support. Contact us for a custom quote.</p></div>
+            <a href="tel:9365551234" class="btn btn-yellow">Get Bulk Commercial Pricing →</a>
         </div>
     </div>
 </section>
@@ -593,17 +399,9 @@
 <section class="contractor-section">
     <div class="section-container">
         <div class="contractor-box">
-            <div class="contractor-icon">
-                <img src="/images/contractor-mascot.png" alt="Find a Pro" class="contractor-mascot-small">
-            </div>
-            <div class="contractor-content">
-                <h3>Got the Materials, But Need the Muscle?</h3>
-                <p>Not everyone wants to spend their Saturday spreading gravel—and that's okay! We've partnered with trusted local landscapers and contractors who know their stuff. They'll handle the hard work while you kick back and watch your yard transform.</p>
-            </div>
-            <a href="/contractors/" class="btn btn-contractor">
-                <span class="btn-icon">👷</span>
-                Find a Pro Near You →
-            </a>
+            <div class="contractor-icon"><img src="/images/contractor-mascot.png" alt="Find a Pro" class="contractor-mascot-small"></div>
+            <div class="contractor-content"><h3>Got the Materials, But Need the Muscle?</h3><p>Not everyone wants to spend their Saturday spreading gravel—and that's okay! We've partnered with trusted local landscapers and contractors who know their stuff. They'll handle the hard work while you kick back and watch your yard transform.</p></div>
+            <a href="/contractors/" class="btn btn-contractor"><span class="btn-icon">👷</span>Find a Pro Near You →</a>
         </div>
     </div>
 </section>
@@ -616,46 +414,14 @@
             <h2 class="section-title">How It Works</h2>
             <p class="section-subtitle">From quote to delivery in four easy steps—no phone tag, no surprises</p>
         </div>
-
         <div class="how-it-works-layout">
-            <!-- Steps Column -->
             <div class="how-it-works-steps">
-                <div class="step-item">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h3 class="step-title">Select Your Material</h3>
-                        <p class="step-description">Browse our products and use our calculator to determine exactly how much you need.</p>
-                    </div>
-                </div>
-
-                <div class="step-item">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h3 class="step-title">Get Instant Pricing</h3>
-                        <p class="step-description">Enter your ZIP code and see your exact total—no hidden fees, ever.</p>
-                    </div>
-                </div>
-
-                <div class="step-item">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h3 class="step-title">Schedule Delivery</h3>
-                        <p class="step-description">Pick your delivery date. Same-day available for orders before noon.</p>
-                    </div>
-                </div>
-
-                <div class="step-item">
-                    <div class="step-number">4</div>
-                    <div class="step-content">
-                        <h3 class="step-title">Track & Receive</h3>
-                        <p class="step-description">Get real-time text updates. Know exactly when your driver arrives.</p>
-                    </div>
-                </div>
+                <div class="step-item"><div class="step-number">1</div><div class="step-content"><h3 class="step-title">Select Your Material</h3><p class="step-description">Browse our products and use our calculator to determine exactly how much you need.</p></div></div>
+                <div class="step-item"><div class="step-number">2</div><div class="step-content"><h3 class="step-title">Get Instant Pricing</h3><p class="step-description">Enter your ZIP code and see your exact total—no hidden fees, ever.</p></div></div>
+                <div class="step-item"><div class="step-number">3</div><div class="step-content"><h3 class="step-title">Schedule Delivery</h3><p class="step-description">Pick your delivery date. Same-day available for orders before noon.</p></div></div>
+                <div class="step-item"><div class="step-number">4</div><div class="step-content"><h3 class="step-title">Track & Receive</h3><p class="step-description">Get real-time text updates. Know exactly when your driver arrives.</p></div></div>
             </div>
-
-            <a href="#" onclick="openCalculatorModal(); return false;" class="how-it-works-cta">
-                Get Your Instant Quote →
-            </a>
+            <a href="#" onclick="openCalculatorModal(); return false;" class="how-it-works-cta">Get Your Instant Quote →</a>
         </div>
     </div>
 </section>
@@ -668,7 +434,6 @@
             <h2 class="section-title">Service Areas</h2>
             <p class="section-subtitle">Serving Conroe, The Woodlands, and surrounding Montgomery County communities</p>
         </div>
-
         <div class="areas-grid">
             <div class="areas-list">
                 <a href="/conroe/" class="area-item"><span class="icon">✓</span> Conroe</a>
@@ -684,31 +449,16 @@
                 <a href="/montgomery/" class="area-item"><span class="icon">✓</span> Montgomery</a>
                 <a href="/huntsville/" class="area-item"><span class="icon">✓</span> Huntsville</a>
             </div>
-
             <div class="areas-map">
                 <div class="free-delivery-banner-large">🚚 ALWAYS FREE DELIVERY</div>
                 <h3>Delivery Zones</h3>
                 <p>Free delivery to all zones—timing based on distance from our Conroe yard</p>
-                
                 <div class="delivery-zones">
-                    <div class="zone">
-                        <span class="zone-name">🟢 Zone 1: 0-10 miles</span>
-                        <span class="zone-delivery">Same-day available • FREE</span>
-                    </div>
-                    <div class="zone">
-                        <span class="zone-name">🟡 Zone 2: 10-25 miles</span>
-                        <span class="zone-delivery">Next-day available • FREE</span>
-                    </div>
-                    <div class="zone">
-                        <span class="zone-name">🟠 Zone 3: 25-40 miles</span>
-                        <span class="zone-delivery">2-3 day delivery • FREE</span>
-                    </div>
+                    <div class="zone"><span class="zone-name">🟢 Zone 1: 0-10 miles</span><span class="zone-delivery">Same-day available • FREE</span></div>
+                    <div class="zone"><span class="zone-name">🟡 Zone 2: 10-25 miles</span><span class="zone-delivery">Next-day available • FREE</span></div>
+                    <div class="zone"><span class="zone-name">🟠 Zone 3: 25-40 miles</span><span class="zone-delivery">2-3 day delivery • FREE</span></div>
                 </div>
-
-                <p style="margin-top: 24px; font-size: 14px; color: var(--earth-brown);">
-                    Not sure if we deliver to your area?<br>
-                    <a href="#" onclick="openCalculatorModal(); return false;" style="color: var(--warm-orange); font-weight: 700;">Open our calculator</a> to check availability.
-                </p>
+                <p style="margin-top: 24px; font-size: 14px; color: var(--earth-brown);">Not sure if we deliver to your area?<br><a href="#" onclick="openCalculatorModal(); return false;" style="color: var(--warm-orange); font-weight: 700;">Open our calculator</a> to check availability.</p>
             </div>
         </div>
     </div>
@@ -722,42 +472,21 @@
             <h2 class="section-title">What Conroe Homeowners Say</h2>
             <p class="section-subtitle">Join 500+ satisfied customers who chose direct supplier pricing</p>
         </div>
-
         <div class="testimonials-grid">
             <div class="testimonial-card">
                 <div class="testimonial-stars">★★★★★</div>
                 <p class="testimonial-text">"Ordered Friday at 10am, gravel arrived at 2pm same day. Price was exactly what the website said—no games. This is how all deliveries should work!"</p>
-                <div class="testimonial-author">
-                    <div class="testimonial-avatar">MT</div>
-                    <div class="testimonial-info">
-                        <strong>Mike T.</strong>
-                        <span>Conroe, TX</span>
-                    </div>
-                </div>
+                <div class="testimonial-author"><div class="testimonial-avatar">MT</div><div class="testimonial-info"><strong>Mike T.</strong><span>Conroe, TX</span></div></div>
             </div>
-
             <div class="testimonial-card">
                 <div class="testimonial-stars">★★★★★</div>
                 <p class="testimonial-text">"HelloGravel wanted $215 for delivery. Texas Got Rocks charged me $145 for the same thing. Saved $70 and got better service from actual locals."</p>
-                <div class="testimonial-author">
-                    <div class="testimonial-avatar">JR</div>
-                    <div class="testimonial-info">
-                        <strong>Jennifer R.</strong>
-                        <span>The Woodlands, TX</span>
-                    </div>
-                </div>
+                <div class="testimonial-author"><div class="testimonial-avatar">JR</div><div class="testimonial-info"><strong>Jennifer R.</strong><span>The Woodlands, TX</span></div></div>
             </div>
-
             <div class="testimonial-card">
                 <div class="testimonial-stars">★★★★★</div>
                 <p class="testimonial-text">"The driver called when he was 15 minutes out, placed the gravel exactly where I wanted it, and was done in 10 minutes. Professional operation."</p>
-                <div class="testimonial-author">
-                    <div class="testimonial-avatar">DK</div>
-                    <div class="testimonial-info">
-                        <strong>David K.</strong>
-                        <span>Spring, TX</span>
-                    </div>
-                </div>
+                <div class="testimonial-author"><div class="testimonial-avatar">DK</div><div class="testimonial-info"><strong>David K.</strong><span>Spring, TX</span></div></div>
             </div>
         </div>
     </div>
@@ -771,77 +500,14 @@
             <h2 class="section-title">Frequently Asked Questions</h2>
             <p class="section-subtitle">Everything you need to know about ordering and delivery</p>
         </div>
-
         <div class="faq-grid">
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>How quickly can you deliver?</span>
-                    <span class="faq-icon">+</span>
-                </button>
-                <div class="faq-answer">
-                    <p>For orders placed before noon within our Zone 1 delivery area (0-10 miles from Conroe), we can often deliver same-day. Most orders are delivered within 24-48 hours. You'll see available delivery dates when you complete your quote.</p>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>How much material do I need?</span>
-                    <span class="faq-icon">+</span>
-                </button>
-                <div class="faq-answer">
-                    <p>Use our <a href="#material-calculator" style="color: var(--warm-orange); font-weight: 700;">Material Calculator</a>! Enter your project dimensions (length × width × depth) and we'll calculate the cubic yards needed. As a general rule: 1 cubic yard covers about 100 square feet at 3 inches deep.</p>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>What if I order too much or too little?</span>
-                    <span class="faq-icon">+</span>
-                </button>
-                <div class="faq-answer">
-                    <p>We always recommend ordering slightly more than you think you need (about 10% extra) to account for settling and spreading. If you end up needing more, we can usually do a follow-up delivery within a day or two.</p>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>Where will you dump the materials?</span>
-                    <span class="faq-icon">+</span>
-                </button>
-                <div class="faq-answer">
-                    <p>Our drivers will dump materials on your driveway, street (with your permission), or designated area that's accessible by truck. Please ensure the drop area is clear and accessible. Our trucks need about 10 feet of clearance width.</p>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>Why are your prices lower than <span class="blurred-text">Hello Gravel</span>?</span>
-                    <span class="faq-icon">+</span>
-                </button>
-                <div class="faq-answer">
-                    <p>Simple: we're the actual supplier, not a broker. <span class="blurred-text">Sites like Hello Gravel</span> take your order, then find a local supplier like us to fulfill it—and they add their markup. When you order from Texas Got Rocks, you're going direct. Same materials, same trucks, but without the middleman fees. That's how we can offer better prices AND better service—plus <strong>always FREE delivery</strong>!</p>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>What payment methods do you accept?</span>
-                    <span class="faq-icon">+</span>
-                </button>
-                <div class="faq-answer">
-                    <p>We accept all major credit cards (Visa, MasterCard, American Express, Discover) through our secure online checkout. Payment is processed when you place your order, and your price is locked in—no surprise charges at delivery.</p>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>Is delivery really free?</span>
-                    <span class="faq-icon">+</span>
-                </button>
-                <div class="faq-answer">
-                    <p>Yes! <strong>Delivery is always 100% FREE</strong> within our service area. No hidden fees, no fuel surcharges, no surprise charges. The price you see is the price you pay—just the cost of your materials. That's our promise as your local, direct supplier.</p>
-                </div>
-            </div>
+            <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>How quickly can you deliver?</span><span class="faq-icon">+</span></button><div class="faq-answer"><p>For orders placed before noon within our Zone 1 delivery area (0-10 miles from Conroe), we can often deliver same-day. Most orders are delivered within 24-48 hours. You'll see available delivery dates when you complete your quote.</p></div></div>
+            <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>How much material do I need?</span><span class="faq-icon">+</span></button><div class="faq-answer"><p>Use our <a href="#material-calculator" style="color: var(--warm-orange); font-weight: 700;">Material Calculator</a>! Enter your project dimensions (length × width × depth) and we'll calculate the cubic yards needed. As a general rule: 1 cubic yard covers about 100 square feet at 3 inches deep.</p></div></div>
+            <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>What if I order too much or too little?</span><span class="faq-icon">+</span></button><div class="faq-answer"><p>We always recommend ordering slightly more than you think you need (about 10% extra) to account for settling and spreading. If you end up needing more, we can usually do a follow-up delivery within a day or two.</p></div></div>
+            <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>Where will you dump the materials?</span><span class="faq-icon">+</span></button><div class="faq-answer"><p>Our drivers will dump materials on your driveway, street (with your permission), or designated area that's accessible by truck. Please ensure the drop area is clear and accessible. Our trucks need about 10 feet of clearance width.</p></div></div>
+            <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>Why are your prices lower than <span class="blurred-text">Hello Gravel</span>?</span><span class="faq-icon">+</span></button><div class="faq-answer"><p>Simple: we're the actual supplier, not a broker. <span class="blurred-text">Sites like Hello Gravel</span> take your order, then find a local supplier like us to fulfill it—and they add their markup. When you order from Texas Got Rocks, you're going direct. Same materials, same trucks, but without the middleman fees. That's how we can offer better prices AND better service—plus <strong>always FREE delivery</strong>!</p></div></div>
+            <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>What payment methods do you accept?</span><span class="faq-icon">+</span></button><div class="faq-answer"><p>We accept all major credit cards (Visa, MasterCard, American Express, Discover) through our secure online checkout. Payment is processed when you place your order, and your price is locked in—no surprise charges at delivery.</p></div></div>
+            <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>Is delivery really free?</span><span class="faq-icon">+</span></button><div class="faq-answer"><p>Yes! <strong>Delivery is always 100% FREE</strong> within our service area. No hidden fees, no fuel surcharges, no surprise charges. The price you see is the price you pay—just the cost of your materials. That's our promise as your local, direct supplier.</p></div></div>
         </div>
     </div>
 </section>
@@ -855,9 +521,7 @@
             <div class="cta-buttons">
                 <a href="#" onclick="openCalculatorModal(); return false;" class="btn btn-yellow">🚚 Get Your Free Quote →</a>
                 <div class="call-dropdown-container">
-                    <button class="btn btn-secondary" style="border-color: #fff; color: #fff;" onclick="toggleCtaCallDropdown(event)">
-                        📞 Call Or Text Now ▾
-                    </button>
+                    <button class="btn btn-secondary" style="border-color: #fff; color: #fff;" onclick="toggleCtaCallDropdown(event)">📞 Call Or Text Now ▾</button>
                     <div class="call-dropdown-menu" id="ctaCallMenu">
                         <a href="tel:9365551234">📞 Call (936) 555-1234</a>
                         <a href="sms:9365551234">💬 Text (936) 555-1234</a>
@@ -874,41 +538,28 @@
         <div class="footer-brand">
             <img src="/images/logo.png" alt="Texas Got Rocks?" class="footer-logo-img">
             <p>Conroe's direct rock, gravel, mulch & topsoil supplier. We're your neighbors, not brokers—delivering honest prices and reliable service to Montgomery County since 2020.</p>
-            
-            <!-- Call Or Text Now Button -->
             <div class="footer-call-dropdown">
-                <button class="footer-call-btn" onclick="toggleFooterCallDropdown(event)">
-                    📞 Call Or Text Now ▾
-                </button>
+                <button class="footer-call-btn" onclick="toggleFooterCallDropdown(event)">📞 Call Or Text Now ▾</button>
                 <div class="footer-call-menu" id="footerCallMenu">
                     <a href="tel:9365551234">📞 Call (936) 555-1234</a>
                     <a href="sms:9365551234">💬 Text (936) 555-1234</a>
                 </div>
             </div>
-            
-            <div class="footer-contact-item">
-                <span>📧</span>
-                <a href="mailto:info@texasgotrocks.com">info@texasgotrocks.com</a>
-            </div>
-            <div class="footer-contact-item">
-                <span>📍</span>
-                <span>Conroe, TX 77301</span>
-            </div>
+            <div class="footer-contact-item"><span>📧</span><a href="mailto:info@texasgotrocks.com">info@texasgotrocks.com</a></div>
+            <div class="footer-contact-item"><span>📍</span><span>Conroe, TX 77301</span></div>
         </div>
-
         <div class="footer-column">
             <h4>Products</h4>
             <ul class="footer-links">
                 <li><a href="/materials/black-mulch/">Black Mulch</a></li>
                 <li><a href="/materials/brown-mulch/">Brown Mulch</a></li>
-                <li><a href="/materials/blackstar-gravel/">Blackstar Gravel</a></li>
+                <li><a href="/materials/blackstar-gravel/">5/8" Black Star</a></li>
                 <li><a href="/materials/decomposed-granite/">Decomposed Granite</a></li>
-                <li><a href="/materials/bull-rock/">2x3 Bull Rock</a></li>
-                <li><a href="/materials/topsoil/">Premium Topsoil</a></li>
+                <li><a href="/materials/bull-rock/">3x5 Bull Rock</a></li>
+                <li><a href="/materials/topsoil/">Topsoil</a></li>
                 <li><em>And Much More...</em></li>
             </ul>
         </div>
-
         <div class="footer-column">
             <h4>Company</h4>
             <ul class="footer-links">
@@ -921,7 +572,6 @@
                 <li><a href="/terms-of-service.html">Terms of Service</a></li>
             </ul>
         </div>
-
         <div class="footer-column">
             <h4>Service Areas</h4>
             <ul class="footer-links">
@@ -934,13 +584,9 @@
             </ul>
         </div>
     </div>
-
     <div class="footer-bottom">
-        <p>© 2025 TexasGotRocks.com. All rights reserved. Locally owned in Conroe, TX. | <a href="/privacy-policy.html">Privacy Policy</a> | <a href="/terms-of-service.html">Terms of Service</a></p>
-        <p>
-            <a href="#" style="color: var(--sand-tan);">Privacy Policy</a> • 
-            <a href="#" style="color: var(--sand-tan);">Terms of Service</a>
-        </p>
+        <p>© 2026 TexasGotRocks.com. All rights reserved. A marketing division of T & C Materials, LLC. Locally owned in Conroe, TX.</p>
+        <p><a href="/privacy-policy.html" style="color: var(--sand-tan);">Privacy Policy</a> • <a href="/terms-of-service.html" style="color: var(--sand-tan);">Terms of Service</a></p>
     </div>
 </footer>
 
@@ -954,28 +600,14 @@
             <p class="modal-subtitle">Save your quote and get 10% off your first order</p>
         </div>
         <div class="modal-body">
-            <div class="modal-discount">
-                <div class="modal-discount-code">NEIGHBOR10</div>
-                <div class="modal-discount-text">10% off your first delivery</div>
-            </div>
+            <div class="modal-discount"><div class="modal-discount-code">NEIGHBOR10</div><div class="modal-discount-text">10% off your first delivery</div></div>
             <form id="exit-capture-form">
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" id="exit-email" placeholder="your@email.com" required>
-                </div>
-                <div class="form-group">
-                    <label>Phone Number (Optional)</label>
-                    <input type="tel" id="exit-phone" placeholder="(936) 555-1234">
-                </div>
+                <div class="form-group"><label>Email Address</label><input type="email" id="exit-email" placeholder="your@email.com" required></div>
+                <div class="form-group"><label>Phone Number (Optional)</label><input type="tel" id="exit-phone" placeholder="(936) 555-1234"></div>
                 <div class="form-group consent-checkbox-group">
-                    <label class="consent-checkbox-label">
-                        <input type="checkbox" id="exit-marketing-consent" required>
-                        <span class="checkbox-text">I agree to receive promotional emails and text messages from Texas Got Rocks. Message frequency varies. Msg & data rates may apply. Reply STOP to unsubscribe. View our <a href="#" onclick="event.stopPropagation();">Privacy Policy</a> and <a href="#" onclick="event.stopPropagation();">Terms</a>.</span>
-                    </label>
+                    <label class="consent-checkbox-label"><input type="checkbox" id="exit-marketing-consent" required><span class="checkbox-text">I agree to receive promotional emails and text messages from Texas Got Rocks. Message frequency varies. Msg & data rates may apply. Reply STOP to unsubscribe. View our <a href="/privacy-policy.html" onclick="event.stopPropagation();">Privacy Policy</a> and <a href="/terms-of-service.html" onclick="event.stopPropagation();">Terms</a>.</span></label>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    Send My Discount Code
-                </button>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Send My Discount Code</button>
             </form>
         </div>
     </div>
@@ -984,17 +616,15 @@
 <!-- Toast Notifications Container -->
 <div class="toast-container" id="toast-container"></div>
 
-<!-- Calculator Modal - ZIP CODE INSTANT QUOTE -->
+<!-- Calculator Modal - ZIP CODE INSTANT QUOTE - UPDATED WITH 2-YARD MIN & UPSELL -->
 <div class="calculator-modal-overlay" id="calculator-modal">
     <div class="calculator-modal">
         <button class="modal-close" onclick="closeCalculatorModal()">×</button>
-        
         <div class="calculator-modal-header">
             <div class="free-delivery-banner">🚚 FREE DELIVERY ON ALL ORDERS</div>
             <h3>Get Your Instant Quote</h3>
             <p>See your exact price in seconds</p>
         </div>
-        
         <div class="calculator-modal-body">
             <!-- ZIP CODE -->
             <div class="quote-calc-section">
@@ -1007,17 +637,13 @@
                     </div>
                 </div>
                 <div id="quoteDeliveryInfo" class="delivery-info-box hidden">
-                    <div>
-                        <div class="city-name" id="quoteCityName">--</div>
-                        <div class="distance-info"><span id="quoteDistanceMiles">--</span> miles • <span id="quoteTravelTime">--</span> min from our yard</div>
-                    </div>
+                    <div><div class="city-name" id="quoteCityName">--</div><div class="distance-info"><span id="quoteDistanceMiles">--</span> miles • <span id="quoteTravelTime">--</span> min from our yard</div></div>
                 </div>
                 <div id="quoteOutOfArea" class="out-of-area-box hidden">
                     <h4>📞 Give Us a Call!</h4>
                     <p>We may be able to deliver to your area.<br><a href="tel:9365551234">Call (936) 555-1234</a> for a custom quote.</p>
                 </div>
             </div>
-            
             <!-- PRODUCT -->
             <div class="quote-calc-section">
                 <div class="calc-section-title">🪨 Select Material</div>
@@ -1026,29 +652,35 @@
                     <select id="quoteProduct">
                         <option value="">-- Select Material --</option>
                         <optgroup label="Rock & Gravel">
-                            <option value="crushed-granite" data-price="52" data-weight="1.4">Crushed Granite</option>
-                            <option value="pea-gravel" data-price="45" data-weight="1.4">Pea Gravel</option>
-                            <option value="bull-rock" data-price="68" data-weight="1.3">2x3 Bull Rock</option>
-                            <option value="decomposed-granite" data-price="48" data-weight="1.5">Decomposed Granite</option>
-                            <option value="blackstar-gravel" data-price="55" data-weight="1.4">Blackstar Gravel</option>
-                            <option value="driveway-gravel" data-price="42" data-weight="1.4">Driveway Gravel</option>
-                            <option value="limestone" data-price="55" data-weight="1.5">Limestone</option>
-                        </optgroup>
-                        <optgroup label="Mulch">
-                            <option value="mulch-brown" data-price="35" data-weight="0.5">Brown Mulch</option>
-                            <option value="mulch-black" data-price="38" data-weight="0.5">Black Mulch</option>
-                            <option value="mulch-red" data-price="40" data-weight="0.5">Red Mulch</option>
+                            <option value="decomposed-granite" data-price="48" data-weight="1.4">1/4" Minus Decomposed Granite</option>
+                            <option value="granite-base" data-price="39" data-weight="1.4">Granite Base</option>
+                            <option value="limestone-1" data-price="55" data-weight="1.4">1" Limestone</option>
+                            <option value="limestone-3/4" data-price="55" data-weight="1.4">3/4" Limestone</option>
+                            <option value="limestone-3/8" data-price="55" data-weight="1.4">3/8" Limestone</option>
+                            <option value="limestone-base" data-price="55" data-weight="1.4">Limestone Base</option>
+                            <option value="bull-rock-3x5" data-price="41" data-weight="1.4">3x5 Bull Rock Gravel</option>
+                            <option value="gravel-2x3" data-price="41" data-weight="1.4">2x3 Gravel</option>
+                            <option value="gravel-1.5-minus" data-price="41" data-weight="1.4">1.5" Minus Gravel</option>
+                            <option value="pea-gravel" data-price="41" data-weight="1.4">3/8" Pea Gravel</option>
+                            <option value="rainbow-gravel" data-price="46" data-weight="1.4">Rainbow Gravel</option>
+                            <option value="blackstar" data-price="96" data-weight="1.4">5/8" Black Star</option>
+                            <option value="colorado-bull-rock" data-price="71" data-weight="1.4">1x3 Colorado Bull Rock</option>
+                            <option value="fairland-pink" data-price="45" data-weight="1.4">1x2 Fairland Pink</option>
                         </optgroup>
                         <optgroup label="Soil & Sand">
-                            <option value="topsoil" data-price="38" data-weight="1.1">Premium Topsoil</option>
-                            <option value="compost" data-price="42" data-weight="0.8">Compost</option>
-                            <option value="fill-dirt" data-price="28" data-weight="1.2">Fill Dirt</option>
-                            <option value="sand" data-price="35" data-weight="1.4">Sand</option>
+                            <option value="bank-sand" data-price="12" data-weight="1.4">Bank Sand</option>
+                            <option value="select-fill" data-price="12" data-weight="1.4">Select Fill</option>
+                            <option value="topsoil" data-price="24" data-weight="1.4">Topsoil</option>
+                            <option value="torpedo-sand" data-price="32" data-weight="1.4">Torpedo Sand</option>
+                            <option value="mason-sand" data-price="21" data-weight="1.4">Mason Sand</option>
+                        </optgroup>
+                        <optgroup label="Mulch">
+                            <option value="mulch-black" data-price="25" data-weight="0.5">Black Mulch</option>
+                            <option value="mulch-brown" data-price="25" data-weight="0.5">Brown Hardwood Mulch</option>
                         </optgroup>
                     </select>
                 </div>
             </div>
-            
             <!-- QUANTITY -->
             <div class="quote-calc-section">
                 <div class="calc-section-title">📦 Quantity</div>
@@ -1062,41 +694,68 @@
                 </div>
             </div>
             
-            <!-- FREE DELIVERY BADGE -->
-            <div id="quoteFreeDeliveryBadge" class="free-delivery-badge-calc hidden">
-                ✓ FREE DELIVERY TO <span id="quoteDeliveryCityBadge">YOUR AREA</span>
+            <!-- ========== NEW: 2-YARD MINIMUM WARNING ========== -->
+            <div id="quoteMinimumWarning" class="minimum-warning-box hidden">
+                <div class="warning-icon">⚠️</div>
+                <div class="warning-content">
+                    <strong>2 Yard Minimum Required</strong>
+                    <p><span id="minWarningMaterialName">This material</span> requires a minimum order of 2 cubic yards. Please adjust your quantity to continue.</p>
+                </div>
             </div>
             
-            <!-- TOTAL -->
-            <div id="quoteTotalSection" class="quote-total-section hidden">
-                <div class="quote-total-label">Your Quote</div>
-                <div class="quote-total-amount" id="quoteTotalAmount">$0</div>
-                <div class="quote-total-per-unit">$<span id="quotePerUnit">0.00</span> per cubic yard delivered</div>
+            <!-- ========== NEW: VALUE PROPOSITION UPSELL ========== -->
+            <div id="quoteUpsellSection" class="upsell-section hidden">
+                <div class="upsell-header">
+                    <span class="upsell-icon">💡</span>
+                    <strong>Get More Value!</strong>
+                </div>
+                <div class="upsell-comparison">
+                    <div class="upsell-option current">
+                        <div class="option-label">Your Order</div>
+                        <div class="option-qty"><span id="upsellCurrentQty">2</span> yards</div>
+                        <div class="option-total">$<span id="upsellCurrentTotal">0.00</span></div>
+                        <div class="option-per-yard">$<span id="upsellCurrentPerYard">0.00</span>/yard</div>
+                    </div>
+                    <div class="upsell-arrow">→</div>
+                    <div class="upsell-option upgrade">
+                        <div class="option-label">Upgrade to</div>
+                        <div class="option-qty">3 yards</div>
+                        <div class="option-total">$<span id="upsellUpgradeTotal">0.00</span></div>
+                        <div class="option-per-yard">$<span id="upsellUpgradePerYard">0.00</span>/yard</div>
+                    </div>
+                </div>
+                <div class="upsell-savings">
+                    You save <strong>$<span id="upsellSavingsPerYard">0.00</span> per yard!</strong>
+                </div>
+                <button type="button" class="btn-upsell" onclick="upgradeToThreeYards()">
+                    ✨ Upgrade to 3 Yards
+                </button>
             </div>
-
+            <!-- ========== END NEW SECTIONS ========== -->
+            
+            <!-- FREE DELIVERY BADGE -->
+            <div id="quoteFreeDeliveryBadge" class="free-delivery-badge-calc hidden">✓ FREE DELIVERY TO <span id="quoteDeliveryCityBadge">YOUR AREA</span></div>
+            <!-- QUOTE BREAKDOWN - NEW PRICING DISPLAY -->
+            <div id="quoteTotalSection" class="quote-total-section hidden">
+                <div class="quote-conversion"><span id="quoteYardsAmount">0</span> cubic yards = <strong><span id="quoteTonsAmount">0</span> tons</strong></div>
+                <div class="quote-line-items">
+                    <div class="quote-line-item"><span class="line-label"><span id="quoteMaterialName">Material</span> (<span id="quoteTonsDisplay">0</span> tons @ $<span id="quotePerTonPrice">0.00</span>/ton)</span><span class="line-amount">$<span id="quoteMaterialTotal">0.00</span></span></div>
+                    <div class="quote-line-item"><span class="line-label">Sales Tax</span><span class="line-amount">$<span id="quoteSalesTax">0.00</span></span></div>
+                    <div class="quote-line-item"><span class="line-label">Service Fee</span><span class="line-amount">$<span id="quoteServiceFee">0.00</span></span></div>
+                </div>
+                <div class="quote-total-row"><span class="total-label">TOTAL</span><span class="total-amount">$<span id="quoteTotalAmount">0.00</span></span></div>
+            </div>
             <!-- Need a Pro Link -->
             <div id="needAProSection" class="need-a-pro-section hidden">
-                <a href="/contractors/?from=quote" class="need-a-pro-link">
-                    <span class="need-pro-icon">👷</span>
-                    <span class="need-pro-text">Need a Pro to install it?</span>
-                    <span class="need-pro-arrow">→</span>
-                </a>
+                <a href="/contractors/?from=quote" class="need-a-pro-link"><span class="need-pro-icon">👷</span><span class="need-pro-text">Need a Pro to install it?</span><span class="need-pro-arrow">→</span></a>
             </div>
-            
-            <!-- Cloudflare Turnstile -->
+            <!-- Cloudflare Turnstile - UPDATED SITEKEY -->
             <div class="turnstile-wrapper" id="quoteTurnstileWrapper">
-                <div class="cf-turnstile" data-sitekey="0x4AAAAAACJoVjq7PPi3oxoA" data-callback="onTurnstileQuote"></div>
+                <div class="cf-turnstile" data-sitekey="0x4AAAAAACLhbHDiLonhYq3P" data-callback="onTurnstileQuote"></div>
             </div>
-            
             <!-- CTA -->
-            <button id="quoteCtaButton" class="quote-cta-button" onclick="addToCartWithCaptcha()" disabled>
-                Enter ZIP Code to Get Quote
-            </button>
-            
-            <p class="service-area-note">
-                Serving the Greater Houston & Conroe area<br>
-                <small>Full address collected at checkout</small>
-            </p>
+            <button id="quoteCtaButton" class="quote-cta-button" onclick="addToCartWithCaptcha()" disabled>Enter ZIP Code to Get Quote</button>
+            <p class="service-area-note">Serving the Greater Houston & Conroe area<br><small>Full address collected at checkout</small></p>
         </div>
     </div>
 </div>
@@ -1104,154 +763,58 @@
 <!-- Cart Drawer -->
 <div class="cart-drawer-overlay" id="cartDrawerOverlay" onclick="closeCartDrawer()"></div>
 <div class="cart-drawer" id="cartDrawer">
-    <div class="cart-drawer-header">
-        <h3>🛒 Your Cart</h3>
-        <button class="cart-drawer-close" onclick="closeCartDrawer()">×</button>
-    </div>
-    
+    <div class="cart-drawer-header"><h3>🛒 Your Cart</h3><button class="cart-drawer-close" onclick="closeCartDrawer()">×</button></div>
     <div class="cart-drawer-body" id="cartDrawerBody">
-        <!-- Empty state -->
         <div class="cart-empty" id="cartEmpty">
-            <div class="cart-empty-icon">🛒</div>
-            <h4>Your cart is empty</h4>
-            <p>Add materials to get started with your order</p>
-            <button class="btn btn-primary" onclick="closeCartDrawer(); openCalculatorModal();">
-                Get Your Free Quote →
-            </button>
+            <div class="cart-empty-icon">🛒</div><h4>Your cart is empty</h4><p>Add materials to get started with your order</p>
+            <button class="btn btn-primary" onclick="closeCartDrawer(); openCalculatorModal();">Get Your Free Quote →</button>
         </div>
-        
-        <!-- Cart items will be inserted here -->
         <div id="cartItemsContainer"></div>
     </div>
-    
     <div class="cart-drawer-footer" id="cartDrawerFooter" style="display: none;">
-        <!-- Summary -->
         <div class="cart-summary" id="cartSummary">
-            <div class="cart-summary-row">
-                <span>Subtotal (<span id="cartItemCount">0</span> items)</span>
-                <span id="cartSubtotal">$0</span>
-            </div>
-            <div class="cart-summary-row">
-                <span>Delivery</span>
-                <span style="color: var(--success-green); font-weight: 700;">FREE</span>
-            </div>
-            <div class="cart-summary-row total">
-                <span>Total</span>
-                <span id="cartTotal">$0</span>
-            </div>
+            <div class="cart-summary-row"><span>Subtotal (<span id="cartItemCount">0</span> items)</span><span id="cartSubtotal">$0</span></div>
+            <div class="cart-summary-row"><span>Delivery</span><span style="color: var(--success-green); font-weight: 700;">FREE</span></div>
+            <div class="cart-summary-row total"><span>Total</span><span id="cartTotal">$0</span></div>
         </div>
-
-        <!-- Need a Pro Link -->
-        <a href="/contractors/?from=quote" class="need-a-pro-link cart-pro-link">
-            <span class="need-pro-icon">👷</span>
-            <span class="need-pro-text">Need a Pro to install it?</span>
-            <span class="need-pro-arrow">→</span>
-        </a>
-        
-        <button class="cart-checkout-btn" onclick="proceedToCheckout()">
-            Proceed to Checkout →
-        </button>
-        
+        <a href="/contractors/?from=quote" class="need-a-pro-link cart-pro-link"><span class="need-pro-icon">👷</span><span class="need-pro-text">Need a Pro to install it?</span><span class="need-pro-arrow">→</span></a>
+        <button class="cart-checkout-btn" onclick="proceedToCheckout()">Proceed to Checkout →</button>
         <p class="free-delivery-reminder">🚚 FREE delivery on all orders!</p>
-        
-        <p class="cart-add-more-link">
-            Need more materials? <a href="#" onclick="closeCartDrawer(); openCalculatorModal(); return false;">+ Add Another Item</a>
-        </p>
+        <p class="cart-add-more-link">Need more materials? <a href="#" onclick="closeCartDrawer(); openCalculatorModal(); return false;">+ Add Another Item</a></p>
     </div>
 </div>
 
 <!-- Checkout Confirmation Modal -->
 <div class="checkout-modal-overlay" id="checkoutModal">
     <div class="checkout-modal">
-        <div class="checkout-modal-header">
-            <h3 id="checkoutModalTitle">📋 Contact Information</h3>
-            <button class="modal-close" onclick="closeCheckoutModal()">×</button>
-        </div>
-        
+        <div class="checkout-modal-header"><h3 id="checkoutModalTitle">📋 Contact Information</h3><button class="modal-close" onclick="closeCheckoutModal()">×</button></div>
         <div class="checkout-modal-body">
-            <!-- Step Indicator -->
             <div class="checkout-steps">
-                <div class="checkout-step active" id="step1indicator">
-                    <span class="step-number">1</span>
-                    <span class="step-label">Contact</span>
-                </div>
-                <div class="checkout-step" id="step2indicator">
-                    <span class="step-number">2</span>
-                    <span class="step-label">Delivery</span>
-                </div>
-                <div class="checkout-step" id="step3indicator">
-                    <span class="step-number">3</span>
-                    <span class="step-label">Payment</span>
-                </div>
+                <div class="checkout-step active" id="step1indicator"><span class="step-number">1</span><span class="step-label">Contact</span></div>
+                <div class="checkout-step" id="step2indicator"><span class="step-number">2</span><span class="step-label">Delivery</span></div>
+                <div class="checkout-step" id="step3indicator"><span class="step-number">3</span><span class="step-label">Payment</span></div>
             </div>
-            
-            <!-- Step 1: Contact Info -->
             <div class="checkout-step-content" id="checkoutStep1">
-                <div class="form-group">
-                    <label>Full Name *</label>
-                    <input type="text" id="checkoutName" placeholder="John Smith" required>
-                </div>
-                <div class="form-group">
-                    <label>Email Address *</label>
-                    <input type="email" id="checkoutEmail" placeholder="john@example.com" required>
-                </div>
-                <div class="form-group">
-                    <label>Phone Number *</label>
-                    <input type="tel" id="checkoutPhone" placeholder="(936) 555-1234" required>
-                </div>
-                <div class="form-group">
-                    <label>Delivery Address *</label>
-                    <input type="text" id="checkoutAddress" placeholder="123 Main St" required>
-                </div>
+                <div class="form-group"><label>Full Name *</label><input type="text" id="checkoutName" placeholder="John Smith" required></div>
+                <div class="form-group"><label>Email Address *</label><input type="email" id="checkoutEmail" placeholder="john@example.com" required></div>
+                <div class="form-group"><label>Phone Number *</label><input type="tel" id="checkoutPhone" placeholder="(936) 555-1234" required></div>
+                <div class="form-group"><label>Delivery Address *</label><input type="text" id="checkoutAddress" placeholder="123 Main St" required></div>
                 <div class="form-row">
-                    <div class="form-group">
-                        <label>City *</label>
-                        <input type="text" id="checkoutCity" placeholder="Conroe" required>
-                    </div>
-                    <div class="form-group" style="max-width: 100px;">
-                        <label>ZIP *</label>
-                        <input type="text" id="checkoutZipConfirm" placeholder="77385" maxlength="5" required>
-                    </div>
+                    <div class="form-group"><label>City *</label><input type="text" id="checkoutCity" placeholder="Conroe" required></div>
+                    <div class="form-group" style="max-width: 100px;"><label>ZIP *</label><input type="text" id="checkoutZipConfirm" placeholder="77385" maxlength="5" required></div>
                 </div>
-                <div class="form-group consent-checkbox-group">
-                    <label class="consent-checkbox-label">
-                        <input type="checkbox" id="checkoutMarketingConsent">
-                        <span class="checkbox-text">Send me updates about my order and occasional promotions via email/text. Msg & data rates may apply. Reply STOP to unsubscribe.</span>
-                    </label>
-                </div>
-                <button class="btn btn-primary" style="width: 100%;" onclick="goToDeliveryStep()">
-                    Continue to Delivery Date →
-                </button>
+                <div class="form-group consent-checkbox-group"><label class="consent-checkbox-label"><input type="checkbox" id="checkoutMarketingConsent"><span class="checkbox-text">Send me updates about my order and occasional promotions via email/text. Msg & data rates may apply. Reply STOP to unsubscribe.</span></label></div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="goToDeliveryStep()">Continue to Delivery Date →</button>
             </div>
-            
-            <!-- Step 2: Delivery Date Selection -->
             <div class="checkout-step-content" id="checkoutStep2" style="display: none;">
-                <div class="checkout-order-items" id="checkoutDeliveryItems">
-                    <!-- Items with date pickers will be inserted here -->
-                </div>
-                <div class="checkout-nav-buttons">
-                    <button class="btn btn-secondary" onclick="goToContactStep()">← Back</button>
-                    <button class="btn btn-primary" onclick="goToPaymentStep()">Continue to Payment →</button>
-                </div>
+                <div class="checkout-order-items" id="checkoutDeliveryItems"></div>
+                <div class="checkout-nav-buttons"><button class="btn btn-secondary" onclick="goToContactStep()">← Back</button><button class="btn btn-primary" onclick="goToPaymentStep()">Continue to Payment →</button></div>
             </div>
-            
-            <!-- Step 3: Review & Pay -->
             <div class="checkout-step-content" id="checkoutStep3" style="display: none;">
-                <div class="checkout-order-summary" id="checkoutOrderSummary">
-                    <!-- Final summary will be inserted here -->
-                </div>
-                
-                <button class="btn btn-primary" style="width: 100%;" onclick="processPayment()">
-                    💳 Pay Now
-                </button>
-                
-                <div class="checkout-nav-buttons" style="margin-top: 12px;">
-                    <button class="btn btn-secondary" style="width: 100%;" onclick="goToDeliveryStep()">← Back to Delivery</button>
-                </div>
-                
-                <p style="text-align: center; margin-top: 12px; font-size: 13px; color: var(--earth-brown);">
-                    🔒 Secure payment powered by Stripe
-                </p>
+                <div class="checkout-order-summary" id="checkoutOrderSummary"></div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="processPayment()">💳 Pay Now</button>
+                <div class="checkout-nav-buttons" style="margin-top: 12px;"><button class="btn btn-secondary" style="width: 100%;" onclick="goToDeliveryStep()">← Back to Delivery</button></div>
+                <p style="text-align: center; margin-top: 12px; font-size: 13px; color: var(--earth-brown);">🔒 Secure payment powered by Stripe</p>
             </div>
         </div>
     </div>
@@ -1260,10 +823,7 @@
 <!-- Photo Consent Modal -->
 <div class="consent-modal-overlay" id="photoConsentModal">
     <div class="consent-modal">
-        <div class="consent-modal-header">
-            <span class="consent-icon">📷</span>
-            <h3>Photo Upload Consent</h3>
-        </div>
+        <div class="consent-modal-header"><span class="consent-icon">📷</span><h3>Photo Upload Consent</h3></div>
         <div class="consent-modal-body">
             <p>By uploading a photo, you agree to the following:</p>
             <ul class="consent-list">
@@ -1274,10 +834,7 @@
             </ul>
             <p class="consent-note">Your privacy is important to us. This tool runs entirely in your browser.</p>
         </div>
-        <div class="consent-modal-footer">
-            <button class="btn btn-secondary" onclick="declinePhotoConsent()">Cancel</button>
-            <button class="btn btn-primary" onclick="acceptPhotoConsent()">I Agree - Continue</button>
-        </div>
+        <div class="consent-modal-footer"><button class="btn btn-secondary" onclick="declinePhotoConsent()">Cancel</button><button class="btn btn-primary" onclick="acceptPhotoConsent()">I Agree - Continue</button></div>
     </div>
 </div>
 
@@ -1285,156 +842,73 @@
 <div class="visualizer-modal-overlay" id="visualizerModal">
     <div class="visualizer-modal">
         <div class="visualizer-header">
-            <div class="visualizer-logo">
-                <img src="/images/logo.png" alt="Texas Got Rocks?">
-                <p>Aggregate Visualizer</p>
-            </div>
+            <div class="visualizer-logo"><img src="/images/logo.png" alt="Texas Got Rocks?"><p>Aggregate Visualizer</p></div>
             <button class="visualizer-close" onclick="closeVisualizer()">×</button>
         </div>
-        
         <div class="visualizer-content">
-            <!-- Left Panel - Controls -->
             <div class="visualizer-controls">
-                
-                <!-- Upload Section -->
                 <div class="visualizer-section">
                     <h3>1. Your Photo</h3>
                     <div class="photo-buttons">
-                        <label class="upload-btn">
-                            📷 Choose Photo
-                            <input type="file" accept="image/*" id="vizFileInput" onchange="handleVisualizerUpload(event)">
-                        </label>
-                        <label class="upload-btn camera-btn">
-                            📸 Use Camera
-                            <input type="file" accept="image/*" capture="environment" id="vizCameraInput" onchange="handleVisualizerUpload(event)">
-                        </label>
+                        <label class="upload-btn">📷 Choose Photo<input type="file" accept="image/*" id="vizFileInput" onchange="handleVisualizerUpload(event)"></label>
+                        <label class="upload-btn camera-btn">📸 Use Camera<input type="file" accept="image/*" capture="environment" id="vizCameraInput" onchange="handleVisualizerUpload(event)"></label>
                     </div>
-                    <button class="start-over-btn" id="vizStartOver" onclick="resetVisualizer()" style="display: none;">
-                        Start Over
-                    </button>
+                    <button class="start-over-btn" id="vizStartOver" onclick="resetVisualizer()" style="display: none;">Start Over</button>
                 </div>
-                
-                <!-- Material Selection -->
                 <div class="visualizer-section">
                     <h3>2. Select Material</h3>
                     <div class="material-grid" id="vizMaterialGrid">
-                        <button class="material-btn active" data-id="black-mulch" data-color="#1a1a1a" style="background-image: url('/images/materials/black-mulch.jpg'); background-size: cover;">
-                            <span>Black Mulch</span>
-                        </button>
-                        <button class="material-btn" data-id="brown-mulch" data-color="#8B4513" style="background-image: url('/images/materials/brown-mulch.jpg'); background-size: cover;">
-                            <span>Brown Mulch</span>
-                        </button>
-                        <button class="material-btn" data-id="blackstar-gravel" data-color="#2d2d2d" style="background-image: url('/images/materials/black-star.jpg'); background-size: cover;">
-                            <span>Blackstar Gravel</span>
-                        </button>
-                        <button class="material-btn" data-id="decomposed-granite" data-color="#C9A66B" style="background-image: url('/images/materials/Decomposed-Granite.jpg'); background-size: cover;">
-                            <span>Decomposed Granite</span>
-                        </button>
-                        <button class="material-btn" data-id="bull-rock" data-color="#a08060" style="background-image: url('/images/materials/2x3-bull-rock.jpeg'); background-size: cover;">
-                            <span>2x3 Bull Rock</span>
-                        </button>
-                        <button class="material-btn" data-id="topsoil" data-color="#3d3225" style="background-image: url('/images/materials/top-soil.jpg'); background-size: cover;">
-                            <span>Premium Topsoil</span>
-                        </button>
+                        <button class="material-btn active" data-id="black-mulch" data-color="#1a1a1a" style="background-image: url('/images/materials/black-mulch.jpg'); background-size: cover;"><span>Black Mulch</span></button>
+                        <button class="material-btn" data-id="brown-mulch" data-color="#8B4513" style="background-image: url('/images/materials/brown-mulch.jpg'); background-size: cover;"><span>Brown Mulch</span></button>
+                        <button class="material-btn" data-id="blackstar-gravel" data-color="#2d2d2d" style="background-image: url('/images/materials/black-star.jpg'); background-size: cover;"><span>Blackstar Gravel</span></button>
+                        <button class="material-btn" data-id="decomposed-granite" data-color="#C9A66B" style="background-image: url('/images/materials/Decomposed-Granite.jpg'); background-size: cover;"><span>Decomposed Granite</span></button>
+                        <button class="material-btn" data-id="bull-rock" data-color="#a08060" style="background-image: url('/images/materials/2x3-bull-rock.jpeg'); background-size: cover;"><span>3x5 Bull Rock</span></button>
+                        <button class="material-btn" data-id="topsoil" data-color="#3d3225" style="background-image: url('/images/materials/top-soil.jpg'); background-size: cover;"><span>Topsoil</span></button>
                     </div>
-                    <p class="material-price" id="vizMaterialPrice">$45/cubic yard</p>
+                    <p class="material-price" id="vizMaterialPrice">$25/ton</p>
                 </div>
-                
-                <!-- Instructions / Controls -->
                 <div class="visualizer-section">
                     <h3 id="vizStep3Title">3. Outline Area</h3>
-                    <div id="vizInstructions">
-                        <p class="viz-instruction">Upload a photo to get started</p>
-                    </div>
+                    <div id="vizInstructions"><p class="viz-instruction">Upload a photo to get started</p></div>
                     <div id="vizControls" style="display: none;">
-                        <label class="viz-checkbox">
-                            <input type="checkbox" id="vizShowOverlay" checked onchange="toggleVisualizerOverlay()">
-                            Show Material Preview
-                        </label>
-                        <div class="viz-opacity">
-                            <div class="viz-opacity-header">
-                                <span>Opacity</span>
-                                <span id="vizOpacityValue">70%</span>
-                            </div>
-                            <input type="range" min="30" max="100" value="70" id="vizOpacitySlider" oninput="updateVisualizerOpacity()">
-                        </div>
-                        <button class="viz-reset-btn" onclick="resetVisualizerPoints()">
-                            ↺ Draw New Area
-                        </button>
+                        <label class="viz-checkbox"><input type="checkbox" id="vizShowOverlay" checked onchange="toggleVisualizerOverlay()">Show Material Preview</label>
+                        <div class="viz-opacity"><div class="viz-opacity-header"><span>Opacity</span><span id="vizOpacityValue">70%</span></div><input type="range" min="30" max="100" value="70" id="vizOpacitySlider" oninput="updateVisualizerOpacity()"></div>
+                        <button class="viz-reset-btn" onclick="resetVisualizerPoints()">↺ Draw New Area</button>
                     </div>
                 </div>
-                
-                <!-- Step 4: Material Calculator (shows after shape complete) -->
                 <div class="visualizer-section" id="vizCalcSection" style="display: none;">
                     <h3>4. Calculate Amount Needed</h3>
                     <p class="viz-calc-material" id="vizCalcMaterial">Calculating for: <strong>Decomposed Granite</strong></p>
-                    
                     <div class="viz-calc-inputs">
                         <div class="viz-calc-row">
-                            <div class="viz-calc-field">
-                                <label>Length (ft)</label>
-                                <input type="number" id="vizCalcLength" placeholder="20" min="1" step="0.5">
-                            </div>
-                            <div class="viz-calc-field">
-                                <label>Width (ft)</label>
-                                <input type="number" id="vizCalcWidth" placeholder="10" min="1" step="0.5">
-                            </div>
-                            <div class="viz-calc-field">
-                                <label>Depth (in)</label>
-                                <input type="number" id="vizCalcDepth" placeholder="3" min="1" step="0.5">
-                            </div>
+                            <div class="viz-calc-field"><label>Length (ft)</label><input type="number" id="vizCalcLength" placeholder="20" min="1" step="0.5"></div>
+                            <div class="viz-calc-field"><label>Width (ft)</label><input type="number" id="vizCalcWidth" placeholder="10" min="1" step="0.5"></div>
+                            <div class="viz-calc-field"><label>Depth (in)</label><input type="number" id="vizCalcDepth" placeholder="3" min="1" step="0.5"></div>
                         </div>
-                        
-                        <button class="viz-calc-btn" onclick="calculateVisualizerMaterial()">
-                            Calculate
-                        </button>
+                        <button class="viz-calc-btn" onclick="calculateVisualizerMaterial()">Calculate</button>
                     </div>
-                    
                     <div class="viz-calc-result" id="vizCalcResult" style="display: none;">
                         <div class="viz-calc-result-box">
                             <div class="viz-calc-result-label">You Need Approximately</div>
                             <div class="viz-calc-result-values">
-                                <div class="viz-calc-result-item">
-                                    <span class="viz-calc-number" id="vizCalcYards">0</span>
-                                    <span class="viz-calc-unit">Cubic Yards</span>
-                                </div>
+                                <div class="viz-calc-result-item"><span class="viz-calc-number" id="vizCalcYards">0</span><span class="viz-calc-unit">Cubic Yards</span></div>
                                 <div class="viz-calc-divider">or</div>
-                                <div class="viz-calc-result-item">
-                                    <span class="viz-calc-number" id="vizCalcTons">0</span>
-                                    <span class="viz-calc-unit">Tons</span>
-                                </div>
+                                <div class="viz-calc-result-item"><span class="viz-calc-number" id="vizCalcTons">0</span><span class="viz-calc-unit">Tons</span></div>
                             </div>
                         </div>
-                        
-                        <button class="viz-quote-btn" onclick="getVisualizerQuoteWithQuantity()">
-                            Get Delivery Price →
-                        </button>
+                        <button class="viz-quote-btn" onclick="getVisualizerQuoteWithQuantity()">Get Delivery Price →</button>
                     </div>
                 </div>
             </div>
-            
-            <!-- Right Panel - Canvas -->
-            <div class="visualizer-canvas-container" id="vizCanvasContainer" 
-                 ondragover="handleVizDragOver(event)" 
-                 ondragleave="handleVizDragLeave(event)" 
-                 ondrop="handleVizDrop(event)">
-                
+            <div class="visualizer-canvas-container" id="vizCanvasContainer" ondragover="handleVizDragOver(event)" ondragleave="handleVizDragLeave(event)" ondrop="handleVizDrop(event)">
                 <div class="viz-placeholder" id="vizPlaceholder">
-                    <div class="viz-placeholder-icon">🏡</div>
-                    <p>Upload a photo of your space</p>
-                    <p class="viz-placeholder-sub">Driveway, patio, yard, walkway...</p>
-                    <p class="viz-placeholder-hint">Or drag & drop an image here</p>
+                    <div class="viz-placeholder-icon">🏡</div><p>Upload a photo of your space</p><p class="viz-placeholder-sub">Driveway, patio, yard, walkway...</p><p class="viz-placeholder-hint">Or drag & drop an image here</p>
                 </div>
-                
                 <div class="viz-canvas-wrapper" id="vizCanvasWrapper" style="display: none;">
                     <canvas id="vizMainCanvas" onclick="handleVisualizerClick(event)"></canvas>
                     <canvas id="vizOverlayCanvas"></canvas>
-                    <div class="viz-material-badge" id="vizMaterialBadge" style="display: none;">
-                        ✓ <span id="vizBadgeName">Decomposed Granite</span>
-                    </div>
-                    <div class="viz-point-counter" id="vizPointCounter" style="display: none;">
-                        <span id="vizPointCount">0</span> points
-                    </div>
+                    <div class="viz-material-badge" id="vizMaterialBadge" style="display: none;">✓ <span id="vizBadgeName">Decomposed Granite</span></div>
+                    <div class="viz-point-counter" id="vizPointCounter" style="display: none;"><span id="vizPointCount">0</span> points</div>
                 </div>
             </div>
         </div>
@@ -1443,58 +917,10 @@
 
 <!-- Scroll Navigation Arrows -->
 <div class="scroll-arrows">
-    <button class="scroll-arrow scroll-up" id="scrollUpBtn" aria-label="Scroll to top">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="18 15 12 9 6 15"></polyline>
-        </svg>
-    </button>
-    <button class="scroll-arrow scroll-down" id="scrollDownBtn" aria-label="Scroll down">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
-    </button>
+    <button class="scroll-arrow scroll-up" id="scrollUpBtn" aria-label="Scroll to top"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+    <button class="scroll-arrow scroll-down" id="scrollDownBtn" aria-label="Scroll down"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
 </div>
-<!-- MongoDB Products Loader -->
-<script>
-async function loadProductsFromAPI() {
-    try {
-        const response = await fetch('/api/products');
-        const products = await response.json();
-        
-        // Group products by category
-        const categories = {};
-        products.forEach(p => {
-            const cat = p.category || 'Other';
-            if (!categories[cat]) categories[cat] = [];
-            categories[cat].push(p);
-        });
-        
-        // Build dropdown HTML
-        let optionsHTML = '<option value="" data-weight="1.4">-- Select Material --</option>';
-        Object.keys(categories).sort().forEach(category => {
-            optionsHTML += `<optgroup label="${category}">`;
-            categories[category].forEach(product => {
-                optionsHTML += `<option value="${product.id}" data-price="${product.price}" data-weight="${product.weight}">${product.name}</option>`;
-            });
-            optionsHTML += '</optgroup>';
-        });
-        
-        // Update both dropdowns
-        const inlineCalc = document.getElementById('inline-calc-material');
-        const quoteProduct = document.getElementById('quoteProduct');
-        
-        if (inlineCalc) inlineCalc.innerHTML = optionsHTML;
-        if (quoteProduct) quoteProduct.innerHTML = optionsHTML;
-        
-        console.log('✓ Loaded ' + products.length + ' products from MongoDB');
-    } catch (error) {
-        console.error('Failed to load products from API:', error);
-    }
-}
 
-// Load products when page is ready
-document.addEventListener('DOMContentLoaded', loadProductsFromAPI);
-</script>
 <script src="/js/main.js"></script>
 </body>
 </html>

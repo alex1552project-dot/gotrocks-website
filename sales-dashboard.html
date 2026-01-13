@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <title>Sales Dashboard | Texas Got Rocks</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #111827;
+            --bg-card: #1a2234;
+            --bg-card-hover: #1f2942;
+            --bg-input: #0d1320;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-purple: #8b5cf6;
+            --accent-orange: #f97316;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-yellow: #f59e0b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            position: sticky; top: 0;
+            background: rgba(10, 14, 23, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 16px 24px;
+            display: flex; align-items: center; justify-content: space-between;
+            z-index: 100;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 16px; }
+
+        .back-btn {
+            width: 44px; height: 44px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .back-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+        .back-btn svg { width: 20px; height: 20px; }
+
+        .page-title { font-size: 1.5rem; font-weight: 700; }
+
+        .header-right { display: flex; gap: 12px; }
+
+        .btn {
+            padding: 12px 20px; font-size: 0.9rem; font-weight: 600;
+            font-family: inherit; border-radius: 12px; cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn svg { width: 18px; height: 18px; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+            color: white; border: none;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(16, 185, 129, 0.4); }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .btn-secondary:hover { background: var(--bg-card-hover); border-color: var(--accent-blue); }
+
+        /* Main Content */
+        .main-content { padding: 24px; max-width: 1400px; margin: 0 auto; }
+
+        /* Stats Row */
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .stat-label { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; }
+        .stat-value { font-size: 1.75rem; font-weight: 700; }
+        .stat-value.green { color: var(--accent-green); }
+        .stat-value.blue { color: var(--accent-blue); }
+        .stat-value.orange { color: var(--accent-orange); }
+
+        /* Content Grid */
+        .content-grid { display: grid; grid-template-columns: 1fr 400px; gap: 24px; }
+
+        /* Card */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+        }
+
+        .card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .card-title { font-size: 1.1rem; font-weight: 600; }
+        .card-body { padding: 20px 24px; }
+
+        /* Search */
+        .search-box {
+            display: flex; gap: 12px; margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1; padding: 14px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: inherit; font-size: 0.95rem;
+        }
+
+        .search-input:focus { outline: none; border-color: var(--accent-blue); }
+        .search-input::placeholder { color: var(--text-muted); }
+
+        /* Customer List */
+        .customer-list { max-height: 500px; overflow-y: auto; }
+
+        .customer-item {
+            display: flex; align-items: center; gap: 14px;
+            padding: 16px;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 8px;
+        }
+
+        .customer-item:hover { background: var(--bg-input); }
+        .customer-item.selected { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); }
+
+        .customer-avatar {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 1rem;
+        }
+
+        .customer-info { flex: 1; }
+        .customer-name { font-weight: 600; margin-bottom: 4px; }
+        .customer-meta { font-size: 0.85rem; color: var(--text-secondary); }
+
+        .customer-badge {
+            padding: 4px 10px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: 600;
+        }
+
+        .badge-contractor { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); }
+        .badge-homeowner { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); }
+        .badge-commercial { background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); }
+
+        /* Quick Quote Panel */
+        .quote-panel { position: sticky; top: 100px; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px; }
+
+        .form-input, .form-select {
+            width: 100%; padding: 14px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: inherit; font-size: 0.95rem;
+        }
+
+        .form-input:focus, .form-select:focus { outline: none; border-color: var(--accent-blue); }
+
+        .form-select { cursor: pointer; }
+        .form-select option { background: var(--bg-card); }
+
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        /* Quote Result */
+        .quote-result {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .quote-label { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px; }
+        .quote-price { font-size: 2.5rem; font-weight: 800; color: var(--accent-green); }
+        .quote-details { font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .content-grid { grid-template-columns: 1fr; }
+            .quote-panel { position: static; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .header { padding: 12px 16px; flex-wrap: wrap; gap: 12px; }
+            .main-content { padding: 16px; }
+            .stats-row { grid-template-columns: 1fr; }
+            .header-right { width: 100%; }
+            .header-right .btn { flex: 1; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <button class="back-btn" onclick="window.location.href='command-center.html'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"/>
+                </svg>
+            </button>
+            <h1 class="page-title">Sales Dashboard</h1>
+        </div>
+        <div class="header-right">
+            <button class="btn btn-secondary" onclick="loadCustomers()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 4 23 10 17 10"/>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                </svg>
+                Refresh
+            </button>
+            <button class="btn btn-primary" onclick="showAddCustomer()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="8.5" cy="7" r="4"/>
+                    <line x1="20" y1="8" x2="20" y2="14"/>
+                    <line x1="23" y1="11" x2="17" y2="11"/>
+                </svg>
+                Add Customer
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">Total Customers</div>
+                <div class="stat-value" id="totalCustomers">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Contractors</div>
+                <div class="stat-value blue" id="contractors">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Homeowners</div>
+                <div class="stat-value orange" id="homeowners">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-value green" id="totalRevenue">$0</div>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Customer List -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Customers</h2>
+                </div>
+                <div class="card-body">
+                    <div class="search-box">
+                        <input type="text" class="search-input" id="searchInput" placeholder="Search customers..." oninput="filterCustomers()">
+                    </div>
+                    <div class="customer-list" id="customerList">
+                        <!-- Customers loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Quote Panel -->
+            <div class="quote-panel">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Quick Quote</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="form-label">Material</label>
+                            <select class="form-select" id="quoteProduct" onchange="calculateQuote()">
+                                <option value="">Select material...</option>
+                            </select>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="form-group">
+                                <label class="form-label">Quantity (yd³)</label>
+                                <input type="number" class="form-input" id="quoteQuantity" value="5" min="2" oninput="calculateQuote()">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">ZIP Code</label>
+                                <input type="text" class="form-input" id="quoteZip" placeholder="77385" maxlength="5" oninput="calculateQuote()">
+                            </div>
+                        </div>
+
+                        <div class="quote-result" id="quoteResult" style="display: none;">
+                            <div class="quote-label">Estimated Total</div>
+                            <div class="quote-price" id="quotePrice">$0</div>
+                            <div class="quote-details" id="quoteDetails"></div>
+                        </div>
+
+                        <button class="btn btn-primary" style="width: 100%; margin-top: 20px; justify-content: center;" onclick="createQuoteDelivery()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                            Schedule Delivery
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_BASE = '/api';
+        let allCustomers = [];
+        let products = [];
+
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount);
+        }
+
+        // Load products for dropdown
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${API_BASE}/products`);
+                const data = await response.json();
+                products = data.products || data || [];
+                
+                const select = document.getElementById('quoteProduct');
+                select.innerHTML = '<option value="">Select material...</option>' + 
+                    products.filter(p => p.active !== false).map(p => 
+                        `<option value="${p.id || p._id}" data-price="${p.price}" data-weight="${p.weight}">${p.name} - $${p.price}/ton</option>`
+                    ).join('');
+            } catch (error) {
+                console.error('Error loading products:', error);
+            }
+        }
+
+        // Load customers
+        async function loadCustomers() {
+            try {
+                const response = await fetch(`${API_BASE}/customers`);
+                const data = await response.json();
+                
+                allCustomers = data.customers || [];
+                const stats = data.stats || {};
+                
+                document.getElementById('totalCustomers').textContent = stats.total || allCustomers.length;
+                document.getElementById('contractors').textContent = stats.contractors || 0;
+                document.getElementById('homeowners').textContent = stats.homeowners || 0;
+                document.getElementById('totalRevenue').textContent = formatCurrency(stats.totalRevenue || 0);
+                
+                renderCustomers(allCustomers);
+            } catch (error) {
+                console.error('Error loading customers:', error);
+                document.getElementById('customerList').innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 40px;">Unable to load customers</p>';
+            }
+        }
+
+        // Render customers
+        function renderCustomers(customers) {
+            if (customers.length === 0) {
+                document.getElementById('customerList').innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 40px;">No customers found</p>';
+                return;
+            }
+
+            document.getElementById('customerList').innerHTML = customers.map(c => `
+                <div class="customer-item" onclick="selectCustomer('${c._id}')">
+                    <div class="customer-avatar">${(c.name || 'C').charAt(0).toUpperCase()}</div>
+                    <div class="customer-info">
+                        <div class="customer-name">${c.name || 'Unknown'}</div>
+                        <div class="customer-meta">${c.phone || c.email || 'No contact'} • ${c.city || 'N/A'}</div>
+                    </div>
+                    <span class="customer-badge badge-${c.type || 'homeowner'}">${c.type || 'Homeowner'}</span>
+                </div>
+            `).join('');
+        }
+
+        // Filter customers
+        function filterCustomers() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allCustomers.filter(c => 
+                (c.name || '').toLowerCase().includes(query) ||
+                (c.phone || '').includes(query) ||
+                (c.email || '').toLowerCase().includes(query) ||
+                (c.city || '').toLowerCase().includes(query)
+            );
+            renderCustomers(filtered);
+        }
+
+        // Select customer
+        function selectCustomer(id) {
+            const customer = allCustomers.find(c => c._id === id);
+            if (customer && customer.zip) {
+                document.getElementById('quoteZip').value = customer.zip;
+                calculateQuote();
+            }
+            
+            document.querySelectorAll('.customer-item').forEach(el => el.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+        }
+
+        // Calculate quote
+        async function calculateQuote() {
+            const productSelect = document.getElementById('quoteProduct');
+            const quantity = parseFloat(document.getElementById('quoteQuantity').value) || 0;
+            const zip = document.getElementById('quoteZip').value;
+            
+            if (!productSelect.value || quantity < 2 || zip.length !== 5) {
+                document.getElementById('quoteResult').style.display = 'none';
+                return;
+            }
+
+            const selectedOption = productSelect.selectedOptions[0];
+            const pricePerTon = parseFloat(selectedOption.dataset.price);
+            const weight = parseFloat(selectedOption.dataset.weight) || 1.4;
+
+            try {
+                const response = await fetch(`${API_BASE}/pricing`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pricePerTon, weight, cubicYards: quantity, zip })
+                });
+
+                const data = await response.json();
+
+                if (data.calculation) {
+                    document.getElementById('quotePrice').textContent = formatCurrency(data.calculation.displayTotal);
+                    document.getElementById('quoteDetails').textContent = 
+                        `${data.calculation.tons} tons • ${data.calculation.truckConfig} • FREE delivery`;
+                    document.getElementById('quoteResult').style.display = 'block';
+                } else if (data.error) {
+                    document.getElementById('quotePrice').textContent = 'N/A';
+                    document.getElementById('quoteDetails').textContent = data.error;
+                    document.getElementById('quoteResult').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error calculating quote:', error);
+            }
+        }
+
+        // Create delivery from quote
+        function createQuoteDelivery() {
+            alert('Delivery scheduling coming soon! For now, use the Dispatch UI.');
+            window.location.href = 'dispatch-ui.html';
+        }
+
+        // Show add customer modal
+        function showAddCustomer() {
+            alert('Customer creation coming soon!');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+            loadCustomers();
+        });
+    </script>
+</body>
+</html>
