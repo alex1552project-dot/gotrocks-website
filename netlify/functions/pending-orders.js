@@ -34,6 +34,78 @@ function generateOrderId() {
   return `PO-${year}-${month}${day}-${random}`;
 }
 
+// Reserve delivery slot via schedule API
+async function reserveDeliverySlot(orderId, delivery, customer, items, truck) {
+  try {
+    // Calculate total tons for the order
+    const totalTons = items.reduce((sum, item) => sum + (item.tonsEquivalent || item.quantity), 0);
+    
+    const slotReservation = {
+      date: delivery.date,
+      slotId: delivery.slotId,
+      orderId: orderId,
+      customerName: customer.name,
+      customerZip: customer.zip,
+      deliveryAddress: delivery.address,
+      truckType: truck?.type || 'tandem',
+      tonsRequired: totalTons
+    };
+    
+    // Add precision window if selected
+    if (delivery.precisionWindowId) {
+      slotReservation.precisionWindowId = delivery.precisionWindowId;
+    }
+    
+    // Call the schedule function internally (same MongoDB connection)
+    // For Netlify, we'll make an internal fetch call
+    const scheduleUrl = process.env.URL 
+      ? `${process.env.URL}/.netlify/functions/schedule`
+      : 'https://texasgotrocks.com/.netlify/functions/schedule';
+    
+    const response = await fetch(scheduleUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(slotReservation)
+    });
+    
+    const result = await response.json();
+    
+    if (result.error) {
+      console.error('Failed to reserve slot:', result.error);
+      return { success: false, error: result.error };
+    }
+    
+    return { success: true, reservation: result.reservation };
+  } catch (error) {
+    console.error('Slot reservation error:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+// Release delivery slot via schedule API
+async function releaseDeliverySlot(orderId, deliveryDate) {
+  try {
+    const scheduleUrl = process.env.URL 
+      ? `${process.env.URL}/.netlify/functions/schedule`
+      : 'https://texasgotrocks.com/.netlify/functions/schedule';
+    
+    const response = await fetch(scheduleUrl, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        date: deliveryDate,
+        orderId: orderId
+      })
+    });
+    
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Slot release error:', error);
+    return { success: false, error: error.message };
+  }
+}
+
 exports.handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -90,7 +162,7 @@ exports.handler = async (event) => {
       };
     }
 
-    // POST - Create pending order (reserves inventory)
+    // POST - Create pending order (reserves inventory AND delivery slot)
     if (event.httpMethod === 'POST') {
       // Allow both authenticated users and public customers
       const auth = verifyToken(event.headers.authorization, null);
@@ -105,6 +177,15 @@ exports.handler = async (event) => {
           statusCode: 400, 
           headers, 
           body: JSON.stringify({ error: 'Missing required fields: customer, items, delivery, pricing' }) 
+        };
+      }
+
+      // Validate delivery slot info (NEW)
+      if (!delivery.date || !delivery.slotId) {
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({ error: 'Missing required delivery fields: date, slotId' })
         };
       }
 
@@ -183,7 +264,12 @@ exports.handler = async (event) => {
         
         delivery: {
           date: delivery.date,
-          window: delivery.window || 'AM',
+          slotId: delivery.slotId,
+          slotLabel: delivery.slotLabel || null,
+          window: delivery.window || null,
+          precisionWindowId: delivery.precisionWindowId || null,
+          precisionDelivery: !!delivery.precisionWindowId,
+          precisionFee: delivery.precisionFee || 0,
           address: delivery.address,
           zip: delivery.zip,
           distanceMiles: delivery.distanceMiles || null,
@@ -203,7 +289,8 @@ exports.handler = async (event) => {
         
         pricing: {
           materialSubtotal: pricing.materialSubtotal || pricing.materialTotal,
-          deliveryFee: pricing.deliveryFee,
+          deliveryFee: pricing.deliveryFee || 0,
+          precisionDeliveryFee: delivery.precisionFee || 0,
           margin: pricing.margin || 0,
           subtotal: pricing.subtotal,
           tax: pricing.tax,
@@ -226,6 +313,29 @@ exports.handler = async (event) => {
         createdBy: isAuthenticated ? auth.user.username : 'customer'
       };
 
+      // Reserve the delivery slot (NEW)
+      const slotResult = await reserveDeliverySlot(
+        orderId, 
+        delivery, 
+        customer, 
+        items, 
+        truck
+      );
+
+      if (!slotResult.success) {
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({ 
+            error: 'Failed to reserve delivery slot', 
+            details: slotResult.error 
+          })
+        };
+      }
+
+      // Add slot reservation info to order
+      pendingOrder.slotReservation = slotResult.reservation;
+
       await pendingOrdersCollection.insertOne(pendingOrder);
 
       return {
@@ -235,7 +345,8 @@ exports.handler = async (event) => {
           success: true, 
           orderId,
           order: pendingOrder,
-          expiresAt: expiresAt.toISOString()
+          expiresAt: expiresAt.toISOString(),
+          slotReservation: slotResult.reservation
         })
       };
     }
@@ -277,6 +388,7 @@ exports.handler = async (event) => {
       
       if (delivery) {
         if (delivery.date) updateFields['delivery.date'] = delivery.date;
+        if (delivery.slotId) updateFields['delivery.slotId'] = delivery.slotId;
         if (delivery.window) updateFields['delivery.window'] = delivery.window;
         if (delivery.instructions) updateFields['delivery.instructions'] = delivery.instructions;
       }
@@ -298,7 +410,7 @@ exports.handler = async (event) => {
       };
     }
 
-    // DELETE - Cancel pending order (releases inventory hold)
+    // DELETE - Cancel pending order (releases inventory hold AND delivery slot)
     if (event.httpMethod === 'DELETE') {
       const auth = verifyToken(event.headers.authorization, ['owner', 'sales']);
       if (!auth.valid) {
@@ -326,6 +438,12 @@ exports.handler = async (event) => {
         };
       }
 
+      // Release the delivery slot (NEW)
+      if (existing.delivery?.date) {
+        const releaseResult = await releaseDeliverySlot(orderId, existing.delivery.date);
+        console.log('Slot release result:', releaseResult);
+      }
+
       // Update to cancelled status (keeps record for audit)
       await pendingOrdersCollection.updateOne(
         { orderId },
@@ -344,7 +462,7 @@ exports.handler = async (event) => {
         headers,
         body: JSON.stringify({ 
           success: true, 
-          message: 'Order cancelled, inventory hold released',
+          message: 'Order cancelled, inventory hold and delivery slot released',
           orderId
         })
       };
