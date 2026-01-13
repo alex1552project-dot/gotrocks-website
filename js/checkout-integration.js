@@ -363,19 +363,35 @@ function injectCheckoutStyles() {
             border-top: 2px solid #2C2416;
         }
         
-        .total-line {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
+        #checkoutOrderSummary .total-line,
+        .checkout-order-total .total-line {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center;
+            padding: 8px 0;
             font-size: 14px;
+            width: 100%;
         }
         
-        .total-line.grand-total {
+        #checkoutOrderSummary .total-line span,
+        .checkout-order-total .total-line span {
+            display: inline-block;
+        }
+        
+        #checkoutOrderSummary .total-line.grand-total,
+        .checkout-order-total .total-line.grand-total {
             font-size: 18px;
             font-weight: 700;
             padding-top: 12px;
             margin-top: 8px;
             border-top: 1px solid #ddd;
+        }
+        
+        .checkout-order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
         }
     `;
     
