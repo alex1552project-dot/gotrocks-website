@@ -984,6 +984,11 @@
         if (panelId === 'teamPanel') loadUsers();
         if (panelId === 'inventoryPanel') loadInventory();
         if (panelId === 'pricingPanel') loadPricing();
+        
+        // Scroll to panel after a brief delay
+        setTimeout(() => {
+          panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
       }
     }
 
