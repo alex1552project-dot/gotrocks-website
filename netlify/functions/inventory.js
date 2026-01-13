@@ -41,7 +41,7 @@ exports.handler = async (event) => {
 
   try {
     await client.connect();
-    const db = client.db('txgotrocks');
+    const db = client.db('gotrocks');
     const inventoryCollection = db.collection('inventory');
     const productsCollection = db.collection('products');
 
@@ -67,10 +67,11 @@ exports.handler = async (event) => {
           $project: {
             _id: 1,
             productId: 1,
-            stockTons: 1,
-            lowStockThreshold: 1,
-            lastUpdated: 1,
-            lastUpdatedBy: 1,
+            stockTons: '$quantity',
+            lowStockThreshold: '$reorderPoint',
+            lastUpdated: '$updatedAt',
+            productName: '$productName',
+            location: 1,
             name: '$product.name',
             category: '$product.category',
             weight: '$product.weight',
@@ -126,11 +127,14 @@ exports.handler = async (event) => {
 
       const inventoryRecord = {
         productId,
-        stockTons: parseFloat(stockTons),
-        lowStockThreshold: parseFloat(lowStockThreshold) || 50,
-        lastUpdated: new Date().toISOString(),
-        lastUpdatedBy: auth.user.username,
-        createdAt: new Date().toISOString()
+        productName: product.name,
+        quantity: parseFloat(stockTons),
+        unit: 'tons',
+        reorderPoint: parseFloat(lowStockThreshold) || 20,
+        location: 'Main Yard',
+        history: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       };
 
       await inventoryCollection.insertOne(inventoryRecord);
@@ -161,27 +165,30 @@ exports.handler = async (event) => {
       }
 
       const updateFields = {
-        lastUpdated: new Date().toISOString(),
-        lastUpdatedBy: auth.user.username
+        updatedAt: new Date().toISOString()
       };
+
+      let newQuantity = existing.quantity;
 
       // Either set absolute value or adjust
       if (stockTons !== undefined) {
-        updateFields.stockTons = parseFloat(stockTons);
+        newQuantity = parseFloat(stockTons);
+        updateFields.quantity = newQuantity;
       } else if (adjustment !== undefined) {
-        updateFields.stockTons = existing.stockTons + parseFloat(adjustment);
+        newQuantity = existing.quantity + parseFloat(adjustment);
+        updateFields.quantity = newQuantity;
       }
 
       if (lowStockThreshold !== undefined) {
-        updateFields.lowStockThreshold = parseFloat(lowStockThreshold);
+        updateFields.reorderPoint = parseFloat(lowStockThreshold);
       }
 
       // Log the adjustment for audit trail
       const adjustmentLog = {
         productId,
-        previousTons: existing.stockTons,
-        newTons: updateFields.stockTons,
-        adjustment: adjustment || (updateFields.stockTons - existing.stockTons),
+        previousTons: existing.quantity,
+        newTons: newQuantity,
+        adjustment: adjustment || (newQuantity - existing.quantity),
         reason: reason || 'Manual adjustment',
         updatedBy: auth.user.username,
         timestamp: new Date().toISOString()
@@ -189,7 +196,7 @@ exports.handler = async (event) => {
 
       await inventoryCollection.updateOne({ productId }, { $set: updateFields });
       
-      // Optional: Log to separate audit collection
+      // Log to separate audit collection
       const auditCollection = db.collection('inventory_audit');
       await auditCollection.insertOne(adjustmentLog);
 
