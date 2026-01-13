@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Select Delivery - Texas Got Rocks</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --tgr-earth: #2C2416;
+      --tgr-stone: #8B7355;
+      --tgr-sand: #D4C4A8;
+      --tgr-cream: #F5F1E8;
+      --tgr-rust: #C45C26;
+      --tgr-rust-dark: #A34A1E;
+      --tgr-green: #4A7C59;
+      --tgr-green-light: #5A9C6B;
+      --shadow-sm: 0 1px 2px rgba(44, 36, 22, 0.08);
+      --shadow-md: 0 4px 12px rgba(44, 36, 22, 0.12);
+      --shadow-lg: 0 8px 24px rgba(44, 36, 22, 0.16);
+      --radius: 8px;
+      --radius-lg: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--tgr-cream);
+      color: var(--tgr-earth);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .scheduler-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .scheduler-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .scheduler-header h1 {
+      font-family: 'Space Mono', monospace;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--tgr-earth);
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .scheduler-header p {
+      color: var(--tgr-stone);
+      font-size: 16px;
+    }
+
+    .scheduler-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .scheduler-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      background: var(--tgr-earth);
+      color: white;
+      padding: 16px 20px;
+      font-weight: 600;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-header svg {
+      width: 18px;
+      height: 18px;
+      opacity: 0.8;
+    }
+
+    .panel-body {
+      padding: 20px;
+    }
+
+    /* Calendar Styles */
+    .calendar-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .calendar-month {
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .calendar-nav-btn {
+      background: var(--tgr-cream);
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .calendar-nav-btn:hover {
+      background: var(--tgr-sand);
+    }
+
+    .calendar-nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .calendar-weekday {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--tgr-stone);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 8px 0;
+    }
+
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .calendar-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+      border: 2px solid transparent;
+    }
+
+    .calendar-day:hover:not(.disabled):not(.empty) {
+      background: var(--tgr-cream);
+    }
+
+    .calendar-day.empty {
+      cursor: default;
+    }
+
+    .calendar-day.disabled {
+      color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .calendar-day.weekend {
+      color: var(--tgr-stone);
+      opacity: 0.5;
+    }
+
+    .calendar-day.today {
+      background: var(--tgr-sand);
+    }
+
+    .calendar-day.selected {
+      background: var(--tgr-rust);
+      color: white;
+      border-color: var(--tgr-rust-dark);
+    }
+
+    .calendar-day.available::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      width: 4px;
+      height: 4px;
+      background: var(--tgr-green);
+      border-radius: 50%;
+    }
+
+    .calendar-day.limited::after {
+      background: #E9A23B;
+    }
+
+    .calendar-day.full {
+      color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .calendar-day.full::after {
+      display: none;
+    }
+
+    /* Slot Picker Styles */
+    .slots-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .slot-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--tgr-cream);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 2px solid transparent;
+    }
+
+    .slot-item:hover:not(.disabled) {
+      background: var(--tgr-sand);
+    }
+
+    .slot-item.selected {
+      background: var(--tgr-rust);
+      color: white;
+      border-color: var(--tgr-rust-dark);
+    }
+
+    .slot-item.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .slot-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slot-label {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .slot-time {
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    .slot-availability {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .slot-availability .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--tgr-green);
+    }
+
+    .slot-item.selected .slot-availability .dot {
+      background: white;
+    }
+
+    .slot-availability.limited .dot {
+      background: #E9A23B;
+    }
+
+    .no-date-selected {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--tgr-stone);
+    }
+
+    .no-date-selected svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 12px;
+      opacity: 0.4;
+    }
+
+    /* Precision Delivery Upsell */
+    .precision-upsell {
+      margin-top: 20px;
+      padding: 16px;
+      background: linear-gradient(135deg, #FFF9E6 0%, #FFF3CC 100%);
+      border-radius: var(--radius);
+      border: 1px solid #E9D88B;
+    }
+
+    .precision-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .precision-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .precision-title svg {
+      width: 18px;
+      height: 18px;
+      color: #B8860B;
+    }
+
+    .precision-badge {
+      background: var(--tgr-rust);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .precision-description {
+      font-size: 13px;
+      color: var(--tgr-stone);
+      margin-bottom: 12px;
+    }
+
+    .precision-windows {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .precision-window {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: white;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 2px solid transparent;
+    }
+
+    .precision-window:hover {
+      border-color: var(--tgr-sand);
+    }
+
+    .precision-window.selected {
+      border-color: var(--tgr-rust);
+      background: #FFF5F0;
+    }
+
+    .precision-window-time {
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .precision-window-check {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--tgr-sand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .precision-window.selected .precision-window-check {
+      background: var(--tgr-rust);
+      border-color: var(--tgr-rust);
+    }
+
+    .precision-window.selected .precision-window-check svg {
+      display: block;
+    }
+
+    .precision-window-check svg {
+      display: none;
+      width: 12px;
+      height: 12px;
+      color: white;
+    }
+
+    /* Summary Section */
+    .selection-summary {
+      margin-top: 24px;
+      padding: 20px;
+      background: var(--tgr-earth);
+      color: white;
+      border-radius: var(--radius-lg);
+    }
+
+    .summary-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.7;
+      margin-bottom: 12px;
+    }
+
+    .summary-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .summary-details {
+      flex: 1;
+    }
+
+    .summary-date {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .summary-slot {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .summary-precision {
+      margin-top: 8px;
+      padding: 6px 10px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius);
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .summary-precision svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .summary-pricing {
+      text-align: right;
+    }
+
+    .summary-fee-label {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    .summary-fee {
+      font-family: 'Space Mono', monospace;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .confirm-btn {
+      width: 100%;
+      margin-top: 16px;
+      padding: 14px;
+      background: var(--tgr-rust);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .confirm-btn:hover {
+      background: var(--tgr-rust-dark);
+    }
+
+    .confirm-btn:disabled {
+      background: var(--tgr-stone);
+      cursor: not-allowed;
+    }
+
+    /* Same Day Badge */
+    .same-day-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--tgr-green);
+      color: white;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .same-day-badge svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Loading State */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      color: var(--tgr-stone);
+    }
+
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid var(--tgr-sand);
+      border-top-color: var(--tgr-rust);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 12px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Legend */
+    .calendar-legend {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--tgr-cream);
+      font-size: 12px;
+      color: var(--tgr-stone);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .legend-dot.available { background: var(--tgr-green); }
+    .legend-dot.limited { background: #E9A23B; }
+    .legend-dot.full { background: #ccc; }
+  </style>
+</head>
+<body>
+  <div class="scheduler-container">
+    <div class="scheduler-header">
+      <h1>SCHEDULE YOUR DELIVERY</h1>
+      <p>Select a date and time window that works for you</p>
+    </div>
+
+    <div class="scheduler-grid">
+      <!-- Calendar Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          Select Date
+        </div>
+        <div class="panel-body">
+          <div id="calendar-container">
+            <div class="loading">
+              <div class="spinner"></div>
+              Loading availability...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Time Slot Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          Select Time Window
+        </div>
+        <div class="panel-body">
+          <div id="slots-container">
+            <div class="no-date-selected">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <p>Select a date to see<br>available time slots</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selection Summary -->
+    <div id="selection-summary" style="display: none;">
+      <div class="selection-summary">
+        <div class="summary-title">Your Delivery</div>
+        <div class="summary-content">
+          <div class="summary-details">
+            <div class="summary-date" id="summary-date">-</div>
+            <div class="summary-slot" id="summary-slot">-</div>
+            <div class="summary-precision" id="summary-precision" style="display: none;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <span id="summary-precision-text">Precision Delivery</span>
+            </div>
+          </div>
+          <div class="summary-pricing">
+            <div class="summary-fee-label">Delivery upgrade</div>
+            <div class="summary-fee" id="summary-fee">$0</div>
+          </div>
+        </div>
+        <button class="confirm-btn" id="confirm-btn" disabled>
+          Confirm Delivery Window
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration
+    const API_BASE = '/.netlify/functions';
+    const PRECISION_FEE = 50;
+
+    // State
+    let availabilityData = null;
+    let selectedDate = null;
+    let selectedSlot = null;
+    let selectedPrecisionWindow = null;
+    let currentMonth = new Date();
+
+    // For demo/testing - simulate customer location (Conroe area)
+    const customerLocation = {
+      lat: 30.32,
+      lng: -95.45
+    };
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchAvailability();
+    });
+
+    // Fetch 14-day availability
+    async function fetchAvailability() {
+      try {
+        const params = new URLSearchParams({
+          range: 14,
+          customerLat: customerLocation.lat,
+          customerLng: customerLocation.lng
+        });
+
+        const response = await fetch(`${API_BASE}/schedule?${params}`);
+        availabilityData = await response.json();
+        renderCalendar();
+      } catch (error) {
+        console.error('Failed to fetch availability:', error);
+        document.getElementById('calendar-container').innerHTML = `
+          <div class="no-date-selected">
+            <p>Unable to load availability.<br>Please refresh the page.</p>
+          </div>
+        `;
+      }
+    }
+
+    // Render calendar
+    function renderCalendar() {
+      const container = document.getElementById('calendar-container');
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const year = currentMonth.getFullYear();
+      const month = currentMonth.getMonth();
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const startPadding = firstDay.getDay();
+
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
+
+      // Build availability map
+      const availabilityMap = {};
+      if (availabilityData?.days) {
+        availabilityData.days.forEach(day => {
+          availabilityMap[day.date] = day;
+        });
+      }
+
+      // Check if we can go to previous month
+      const canGoPrev = currentMonth > today;
+
+      let html = `
+        <div class="calendar-nav">
+          <button class="calendar-nav-btn" onclick="prevMonth()" ${!canGoPrev ? 'disabled' : ''}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          <span class="calendar-month">${monthNames[month]} ${year}</span>
+          <button class="calendar-nav-btn" onclick="nextMonth()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+        <div class="calendar-weekdays">
+          <div class="calendar-weekday">Sun</div>
+          <div class="calendar-weekday">Mon</div>
+          <div class="calendar-weekday">Tue</div>
+          <div class="calendar-weekday">Wed</div>
+          <div class="calendar-weekday">Thu</div>
+          <div class="calendar-weekday">Fri</div>
+          <div class="calendar-weekday">Sat</div>
+        </div>
+        <div class="calendar-days">
+      `;
+
+      // Empty cells for start padding
+      for (let i = 0; i < startPadding; i++) {
+        html += `<div class="calendar-day empty"></div>`;
+      }
+
+      // Days of the month
+      for (let day = 1; day <= lastDay.getDate(); day++) {
+        const date = new Date(year, month, day);
+        const dateStr = formatDate(date);
+        const isToday = date.getTime() === today.getTime();
+        const isPast = date < today;
+        const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+        const isSelected = selectedDate === dateStr;
+
+        const dayData = availabilityMap[dateStr];
+        const hasAvailability = dayData && dayData.availableSlots > 0;
+        const isLimited = dayData && dayData.availableSlots <= 2 && dayData.availableSlots > 0;
+        const isFull = dayData && dayData.fullyBooked;
+
+        let classes = ['calendar-day'];
+        if (isToday) classes.push('today');
+        if (isPast) classes.push('disabled');
+        if (isWeekend) classes.push('weekend', 'disabled');
+        if (isSelected) classes.push('selected');
+        if (!isPast && !isWeekend && hasAvailability) classes.push('available');
+        if (!isPast && !isWeekend && isLimited) classes.push('limited');
+        if (!isPast && !isWeekend && isFull) classes.push('full', 'disabled');
+
+        const clickable = !isPast && !isWeekend && !isFull && hasAvailability;
+
+        html += `<div class="${classes.join(' ')}" ${clickable ? `onclick="selectDate('${dateStr}')"` : ''}>${day}</div>`;
+      }
+
+      html += `
+        </div>
+        <div class="calendar-legend">
+          <div class="legend-item"><div class="legend-dot available"></div> Available</div>
+          <div class="legend-item"><div class="legend-dot limited"></div> Limited</div>
+          <div class="legend-item"><div class="legend-dot full"></div> Full</div>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    // Format date as YYYY-MM-DD
+    function formatDate(date) {
+      return date.toISOString().split('T')[0];
+    }
+
+    // Navigate months
+    function prevMonth() {
+      currentMonth.setMonth(currentMonth.getMonth() - 1);
+      renderCalendar();
+    }
+
+    function nextMonth() {
+      currentMonth.setMonth(currentMonth.getMonth() + 1);
+      renderCalendar();
+    }
+
+    // Select a date
+    function selectDate(dateStr) {
+      selectedDate = dateStr;
+      selectedSlot = null;
+      selectedPrecisionWindow = null;
+      renderCalendar();
+      renderSlots(dateStr);
+      updateSummary();
+    }
+
+    // Render time slots for selected date
+    function renderSlots(dateStr) {
+      const container = document.getElementById('slots-container');
+      const dayData = availabilityData?.days?.find(d => d.date === dateStr);
+
+      if (!dayData) {
+        container.innerHTML = `
+          <div class="no-date-selected">
+            <p>No availability data<br>for this date</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+
+      // Same-day badge
+      if (dayData.isToday && availabilityData.sameDayMaxDistance) {
+        html += `
+          <div class="same-day-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            Same-Day Delivery Available
+          </div>
+        `;
+      }
+
+      html += '<div class="slots-container">';
+
+      dayData.slots.forEach(slot => {
+        const isSelected = selectedSlot === slot.id;
+        const isAvailable = slot.available;
+        const isLimited = slot.bookedCount >= slot.capacity - 2;
+
+        let classes = ['slot-item'];
+        if (isSelected) classes.push('selected');
+        if (!isAvailable) classes.push('disabled');
+
+        const spotsLeft = slot.capacity - slot.bookedCount;
+        const availText = isAvailable
+          ? (isLimited ? `${spotsLeft} spots left` : 'Available')
+          : 'Full';
+
+        html += `
+          <div class="${classes.join(' ')}" ${isAvailable ? `onclick="selectSlot('${slot.id}')"` : ''}>
+            <div class="slot-info">
+              <span class="slot-label">${slot.label}</span>
+              <span class="slot-time">${formatTime(slot.start)} - ${formatTime(slot.end)}</span>
+            </div>
+            <div class="slot-availability ${isLimited ? 'limited' : ''}">
+              <span class="dot"></span>
+              ${availText}
+            </div>
+          </div>
+        `;
+      });
+
+      html += '</div>';
+
+      // Precision Delivery upsell (only show if a slot is selected)
+      if (selectedSlot) {
+        const slot = dayData.slots.find(s => s.id === selectedSlot);
+        if (slot?.precisionWindows?.length) {
+          html += `
+            <div class="precision-upsell">
+              <div class="precision-header">
+                <div class="precision-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  Precision Delivery
+                </div>
+                <span class="precision-badge">+$${PRECISION_FEE}</span>
+              </div>
+              <p class="precision-description">
+                Upgrade to a 1-hour delivery window. Know exactly when we'll arrive.
+              </p>
+              <div class="precision-windows">
+          `;
+
+          slot.precisionWindows.forEach(window => {
+            const isSelected = selectedPrecisionWindow === window.id;
+            html += `
+              <div class="precision-window ${isSelected ? 'selected' : ''}" onclick="selectPrecisionWindow('${window.id}')">
+                <span class="precision-window-time">${window.label}</span>
+                <div class="precision-window-check">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </div>
+              </div>
+            `;
+          });
+
+          html += `
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      container.innerHTML = html;
+    }
+
+    // Format time for display
+    function formatTime(time24) {
+      const [hours, minutes] = time24.split(':');
+      const h = parseInt(hours);
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const h12 = h % 12 || 12;
+      return `${h12}:${minutes} ${ampm}`;
+    }
+
+    // Select a slot
+    function selectSlot(slotId) {
+      selectedSlot = slotId;
+      selectedPrecisionWindow = null;
+      renderSlots(selectedDate);
+      updateSummary();
+    }
+
+    // Select precision window
+    function selectPrecisionWindow(windowId) {
+      if (selectedPrecisionWindow === windowId) {
+        selectedPrecisionWindow = null;
+      } else {
+        selectedPrecisionWindow = windowId;
+      }
+      renderSlots(selectedDate);
+      updateSummary();
+    }
+
+    // Update summary panel
+    function updateSummary() {
+      const summaryEl = document.getElementById('selection-summary');
+      const dateEl = document.getElementById('summary-date');
+      const slotEl = document.getElementById('summary-slot');
+      const precisionEl = document.getElementById('summary-precision');
+      const precisionTextEl = document.getElementById('summary-precision-text');
+      const feeEl = document.getElementById('summary-fee');
+      const confirmBtn = document.getElementById('confirm-btn');
+
+      if (!selectedDate || !selectedSlot) {
+        summaryEl.style.display = 'none';
+        return;
+      }
+
+      summaryEl.style.display = 'block';
+
+      // Format date nicely
+      const dateObj = new Date(selectedDate + 'T12:00:00');
+      const options = { weekday: 'long', month: 'long', day: 'numeric' };
+      dateEl.textContent = dateObj.toLocaleDateString('en-US', options);
+
+      // Get slot info
+      const dayData = availabilityData.days.find(d => d.date === selectedDate);
+      const slot = dayData?.slots.find(s => s.id === selectedSlot);
+
+      if (slot) {
+        slotEl.textContent = `${slot.label} (${formatTime(slot.start)} - ${formatTime(slot.end)})`;
+      }
+
+      // Precision delivery
+      if (selectedPrecisionWindow) {
+        const precisionWindow = slot?.precisionWindows?.find(w => w.id === selectedPrecisionWindow);
+        precisionEl.style.display = 'inline-flex';
+        precisionTextEl.textContent = `Precision: ${precisionWindow?.label || ''}`;
+        feeEl.textContent = `+$${PRECISION_FEE}`;
+      } else {
+        precisionEl.style.display = 'none';
+        feeEl.textContent = '$0';
+      }
+
+      confirmBtn.disabled = false;
+    }
+
+    // Confirm selection (to be integrated with checkout flow)
+    document.getElementById('confirm-btn').addEventListener('click', () => {
+      const selection = {
+        date: selectedDate,
+        slotId: selectedSlot,
+        precisionWindowId: selectedPrecisionWindow,
+        precisionDelivery: !!selectedPrecisionWindow,
+        precisionFee: selectedPrecisionWindow ? PRECISION_FEE : 0
+      };
+
+      console.log('Delivery selection:', selection);
+
+      // Dispatch custom event for parent page to listen to
+      window.dispatchEvent(new CustomEvent('deliverySelected', { detail: selection }));
+
+      // For standalone testing, show alert
+      alert(`Delivery confirmed!\n\nDate: ${selectedDate}\nSlot: ${selectedSlot}\nPrecision: ${selectedPrecisionWindow || 'No'}\nFee: $${selection.precisionFee}`);
+    });
+  </script>
+</body>
+</html>
