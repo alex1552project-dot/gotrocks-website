@@ -78,11 +78,14 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // =====================================================
 // SCROLL NAVIGATION ARROWS
 // Shows/hides up/down arrows based on scroll position
+// Uses CSS classes: .visible for up arrow, .hidden for down arrow
 // =====================================================
-const scrollUpBtn = document.getElementById('scrollUpBtn');
-const scrollDownBtn = document.getElementById('scrollDownBtn');
-
 function updateScrollArrows() {
+    const scrollUpBtn = document.getElementById('scrollUpBtn');
+    const scrollDownBtn = document.getElementById('scrollDownBtn');
+    
+    if (!scrollUpBtn || !scrollDownBtn) return;
+    
     const scrollTop = window.scrollY;
     const scrollHeight = document.documentElement.scrollHeight;
     const clientHeight = document.documentElement.clientHeight;
@@ -91,49 +94,52 @@ function updateScrollArrows() {
     // Threshold for considering "at top" or "at bottom" (in pixels)
     const threshold = 100;
     
-    if (scrollUpBtn && scrollDownBtn) {
-        // At top of page: hide up arrow, show down arrow
-        if (scrollTop <= threshold) {
-            scrollUpBtn.style.display = 'none';
-            scrollDownBtn.style.display = 'flex';
-        }
-        // At bottom of page: show up arrow, hide down arrow
-        else if (scrollBottom <= threshold) {
-            scrollUpBtn.style.display = 'flex';
-            scrollDownBtn.style.display = 'none';
-        }
-        // In the middle: show both arrows
-        else {
-            scrollUpBtn.style.display = 'flex';
-            scrollDownBtn.style.display = 'flex';
-        }
+    // At top of page: hide up arrow, show down arrow
+    if (scrollTop <= threshold) {
+        scrollUpBtn.classList.remove('visible');
+        scrollDownBtn.classList.remove('hidden');
+    }
+    // At bottom of page: show up arrow, hide down arrow
+    else if (scrollBottom <= threshold) {
+        scrollUpBtn.classList.add('visible');
+        scrollDownBtn.classList.add('hidden');
+    }
+    // In the middle: show both arrows
+    else {
+        scrollUpBtn.classList.add('visible');
+        scrollDownBtn.classList.remove('hidden');
     }
 }
 
 // Scroll arrow click handlers
-if (scrollUpBtn) {
-    scrollUpBtn.addEventListener('click', function() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-}
-
-if (scrollDownBtn) {
-    scrollDownBtn.addEventListener('click', function() {
-        // Scroll down by one viewport height, or to bottom if near end
-        const currentScroll = window.scrollY;
-        const viewportHeight = window.innerHeight;
-        const maxScroll = document.documentElement.scrollHeight - viewportHeight;
-        const targetScroll = Math.min(currentScroll + viewportHeight, maxScroll);
-        window.scrollTo({ top: targetScroll, behavior: 'smooth' });
-    });
-}
+document.addEventListener('DOMContentLoaded', function() {
+    const scrollUpBtn = document.getElementById('scrollUpBtn');
+    const scrollDownBtn = document.getElementById('scrollDownBtn');
+    
+    if (scrollUpBtn) {
+        scrollUpBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+    
+    if (scrollDownBtn) {
+        scrollDownBtn.addEventListener('click', function() {
+            // Scroll down by one viewport height, or to bottom if near end
+            const currentScroll = window.scrollY;
+            const viewportHeight = window.innerHeight;
+            const maxScroll = document.documentElement.scrollHeight - viewportHeight;
+            const targetScroll = Math.min(currentScroll + viewportHeight, maxScroll);
+            window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+        });
+    }
+    
+    // Initial check
+    updateScrollArrows();
+});
 
 // Update arrows on scroll and resize
 window.addEventListener('scroll', updateScrollArrows);
 window.addEventListener('resize', updateScrollArrows);
-
-// Initial check on page load
-document.addEventListener('DOMContentLoaded', updateScrollArrows);
 
 // =====================================================
 // CALCULATOR MODAL FUNCTIONS
