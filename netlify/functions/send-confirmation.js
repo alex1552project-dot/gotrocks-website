@@ -1,8 +1,6 @@
 // /netlify/functions/send-confirmation.js
 // Sends order confirmation via Email and SMS using Brevo
 
-const fetch = require('node-fetch');
-
 const BREVO_API_KEY = process.env.BREVO_API_KEY;
 const BREVO_EMAIL_URL = 'https://api.brevo.com/v3/smtp/email';
 const BREVO_SMS_URL = 'https://api.brevo.com/v3/transactionalSMS/sms';
