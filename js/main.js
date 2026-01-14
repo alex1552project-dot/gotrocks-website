@@ -1,9 +1,10 @@
 // =====================================================
 // TEXAS GOT ROCKS - COMPLETE MAIN.JS
-// Last Updated: January 8, 2026
+// Last Updated: January 14, 2026
 // INCLUDES: Smart truck selection, delivery minimums, 48-ton cap
 // NEW: 2-yard minimum per material, tiered margins, value proposition upsell
 // NEW: 41 additional ZIP codes (189 total)
+// NEW: Scroll arrow visibility based on page position
 // REPLACE YOUR ENTIRE main.js WITH THIS FILE
 // =====================================================
 
@@ -73,6 +74,66 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 });
+
+// =====================================================
+// SCROLL NAVIGATION ARROWS
+// Shows/hides up/down arrows based on scroll position
+// =====================================================
+const scrollUpBtn = document.getElementById('scrollUpBtn');
+const scrollDownBtn = document.getElementById('scrollDownBtn');
+
+function updateScrollArrows() {
+    const scrollTop = window.scrollY;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+    const scrollBottom = scrollHeight - scrollTop - clientHeight;
+    
+    // Threshold for considering "at top" or "at bottom" (in pixels)
+    const threshold = 100;
+    
+    if (scrollUpBtn && scrollDownBtn) {
+        // At top of page: hide up arrow, show down arrow
+        if (scrollTop <= threshold) {
+            scrollUpBtn.style.display = 'none';
+            scrollDownBtn.style.display = 'flex';
+        }
+        // At bottom of page: show up arrow, hide down arrow
+        else if (scrollBottom <= threshold) {
+            scrollUpBtn.style.display = 'flex';
+            scrollDownBtn.style.display = 'none';
+        }
+        // In the middle: show both arrows
+        else {
+            scrollUpBtn.style.display = 'flex';
+            scrollDownBtn.style.display = 'flex';
+        }
+    }
+}
+
+// Scroll arrow click handlers
+if (scrollUpBtn) {
+    scrollUpBtn.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
+
+if (scrollDownBtn) {
+    scrollDownBtn.addEventListener('click', function() {
+        // Scroll down by one viewport height, or to bottom if near end
+        const currentScroll = window.scrollY;
+        const viewportHeight = window.innerHeight;
+        const maxScroll = document.documentElement.scrollHeight - viewportHeight;
+        const targetScroll = Math.min(currentScroll + viewportHeight, maxScroll);
+        window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+    });
+}
+
+// Update arrows on scroll and resize
+window.addEventListener('scroll', updateScrollArrows);
+window.addEventListener('resize', updateScrollArrows);
+
+// Initial check on page load
+document.addEventListener('DOMContentLoaded', updateScrollArrows);
 
 // =====================================================
 // CALCULATOR MODAL FUNCTIONS
