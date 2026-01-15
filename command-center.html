@@ -1387,10 +1387,13 @@
       }
     }
 
+    // ==========================================
+    // PRICING CONFIG SAVE FUNCTIONS (FIXED)
+    // ==========================================
     async function saveTruckingRates() {
       const trucking = {
-        tandemRate: parseFloat(document.getElementById('tandemRate').value),
-        endDumpRate: parseFloat(document.getElementById('endDumpRate').value),
+        tandemRate: parseFloat(document.getElementById('tandemRate').value) || 100,
+        endDumpRate: parseFloat(document.getElementById('endDumpRate').value) || 130,
         loadTime: pricingConfig?.trucking?.loadTime || 0.25,
         avgSpeed: pricingConfig?.trucking?.avgSpeed || 35
       };
@@ -1398,30 +1401,60 @@
     }
 
     async function saveMargins() {
+      const smallVal = parseFloat(document.getElementById('marginSmall').value);
+      const stdVal = parseFloat(document.getElementById('marginStandard').value);
+      
+      if (isNaN(smallVal) || isNaN(stdVal)) {
+        showAlert('pricingAlert', 'error', 'Please enter valid margin percentages');
+        return;
+      }
+      
       const margins = {
-        small: parseFloat(document.getElementById('marginSmall').value) / 100,
-        standard: parseFloat(document.getElementById('marginStandard').value) / 100
+        small: smallVal / 100,
+        standard: stdVal / 100
       };
       await updatePricingConfig({ margins });
     }
 
     async function saveMinimums() {
-      const minimums = { orderYards: parseFloat(document.getElementById('minYards').value), orderDollars: 0 };
-      const fees = { smallOrderFee: 0, fuelSurcharge: parseFloat(document.getElementById('fuelSurcharge').value) };
+      const minimums = { 
+        orderYards: parseFloat(document.getElementById('minYards').value) || 2, 
+        orderDollars: 0 
+      };
+      const fees = { 
+        smallOrderFee: 0, 
+        fuelSurcharge: parseFloat(document.getElementById('fuelSurcharge').value) || 0 
+      };
       await updatePricingConfig({ minimums, fees });
     }
 
     async function updatePricingConfig(updates) {
       try {
+        const token = getToken();
+        if (!token) {
+          showAlert('pricingAlert', 'error', 'Not authenticated. Please log in again.');
+          return;
+        }
+        
         const response = await fetch('/.netlify/functions/pricing', {
           method: 'PUT',
-          headers: authHeaders(),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify({ type: 'config', updates })
         });
-        if (!response.ok) throw new Error('Failed to save config');
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to save config');
+        }
+        
         showAlert('pricingAlert', 'success', 'Settings saved!');
         loadPricing();
       } catch (error) {
+        console.error('updatePricingConfig error:', error);
         showAlert('pricingAlert', 'error', error.message);
       }
     }
