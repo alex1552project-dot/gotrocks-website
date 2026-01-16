@@ -355,27 +355,27 @@
         <div class="products-grid">
             <a href="/materials/black-mulch/" class="product-card" data-product="black-mulch">
                 <div class="product-image" style="background-image: url('/images/black-mulch.png'); background-size: cover; background-position: center;"><span class="product-badge">Popular</span></div>
-                <div class="product-info"><h3 class="product-name">Black Mulch</h3><p class="product-description">Creates dramatic contrast against greenery. Retains moisture and suppresses weeds naturally.</p><div class="product-price"><span class="amount">$25</span><span class="unit">per ton</span></div></div>
+                <div class="product-info"><h3 class="product-name">Black Mulch</h3><p class="product-description">Creates dramatic contrast against greenery. Retains moisture and suppresses weeds naturally.</p><div class="product-price"><span class="amount">Starting at $12.50</span><span class="unit">per cubic yard</span></div></div>
             </a>
             <a href="/materials/brown-mulch/" class="product-card" data-product="brown-mulch">
                 <div class="product-image" style="background-image: url('/images/brown-mulch.png'); background-size: cover; background-position: center;"><span class="product-badge">Best Seller</span></div>
-                <div class="product-info"><h3 class="product-name">Brown Mulch</h3><p class="product-description">Classic natural look that mimics the forest floor. Blends seamlessly with wooded environments.</p><div class="product-price"><span class="amount">$25</span><span class="unit">per ton</span></div></div>
+                <div class="product-info"><h3 class="product-name">Brown Mulch</h3><p class="product-description">Classic natural look that mimics the forest floor. Blends seamlessly with wooded environments.</p><div class="product-price"><span class="amount">Starting at $12.50</span><span class="unit">per cubic yard</span></div></div>
             </a>
             <a href="/materials/blackstar-gravel/" class="product-card" data-product="blackstar-gravel">
                 <div class="product-image" style="background-image: url('/images/blackstar-gravel.png'); background-size: cover; background-position: center;"><span class="product-badge">Premium</span></div>
-                <div class="product-info"><h3 class="product-name">5/8" Black Star</h3><p class="product-description">Stunning basalt volcanic rock. Dark, elegant, and incredibly durable for modern landscapes.</p><div class="product-price"><span class="amount">$96</span><span class="unit">per ton</span></div></div>
+                <div class="product-info"><h3 class="product-name">5/8" Black Star</h3><p class="product-description">Stunning basalt volcanic rock. Dark, elegant, and incredibly durable for modern landscapes.</p><div class="product-price"><span class="amount">Starting at $134.40</span><span class="unit">per cubic yard</span></div></div>
             </a>
             <a href="/materials/decomposed-granite/" class="product-card" data-product="decomposed-granite">
                 <div class="product-image" style="background-image: url('/images/decomposed-granite.png'); background-size: cover; background-position: center;"><span class="product-badge">Texas Favorite</span></div>
-                <div class="product-info"><h3 class="product-name">Decomposed Granite</h3><p class="product-description">Natural, rustic look that compacts well. Great for paths, patios, and xeriscaping.</p><div class="product-price"><span class="amount">$48</span><span class="unit">per ton</span></div></div>
+                <div class="product-info"><h3 class="product-name">Decomposed Granite</h3><p class="product-description">Natural, rustic look that compacts well. Great for paths, patios, and xeriscaping.</p><div class="product-price"><span class="amount">Starting at $67.20</span><span class="unit">per cubic yard</span></div></div>
             </a>
             <a href="/materials/bull-rock/" class="product-card" data-product="bull-rock">
                 <div class="product-image" style="background-image: url('/images/bull-rock.png'); background-size: cover; background-position: center;"><span class="product-badge">Drainage</span></div>
-                <div class="product-info"><h3 class="product-name">3x5 Bull Rock</h3><p class="product-description">Large, rounded landscape stones perfect for borders, drainage, and accent areas.</p><div class="product-price"><span class="amount">$41</span><span class="unit">per ton</span></div></div>
+                <div class="product-info"><h3 class="product-name">3x5 Bull Rock</h3><p class="product-description">Large, rounded landscape stones perfect for borders, drainage, and accent areas.</p><div class="product-price"><span class="amount">Starting at $57.40</span><span class="unit">per cubic yard</span></div></div>
             </a>
             <a href="/materials/topsoil/" class="product-card" data-product="topsoil">
                 <div class="product-image" style="background-image: url('/images/topsoil.png'); background-size: cover; background-position: center;"><span class="product-badge">Garden Grade</span></div>
-                <div class="product-info"><h3 class="product-name">Topsoil</h3><p class="product-description">Nutrient-rich screened topsoil for gardens, lawns, and raised beds.</p><div class="product-price"><span class="amount">$24</span><span class="unit">per ton</span></div></div>
+                <div class="product-info"><h3 class="product-name">Topsoil</h3><p class="product-description">Nutrient-rich screened topsoil for gardens, lawns, and raised beds.</p><div class="product-price"><span class="amount">Starting at $33.60</span><span class="unit">per cubic yard</span></div></div>
             </a>
             <div class="product-card" data-product="more" onclick="openMoreProductsModal()">
                 <div class="product-image" style="background-image: url('/images/more-materials.png'); background-size: cover; background-position: center;"></div>
@@ -851,7 +851,7 @@
                         <button class="material-btn" data-id="bull-rock" data-color="#a08060" style="background-image: url('/images/materials/2x3-bull-rock.jpeg'); background-size: cover;"><span>3x5 Bull Rock</span></button>
                         <button class="material-btn" data-id="topsoil" data-color="#3d3225" style="background-image: url('/images/materials/top-soil.jpg'); background-size: cover;"><span>Topsoil</span></button>
                     </div>
-                    <p class="material-price" id="vizMaterialPrice">$25/ton</p>
+                    <p class="material-price" id="vizMaterialPrice">Starting at $12.50/cy</p>
                 </div>
                 <div class="visualizer-section">
                     <h3 id="vizStep3Title">3. Outline Area</h3>
@@ -901,6 +901,143 @@
     </div>
 </div>
 
+<!-- More Products Modal Styles (inline for reliability) -->
+<style>
+.more-products-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.more-products-modal-overlay.active {
+    display: flex !important;
+}
+.more-products-modal {
+    background: white;
+    border-radius: 20px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.more-products-modal .modal-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: rgba(255,255,255,0.2);
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+.more-products-modal .modal-close:hover {
+    background: rgba(255,255,255,0.3);
+}
+.more-products-header {
+    background: linear-gradient(135deg, #3E2723, #FF6F00);
+    color: white;
+    padding: 30px;
+    border-radius: 20px 20px 0 0;
+    text-align: center;
+}
+.more-products-header h3 {
+    font-size: 1.5rem;
+    margin: 0 0 8px 0;
+}
+.more-products-header p {
+    opacity: 0.9;
+    margin: 0;
+}
+.more-products-body {
+    padding: 25px 30px;
+}
+.more-products-modal .product-category {
+    margin-bottom: 25px;
+}
+.more-products-modal .product-category:last-child {
+    margin-bottom: 0;
+}
+.more-products-modal .product-category h4 {
+    color: #3E2723;
+    font-size: 1.1rem;
+    margin: 0 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #eee;
+}
+.more-products-modal .product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 10px;
+}
+.more-products-modal .product-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: #f8f8f8;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+.more-products-modal .product-item:hover {
+    background: #fff;
+    border-color: #FF6F00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.more-products-modal .product-name {
+    font-weight: 500;
+    color: #3E2723;
+    font-size: 0.9rem;
+}
+.more-products-modal .product-price {
+    font-weight: 600;
+    color: #FF6F00;
+    white-space: nowrap;
+    font-size: 0.85rem;
+}
+.more-products-footer {
+    padding: 20px 30px;
+    background: #f5f5f5;
+    border-radius: 0 0 20px 20px;
+    text-align: center;
+}
+.more-products-footer p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+.more-products-footer a {
+    color: #FF6F00;
+    font-weight: 600;
+}
+@media (max-width: 600px) {
+    .more-products-modal .product-list {
+        grid-template-columns: 1fr;
+    }
+    .more-products-header, .more-products-body, .more-products-footer {
+        padding: 20px;
+    }
+}
+</style>
+
 <!-- More Products Modal -->
 <div class="more-products-modal-overlay" id="moreProductsModal">
     <div class="more-products-modal">
@@ -913,37 +1050,37 @@
             <div class="product-category">
                 <h4>Rock & Gravel</h4>
                 <div class="product-list">
-                    <div class="product-item" onclick="selectMoreProduct('decomposed-granite')"><span class="product-name">1/4" Minus Decomposed Granite</span><span class="product-price">$48/ton</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('granite-base')"><span class="product-name">Granite Base</span><span class="product-price">$39/ton</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('limestone-1')"><span class="product-name">1" Limestone</span><span class="product-price">$55/ton</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('limestone-3/4')"><span class="product-name">3/4" Limestone</span><span class="product-price">$55/ton</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('limestone-3/8')"><span class="product-name">3/8" Limestone</span><span class="product-price">$55/ton</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('limestone-base')"><span class="product-name">Limestone Base</span><span class="product-price">$55/ton</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('bull-rock-3x5')"><span class="product-name">3x5 Bull Rock Gravel</span><span class="product-price">$41/ton</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('gravel-2x3')"><span class="product-name">2x3 Gravel</span><span class="product-price">$41/ton</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('gravel-1.5-minus')"><span class="product-name">1.5" Minus Gravel</span><span class="product-price">$41/ton</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('pea-gravel')"><span class="product-name">3/8" Pea Gravel</span><span class="product-price">$41/ton</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('rainbow-gravel')"><span class="product-name">Rainbow Gravel</span><span class="product-price">$46/ton</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('blackstar')"><span class="product-name">5/8" Black Star</span><span class="product-price">$96/ton</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('colorado-bull-rock')"><span class="product-name">1x3 Colorado Bull Rock</span><span class="product-price">$71/ton</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('fairland-pink')"><span class="product-name">1x2 Fairland Pink</span><span class="product-price">$45/ton</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('decomposed-granite')"><span class="product-name">1/4" Minus Decomposed Granite</span><span class="product-price">Starting at $67.20/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('granite-base')"><span class="product-name">Granite Base</span><span class="product-price">Starting at $54.60/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('limestone-1')"><span class="product-name">1" Limestone</span><span class="product-price">Starting at $77.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('limestone-3/4')"><span class="product-name">3/4" Limestone</span><span class="product-price">Starting at $77.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('limestone-3/8')"><span class="product-name">3/8" Limestone</span><span class="product-price">Starting at $77.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('limestone-base')"><span class="product-name">Limestone Base</span><span class="product-price">Starting at $77.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('bull-rock-3x5')"><span class="product-name">3x5 Bull Rock Gravel</span><span class="product-price">Starting at $57.40/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('gravel-2x3')"><span class="product-name">2x3 Gravel</span><span class="product-price">Starting at $57.40/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('gravel-1.5-minus')"><span class="product-name">1.5" Minus Gravel</span><span class="product-price">Starting at $57.40/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('pea-gravel')"><span class="product-name">3/8" Pea Gravel</span><span class="product-price">Starting at $57.40/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('rainbow-gravel')"><span class="product-name">Rainbow Gravel</span><span class="product-price">Starting at $64.40/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('blackstar')"><span class="product-name">5/8" Black Star</span><span class="product-price">Starting at $134.40/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('colorado-bull-rock')"><span class="product-name">1x3 Colorado Bull Rock</span><span class="product-price">Starting at $99.40/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('fairland-pink')"><span class="product-name">1x2 Fairland Pink</span><span class="product-price">Starting at $63.00/cy</span></div>
                 </div>
             </div>
             <div class="product-category">
                 <h4>Soil & Sand</h4>
                 <div class="product-list">
-                    <div class="product-item" onclick="selectMoreProduct('bank-sand')"><span class="product-name">Bank Sand</span><span class="product-price">$12/ton</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('select-fill')"><span class="product-name">Select Fill</span><span class="product-price">$12/ton</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('topsoil')"><span class="product-name">Topsoil</span><span class="product-price">$24/ton</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('torpedo-sand')"><span class="product-name">Torpedo Sand</span><span class="product-price">$32/ton</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('mason-sand')"><span class="product-name">Mason Sand</span><span class="product-price">$21/ton</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('bank-sand')"><span class="product-name">Bank Sand</span><span class="product-price">Starting at $16.80/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('select-fill')"><span class="product-name">Select Fill</span><span class="product-price">Starting at $16.80/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('topsoil')"><span class="product-name">Topsoil</span><span class="product-price">Starting at $33.60/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('torpedo-sand')"><span class="product-name">Torpedo Sand</span><span class="product-price">Starting at $44.80/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('mason-sand')"><span class="product-name">Mason Sand</span><span class="product-price">Starting at $29.40/cy</span></div>
                 </div>
             </div>
             <div class="product-category">
                 <h4>Mulch</h4>
                 <div class="product-list">
-                    <div class="product-item" onclick="selectMoreProduct('mulch-black')"><span class="product-name">Black Mulch</span><span class="product-price">$25/ton</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('mulch-brown')"><span class="product-name">Brown Hardwood Mulch</span><span class="product-price">$25/ton</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('mulch-black')"><span class="product-name">Black Mulch</span><span class="product-price">Starting at $12.50/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('mulch-brown')"><span class="product-name">Brown Hardwood Mulch</span><span class="product-price">Starting at $12.50/cy</span></div>
                 </div>
             </div>
         </div>
