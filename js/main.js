@@ -1,11 +1,9 @@
 // =====================================================
 // TEXAS GOT ROCKS - COMPLETE MAIN.JS
-// Last Updated: January 15, 2026
+// Last Updated: January 8, 2026
 // INCLUDES: Smart truck selection, delivery minimums, 48-ton cap
 // NEW: 2-yard minimum per material, tiered margins, value proposition upsell
 // NEW: 41 additional ZIP codes (189 total)
-// NEW: Scroll arrow visibility based on page position
-// FIXED: Margins now loaded from database instead of hardcoded
 // REPLACE YOUR ENTIRE main.js WITH THIS FILE
 // =====================================================
 
@@ -77,59 +75,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // =====================================================
-// SCROLL NAVIGATION ARROWS
-// =====================================================
-function updateScrollArrows() {
-    const scrollUpBtn = document.getElementById('scrollUpBtn');
-    const scrollDownBtn = document.getElementById('scrollDownBtn');
-    
-    if (!scrollUpBtn || !scrollDownBtn) return;
-    
-    const scrollTop = window.scrollY;
-    const scrollHeight = document.documentElement.scrollHeight;
-    const clientHeight = document.documentElement.clientHeight;
-    const scrollBottom = scrollHeight - scrollTop - clientHeight;
-    const threshold = 100;
-    
-    if (scrollTop <= threshold) {
-        scrollUpBtn.classList.remove('visible');
-        scrollDownBtn.classList.remove('hidden');
-    } else if (scrollBottom <= threshold) {
-        scrollUpBtn.classList.add('visible');
-        scrollDownBtn.classList.add('hidden');
-    } else {
-        scrollUpBtn.classList.add('visible');
-        scrollDownBtn.classList.remove('hidden');
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    const scrollUpBtn = document.getElementById('scrollUpBtn');
-    const scrollDownBtn = document.getElementById('scrollDownBtn');
-    
-    if (scrollUpBtn) {
-        scrollUpBtn.addEventListener('click', function() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    }
-    
-    if (scrollDownBtn) {
-        scrollDownBtn.addEventListener('click', function() {
-            const currentScroll = window.scrollY;
-            const viewportHeight = window.innerHeight;
-            const maxScroll = document.documentElement.scrollHeight - viewportHeight;
-            const targetScroll = Math.min(currentScroll + viewportHeight, maxScroll);
-            window.scrollTo({ top: targetScroll, behavior: 'smooth' });
-        });
-    }
-    
-    updateScrollArrows();
-});
-
-window.addEventListener('scroll', updateScrollArrows);
-window.addEventListener('resize', updateScrollArrows);
-
-// =====================================================
 // CALCULATOR MODAL FUNCTIONS
 // =====================================================
 function openCalculatorModal() {
@@ -189,10 +134,14 @@ if (exitForm) {
 }
 
 // =====================================================
-// ZIP CODE DATABASE - 189 ZIP CODES
+// ZIP CODE DATABASE - EXPANDED TO 189 ZIP CODES
+// Includes 41 new ZIP codes from gap analysis
+// Pre-calculated distances from Conroe yard
 // =====================================================
 const ZIP_DATA = {
-    // ZONE 1: Conroe & Immediate Area
+    // =========================================================
+    // ZONE 1: Conroe & Immediate Area (0-15 miles from yard)
+    // =========================================================
     '77301': { city: 'Conroe', distance: 3, time: 8, zone: 1 },
     '77302': { city: 'Conroe', distance: 7, time: 15, zone: 1 },
     '77303': { city: 'Conroe', distance: 5, time: 12, zone: 1 },
@@ -201,61 +150,115 @@ const ZIP_DATA = {
     '77306': { city: 'Conroe', distance: 8, time: 18, zone: 1 },
     '77384': { city: 'Conroe', distance: 10, time: 20, zone: 1 },
     '77385': { city: 'Conroe', distance: 2, time: 5, zone: 1 },
+    
+    // Montgomery
     '77316': { city: 'Montgomery', distance: 12, time: 22, zone: 1 },
     '77356': { city: 'Montgomery', distance: 14, time: 25, zone: 1 },
+    
+    // Willis
     '77318': { city: 'Willis', distance: 10, time: 18, zone: 1 },
     '77378': { city: 'Willis', distance: 12, time: 20, zone: 1 },
+    
+    // Oak Ridge North
     '77386': { city: 'Oak Ridge North', distance: 14, time: 24, zone: 1 },
+    
+    // Shenandoah
     '77381': { city: 'Shenandoah', distance: 12, time: 22, zone: 1 },
     
-    // ZONE 2: The Woodlands, Spring, Magnolia
+    // =========================================================
+    // ZONE 2: The Woodlands, Spring, Magnolia (15-30 miles)
+    // =========================================================
+    
+    // The Woodlands
     '77380': { city: 'The Woodlands', distance: 18, time: 30, zone: 2 },
     '77382': { city: 'The Woodlands', distance: 17, time: 29, zone: 2 },
     '77387': { city: 'The Woodlands', distance: 19, time: 32, zone: 2 },
     '77389': { city: 'The Woodlands', distance: 22, time: 38, zone: 2 },
+    
+    // Magnolia
     '77354': { city: 'Magnolia', distance: 15, time: 28, zone: 2 },
     '77355': { city: 'Magnolia', distance: 18, time: 32, zone: 2 },
+    
+    // NEW: Pinehurst
     '77362': { city: 'Pinehurst', distance: 20, time: 35, zone: 2 },
+    
+    // Spring
     '77373': { city: 'Spring', distance: 25, time: 40, zone: 2 },
     '77379': { city: 'Spring', distance: 24, time: 42, zone: 2 },
     '77388': { city: 'Spring', distance: 26, time: 45, zone: 2 },
+    
+    // Tomball
     '77375': { city: 'Tomball', distance: 22, time: 38, zone: 2 },
     '77377': { city: 'Tomball', distance: 25, time: 42, zone: 2 },
+    
+    // Splendora
     '77372': { city: 'Splendora', distance: 22, time: 35, zone: 2 },
+    
+    // Porter
     '77365': { city: 'Porter', distance: 26, time: 40, zone: 2 },
+    
+    // New Caney
     '77357': { city: 'New Caney', distance: 28, time: 42, zone: 2 },
+    
+    // Plantersville
     '77363': { city: 'Plantersville', distance: 25, time: 40, zone: 2 },
+    
+    // New Waverly
     '77358': { city: 'New Waverly', distance: 20, time: 32, zone: 2 },
     
-    // ZONE 3: Extended areas
+    // =========================================================
+    // ZONE 3: Huntsville, Humble, Cypress, Katy, Cleveland + NEW AREAS (30-60 miles)
+    // =========================================================
+    
+    // Huntsville (about 40 miles north)
     '77320': { city: 'Huntsville', distance: 40, time: 50, zone: 3 },
     '77340': { city: 'Huntsville', distance: 42, time: 52, zone: 3 },
     '77341': { city: 'Huntsville', distance: 42, time: 52, zone: 3 },
     '77344': { city: 'Huntsville', distance: 44, time: 55, zone: 3 },
     '77348': { city: 'Huntsville', distance: 44, time: 55, zone: 3 },
     '77349': { city: 'Huntsville', distance: 44, time: 55, zone: 3 },
+    
+    // Cleveland (about 35 miles east)
     '77327': { city: 'Cleveland', distance: 35, time: 45, zone: 3 },
     '77328': { city: 'Cleveland', distance: 37, time: 48, zone: 3 },
+    
+    // NEW: Romayor, Rye, Shepherd (east)
     '77368': { city: 'Romayor', distance: 45, time: 55, zone: 3 },
     '77369': { city: 'Rye', distance: 50, time: 60, zone: 3 },
     '77371': { city: 'Shepherd', distance: 42, time: 52, zone: 3 },
+    
+    // Humble / Kingwood
     '77338': { city: 'Humble', distance: 32, time: 50, zone: 3 },
     '77339': { city: 'Kingwood', distance: 30, time: 48, zone: 3 },
     '77345': { city: 'Kingwood', distance: 32, time: 52, zone: 3 },
     '77346': { city: 'Humble', distance: 35, time: 55, zone: 3 },
     '77347': { city: 'Humble', distance: 33, time: 52, zone: 3 },
     '77396': { city: 'Humble', distance: 34, time: 54, zone: 3 },
+    
+    // NEW: Crosby, Huffman, Highlands (east of Humble)
     '77532': { city: 'Crosby', distance: 42, time: 55, zone: 3 },
     '77336': { city: 'Huffman', distance: 38, time: 50, zone: 3 },
     '77562': { city: 'Highlands', distance: 45, time: 58, zone: 3 },
+    
+    // NEW: Channelview
     '77530': { city: 'Channelview', distance: 48, time: 60, zone: 3 },
+    
+    // NEW: Baytown
     '77520': { city: 'Baytown', distance: 52, time: 65, zone: 3 },
     '77521': { city: 'Baytown', distance: 50, time: 62, zone: 3 },
     '77522': { city: 'Baytown', distance: 51, time: 63, zone: 3 },
     '77523': { city: 'Baytown', distance: 48, time: 60, zone: 3 },
+    
+    // NEW: Dayton
     '77535': { city: 'Dayton', distance: 45, time: 55, zone: 3 },
+    
+    // NEW: Deer Park
     '77536': { city: 'Deer Park', distance: 52, time: 65, zone: 3 },
+    
+    // NEW: La Porte
     '77571': { city: 'La Porte', distance: 55, time: 68, zone: 3 },
+    
+    // NEW: Pasadena
     '77501': { city: 'Pasadena', distance: 50, time: 65, zone: 3 },
     '77502': { city: 'Pasadena', distance: 52, time: 67, zone: 3 },
     '77503': { city: 'Pasadena', distance: 53, time: 68, zone: 3 },
@@ -264,35 +267,65 @@ const ZIP_DATA = {
     '77506': { city: 'Pasadena', distance: 51, time: 66, zone: 3 },
     '77507': { city: 'Pasadena', distance: 56, time: 72, zone: 3 },
     '77508': { city: 'Pasadena', distance: 52, time: 67, zone: 3 },
+    
+    // NEW: Pearland
     '77581': { city: 'Pearland', distance: 55, time: 70, zone: 3 },
     '77584': { city: 'Pearland', distance: 58, time: 72, zone: 3 },
     '77588': { city: 'Pearland', distance: 56, time: 70, zone: 3 },
+    
+    // NEW: Friendswood
     '77546': { city: 'Friendswood', distance: 55, time: 70, zone: 3 },
+    
+    // NEW: League City
     '77573': { city: 'League City', distance: 58, time: 75, zone: 3 },
+    
+    // NEW: Seabrook
     '77586': { city: 'Seabrook', distance: 55, time: 70, zone: 3 },
+    
+    // NEW: Kemah
     '77565': { city: 'Kemah', distance: 58, time: 72, zone: 3 },
+    
+    // Cypress (about 35 miles southwest)
     '77410': { city: 'Cypress', distance: 35, time: 50, zone: 3 },
     '77429': { city: 'Cypress', distance: 35, time: 50, zone: 3 },
     '77433': { city: 'Cypress', distance: 38, time: 55, zone: 3 },
+    
+    // Katy (about 50 miles southwest)
     '77449': { city: 'Katy', distance: 50, time: 65, zone: 3 },
     '77450': { city: 'Katy', distance: 52, time: 68, zone: 3 },
     '77491': { city: 'Katy', distance: 50, time: 65, zone: 3 },
     '77492': { city: 'Katy', distance: 50, time: 65, zone: 3 },
     '77493': { city: 'Katy', distance: 48, time: 62, zone: 3 },
     '77494': { city: 'Katy', distance: 52, time: 68, zone: 3 },
+    
+    // NEW: Brookshire
     '77423': { city: 'Brookshire', distance: 55, time: 70, zone: 3 },
+    
+    // NEW: Fulshear
     '77441': { city: 'Fulshear', distance: 55, time: 70, zone: 3 },
+    
+    // NEW: Richmond
     '77406': { city: 'Richmond', distance: 58, time: 75, zone: 3 },
     '77407': { city: 'Richmond', distance: 55, time: 70, zone: 3 },
     '77469': { city: 'Richmond', distance: 58, time: 75, zone: 3 },
+    
+    // NEW: Rosenberg
     '77471': { city: 'Rosenberg', distance: 60, time: 78, zone: 3 },
+    
+    // NEW: Simonton
     '77476': { city: 'Simonton', distance: 58, time: 75, zone: 3 },
+    
+    // NEW: Sugar Land
     '77478': { city: 'Sugar Land', distance: 52, time: 68, zone: 3 },
     '77479': { city: 'Sugar Land', distance: 55, time: 70, zone: 3 },
     '77498': { city: 'Sugar Land', distance: 53, time: 68, zone: 3 },
+    
+    // NEW: Bellaire
     '77401': { city: 'Bellaire', distance: 48, time: 65, zone: 3 },
     
-    // Houston ZIPs
+    // =========================================================
+    // HOUSTON - North & Northwest (closest to Conroe)
+    // =========================================================
     '77014': { city: 'Houston', distance: 35, time: 55, zone: 3 },
     '77018': { city: 'Houston', distance: 42, time: 64, zone: 3 },
     '77022': { city: 'Houston', distance: 40, time: 60, zone: 3 },
@@ -323,6 +356,10 @@ const ZIP_DATA = {
     '77091': { city: 'Houston', distance: 40, time: 62, zone: 3 },
     '77092': { city: 'Houston', distance: 42, time: 65, zone: 3 },
     '77093': { city: 'Houston', distance: 40, time: 62, zone: 3 },
+    
+    // =========================================================
+    // HOUSTON - Central, West, Southwest (farther from Conroe)
+    // =========================================================
     '77002': { city: 'Houston', distance: 45, time: 65, zone: 3 },
     '77003': { city: 'Houston', distance: 46, time: 66, zone: 3 },
     '77004': { city: 'Houston', distance: 48, time: 70, zone: 3 },
@@ -393,7 +430,6 @@ const ZIP_DATA = {
 
 // =====================================================
 // TRUCK & PRICING CONFIGURATION
-// Default values - will be overridden by database values
 // =====================================================
 const TRUCK_CONFIG = {
     tandem: { hourlyRate: 100, capacityTons: 15, minimumCharge: 75 },
@@ -403,44 +439,12 @@ const TRUCK_CONFIG = {
     taxRate: 0.0825,
     serviceFeeRate: 0.035,
     maxTons: 48,
+    // NEW: Minimum Yard & Tiered Margin Configuration
     minimumYards: 2,
     smallOrderThreshold: 3,
-    smallOrderMargin: 0.30,  // Default - will be loaded from DB
-    standardMargin: 0.20     // Default - will be loaded from DB
+    smallOrderMargin: 0.30,
+    standardMargin: 0.20
 };
-
-// =====================================================
-// LOAD PRICING CONFIG FROM DATABASE
-// Fetches margins from pricing_config collection on page load
-// =====================================================
-async function loadPricingConfig() {
-    try {
-        const response = await fetch('/.netlify/functions/pricing-config');
-        if (response.ok) {
-            const data = await response.json();
-            if (data.margins) {
-                TRUCK_CONFIG.smallOrderMargin = data.margins.small || 0.30;
-                TRUCK_CONFIG.standardMargin = data.margins.standard || 0.20;
-                console.log('Margins loaded from database:', {
-                    small: TRUCK_CONFIG.smallOrderMargin,
-                    standard: TRUCK_CONFIG.standardMargin
-                });
-            }
-            if (data.trucking) {
-                TRUCK_CONFIG.tandem.hourlyRate = data.trucking.tandemRate || 100;
-                TRUCK_CONFIG.endDump.hourlyRate = data.trucking.endDumpRate || 130;
-            }
-            if (data.minimums) {
-                TRUCK_CONFIG.minimumYards = data.minimums.orderYards || 2;
-            }
-        }
-    } catch (error) {
-        console.log('Using default pricing config:', error.message);
-    }
-}
-
-// Load config when page loads
-document.addEventListener('DOMContentLoaded', loadPricingConfig);
 
 // =====================================================
 // SMART TRUCK SELECTION
@@ -527,6 +531,7 @@ function adjustQuoteQuantity(delta) {
 
 // =====================================================
 // CALCULATE FULL PRICE HELPER
+// Used for both current order and upsell comparison
 // =====================================================
 function calculateFullPrice(quantity, pricePerTon, weightPerYard, travelTime, margin) {
     const tons = quantity * weightPerYard;
@@ -551,7 +556,7 @@ function calculateFullPrice(quantity, pricePerTon, weightPerYard, travelTime, ma
 
 // =====================================================
 // RECALCULATE QUOTE - MAIN PRICING FORMULA
-// NOW USES DATABASE MARGINS
+// With 2-yard minimum, tiered margins, and value proposition upsell
 // =====================================================
 function recalculateQuote() {
     const productSelect = document.getElementById('quoteProduct');
@@ -560,9 +565,11 @@ function recalculateQuote() {
     const minimumWarning = document.getElementById('quoteMinimumWarning');
     const upsellSection = document.getElementById('quoteUpsellSection');
     
+    // Hide warnings/upsells by default
     if (minimumWarning) minimumWarning.classList.add('hidden');
     if (upsellSection) upsellSection.classList.add('hidden');
     
+    // Check if we have all required data
     if (!currentZipData || !productSelect.value || quantity <= 0) {
         document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
         document.getElementById('quoteTotalSection').classList.add('hidden');
@@ -580,6 +587,9 @@ function recalculateQuote() {
     const weightPerYard = parseFloat(selectedOption.dataset.weight);
     const materialName = selectedOption.text;
     
+    // =========================================================
+    // CHECK: 2-YARD MINIMUM PER MATERIAL
+    // =========================================================
     if (quantity < TRUCK_CONFIG.minimumYards) {
         if (minimumWarning) {
             document.getElementById('minWarningMaterialName').textContent = materialName;
@@ -595,6 +605,7 @@ function recalculateQuote() {
     
     const tons = quantity * weightPerYard;
     
+    // CHECK: 48-TON CAP
     if (tons > TRUCK_CONFIG.maxTons) {
         document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
         document.getElementById('quoteTotalSection').classList.add('hidden');
@@ -609,15 +620,24 @@ function recalculateQuote() {
         return;
     }
     
+    // Reset onclick for normal orders
     ctaButton.onclick = function() { addToCartWithCaptcha(); };
     
-    // MARGIN FROM DATABASE (via TRUCK_CONFIG)
+    // =========================================================
+    // DETERMINE MARGIN BASED ON QUANTITY
+    // 30% for 2-2.99 yards, 20% for 3+ yards
+    // =========================================================
     const margin = (quantity < TRUCK_CONFIG.smallOrderThreshold) 
         ? TRUCK_CONFIG.smallOrderMargin 
         : TRUCK_CONFIG.standardMargin;
     
+    // Calculate current order pricing
     const currentPricing = calculateFullPrice(quantity, pricePerTon, weightPerYard, currentZipData.time, margin);
     
+    // =========================================================
+    // VALUE PROPOSITION UPSELL (for 2-2.99 yard orders)
+    // Shows customer they pay MORE total but get BETTER per-yard rate
+    // =========================================================
     if (quantity >= TRUCK_CONFIG.minimumYards && quantity < TRUCK_CONFIG.smallOrderThreshold) {
         const upsellPricing = calculateFullPrice(3, pricePerTon, weightPerYard, currentZipData.time, TRUCK_CONFIG.standardMargin);
         const savingsPerYard = currentPricing.pricePerYard - upsellPricing.pricePerYard;
@@ -633,6 +653,9 @@ function recalculateQuote() {
         }
     }
     
+    // =========================================================
+    // UPDATE DISPLAY
+    // =========================================================
     document.getElementById('quoteYardsAmount').textContent = quantity;
     document.getElementById('quoteTonsAmount').textContent = currentPricing.tons.toFixed(1);
     document.getElementById('quoteMaterialName').textContent = materialName;
@@ -655,6 +678,7 @@ function recalculateQuote() {
         ctaButton.disabled = true;
     }
     
+    // Store quote data for cart
     currentQuote = {
         zip: document.getElementById('quoteZipCode').value,
         city: currentZipData.city,
@@ -677,12 +701,18 @@ function recalculateQuote() {
     };
 }
 
+// =====================================================
+// UPGRADE TO 3 YARDS FUNCTION (called from upsell button)
+// =====================================================
 function upgradeToThreeYards() {
     document.getElementById('quoteQuantity').value = 3;
     recalculateQuote();
     showToast('success', 'Upgraded!', 'Quantity updated to 3 yards for better pricing');
 }
 
+// =====================================================
+// ATTACH ZIP CODE CALCULATOR EVENT LISTENERS
+// =====================================================
 const quoteZipInput = document.getElementById('quoteZipCode');
 if (quoteZipInput) quoteZipInput.addEventListener('input', handleQuoteZipInput);
 
@@ -1054,9 +1084,18 @@ document.addEventListener('click', function(e) {
 });
 
 // =====================================================
-// MATERIAL VISUALIZER (Condensed)
+// MATERIAL VISUALIZER
 // =====================================================
-const vizState = { image: null, selectedMaterial: { id: 'black-mulch', name: 'Black Mulch', color: '#1a1a1a', price: 25, image: '/images/materials/black-mulch.jpg' }, points: [], isComplete: false, showOverlay: true, opacity: 0.7, materialPattern: null };
+const vizState = {
+    image: null,
+    selectedMaterial: { id: 'black-mulch', name: 'Black Mulch', color: '#1a1a1a', price: 25, image: '/images/materials/black-mulch.jpg' },
+    points: [],
+    isComplete: false,
+    showOverlay: true,
+    opacity: 0.7,
+    materialPattern: null
+};
+
 const vizMaterials = [
     { id: 'black-mulch', name: 'Black Mulch', color: '#1a1a1a', price: 25, image: '/images/materials/black-mulch.jpg' },
     { id: 'brown-mulch', name: 'Brown Mulch', color: '#8B4513', price: 25, image: '/images/materials/brown-mulch.jpg' },
@@ -1065,8 +1104,10 @@ const vizMaterials = [
     { id: 'bull-rock', name: '3x5 Bull Rock', color: '#a08060', price: 41, image: '/images/materials/2x3-bull-rock.jpeg' },
     { id: 'topsoil', name: 'Topsoil', color: '#3d3225', price: 24, image: '/images/materials/top-soil.jpg' }
 ];
+
 const vizMaterialWeights = { 'black-mulch': 0.5, 'brown-mulch': 0.5, 'blackstar-gravel': 1.4, 'decomposed-granite': 1.4, 'bull-rock': 1.4, 'topsoil': 1.4 };
 const vizToQuoteMaterialMapping = { 'black-mulch': 'mulch-black', 'brown-mulch': 'mulch-brown', 'blackstar-gravel': 'blackstar', 'decomposed-granite': 'decomposed-granite', 'bull-rock': 'bull-rock-3x5', 'topsoil': 'topsoil' };
+
 let vizCalculatedQuantity = null;
 let vizCalculatedTons = null;
 let vizCanvasDimensions = { width: 0, height: 0 };
@@ -1087,8 +1128,18 @@ function handleVisualizerUpload(event) {
     else { pendingPhotoFile = file; openPhotoConsent(); }
 }
 
-function acceptPhotoConsent() { photoConsentGiven = true; closePhotoConsent(); if (pendingPhotoFile) { processVisualizerFile(pendingPhotoFile); pendingPhotoFile = null; } }
-function declinePhotoConsent() { closePhotoConsent(); document.getElementById('vizFileInput').value = ''; document.getElementById('vizCameraInput').value = ''; pendingPhotoFile = null; }
+function acceptPhotoConsent() {
+    photoConsentGiven = true;
+    closePhotoConsent();
+    if (pendingPhotoFile) { processVisualizerFile(pendingPhotoFile); pendingPhotoFile = null; }
+}
+
+function declinePhotoConsent() {
+    closePhotoConsent();
+    document.getElementById('vizFileInput').value = '';
+    document.getElementById('vizCameraInput').value = '';
+    pendingPhotoFile = null;
+}
 
 function processVisualizerFile(file) {
     if (!file || !file.type.startsWith('image/')) return;
@@ -1098,10 +1149,14 @@ function processVisualizerFile(file) {
         img.onload = function() {
             const maxDim = 800;
             let width = img.width, height = img.height;
-            if (width > maxDim || height > maxDim) { if (width > height) { height = (height / width) * maxDim; width = maxDim; } else { width = (width / height) * maxDim; height = maxDim; } }
+            if (width > maxDim || height > maxDim) {
+                if (width > height) { height = (height / width) * maxDim; width = maxDim; }
+                else { width = (width / height) * maxDim; height = maxDim; }
+            }
             const tempCanvas = document.createElement('canvas');
             tempCanvas.width = width; tempCanvas.height = height;
-            tempCanvas.getContext('2d').drawImage(img, 0, 0, width, height);
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.drawImage(img, 0, 0, width, height);
             vizState.image = tempCanvas.toDataURL('image/jpeg', 0.8);
             vizState.points = []; vizState.isComplete = false;
             vizCanvasDimensions = { width: 0, height: 0 };
@@ -1114,7 +1169,12 @@ function processVisualizerFile(file) {
 
 function handleVizDragOver(event) { event.preventDefault(); event.stopPropagation(); document.getElementById('vizCanvasContainer').classList.add('dragging'); }
 function handleVizDragLeave(event) { event.preventDefault(); event.stopPropagation(); document.getElementById('vizCanvasContainer').classList.remove('dragging'); }
-function handleVizDrop(event) { event.preventDefault(); event.stopPropagation(); document.getElementById('vizCanvasContainer').classList.remove('dragging'); var file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]; if (file) { if (photoConsentGiven) processVisualizerFile(file); else { pendingPhotoFile = file; openPhotoConsent(); } } }
+function handleVizDrop(event) {
+    event.preventDefault(); event.stopPropagation();
+    document.getElementById('vizCanvasContainer').classList.remove('dragging');
+    var file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
+    if (file) { if (photoConsentGiven) processVisualizerFile(file); else { pendingPhotoFile = file; openPhotoConsent(); } }
+}
 
 function handleVisualizerClick(event) {
     if (!vizState.image || vizState.isComplete) return;
@@ -1122,7 +1182,11 @@ function handleVisualizerClick(event) {
     const rect = canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left) * (canvas.width / rect.width);
     const y = (event.clientY - rect.top) * (canvas.height / rect.height);
-    if (vizState.points.length > 2) { const first = vizState.points[0]; if (Math.sqrt((x - first.x) ** 2 + (y - first.y) ** 2) < 25) { vizState.isComplete = true; updateVisualizerUI(); drawVisualizerCanvas(); return; } }
+    if (vizState.points.length > 2) {
+        const first = vizState.points[0];
+        const dist = Math.sqrt((x - first.x) ** 2 + (y - first.y) ** 2);
+        if (dist < 25) { vizState.isComplete = true; updateVisualizerUI(); drawVisualizerCanvas(); return; }
+    }
     vizState.points.push({x, y}); updateVisualizerUI(); drawVisualizerCanvas();
 }
 
@@ -1132,15 +1196,33 @@ function drawVisualizerCanvas() {
     const ctx = canvas.getContext('2d');
     const img = new Image();
     img.onload = function() {
-        if (vizCanvasDimensions.width === 0) { const maxDim = 500; let w = img.width, h = img.height; if (w > maxDim || h > maxDim) { if (w > h) { h = (h/w) * maxDim; w = maxDim; } else { w = (w/h) * maxDim; h = maxDim; } } vizCanvasDimensions.width = Math.floor(w); vizCanvasDimensions.height = Math.floor(h); }
+        if (vizCanvasDimensions.width === 0) {
+            const maxDim = 500; let w = img.width, h = img.height;
+            if (w > maxDim || h > maxDim) { if (w > h) { h = (h/w) * maxDim; w = maxDim; } else { w = (w/h) * maxDim; h = maxDim; } }
+            vizCanvasDimensions.width = Math.floor(w); vizCanvasDimensions.height = Math.floor(h);
+        }
         canvas.width = vizCanvasDimensions.width; canvas.height = vizCanvasDimensions.height;
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         if (vizState.points.length > 0) {
-            ctx.strokeStyle = '#E85D04'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(vizState.points[0].x, vizState.points[0].y);
+            ctx.strokeStyle = '#E85D04'; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(vizState.points[0].x, vizState.points[0].y);
             for (let i = 1; i < vizState.points.length; i++) ctx.lineTo(vizState.points[i].x, vizState.points[i].y);
-            if (vizState.isComplete) ctx.closePath(); ctx.stroke();
-            if (!vizState.isComplete) { vizState.points.forEach(function(p, i) { ctx.beginPath(); ctx.arc(p.x, p.y, 10, 0, Math.PI * 2); ctx.fillStyle = (i === 0 && vizState.points.length > 2) ? '#22c55e' : '#E85D04'; ctx.fill(); ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.stroke(); }); }
-            if (vizState.isComplete && vizState.showOverlay) { ctx.globalAlpha = vizState.opacity; ctx.fillStyle = vizState.materialPattern || vizState.selectedMaterial.color; ctx.beginPath(); ctx.moveTo(vizState.points[0].x, vizState.points[0].y); for (let i = 1; i < vizState.points.length; i++) ctx.lineTo(vizState.points[i].x, vizState.points[i].y); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1; }
+            if (vizState.isComplete) ctx.closePath();
+            ctx.stroke();
+            if (!vizState.isComplete) {
+                vizState.points.forEach(function(p, i) {
+                    ctx.beginPath(); ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
+                    ctx.fillStyle = (i === 0 && vizState.points.length > 2) ? '#22c55e' : '#E85D04';
+                    ctx.fill(); ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.stroke();
+                });
+            }
+            if (vizState.isComplete && vizState.showOverlay) {
+                ctx.globalAlpha = vizState.opacity;
+                ctx.fillStyle = vizState.materialPattern || vizState.selectedMaterial.color;
+                ctx.beginPath(); ctx.moveTo(vizState.points[0].x, vizState.points[0].y);
+                for (let i = 1; i < vizState.points.length; i++) ctx.lineTo(vizState.points[i].x, vizState.points[i].y);
+                ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1;
+            }
         }
     };
     img.src = vizState.image;
@@ -1157,10 +1239,26 @@ function updateVisualizerUI() {
     const materialBadge = document.getElementById('vizMaterialBadge');
     const calcSection = document.getElementById('vizCalcSection');
     
-    if (!vizState.image) { placeholder.style.display = 'block'; canvasWrapper.style.display = 'none'; startOverBtn.style.display = 'none'; instructionsDiv.innerHTML = '<p class="viz-instruction">Upload a photo to get started</p>'; instructionsDiv.style.display = 'block'; controlsDiv.style.display = 'none'; calcSection.style.display = 'none'; return; }
+    if (!vizState.image) {
+        placeholder.style.display = 'block'; canvasWrapper.style.display = 'none'; startOverBtn.style.display = 'none';
+        instructionsDiv.innerHTML = '<p class="viz-instruction">Upload a photo to get started</p>';
+        instructionsDiv.style.display = 'block'; controlsDiv.style.display = 'none'; calcSection.style.display = 'none';
+        return;
+    }
     placeholder.style.display = 'none'; canvasWrapper.style.display = 'block'; startOverBtn.style.display = 'block';
-    if (vizState.isComplete) { step3Title.textContent = '3. Adjust Preview'; instructionsDiv.style.display = 'none'; controlsDiv.style.display = 'block'; pointCounter.style.display = 'none'; materialBadge.style.display = 'block'; document.getElementById('vizBadgeName').textContent = vizState.selectedMaterial.name; calcSection.style.display = 'block'; document.getElementById('vizCalcMaterial').innerHTML = 'Calculating for: <strong>' + vizState.selectedMaterial.name + '</strong>'; }
-    else { step3Title.textContent = '3. Outline Area'; instructionsDiv.innerHTML = '<p class="viz-instruction">Tap to add points. Tap the <span class="green">green point</span> to close the shape.</p>' + (vizState.points.length > 0 ? '<button class="viz-reset-btn" onclick="resetVisualizerPoints()">↺ Reset Points</button>' : ''); instructionsDiv.style.display = 'block'; controlsDiv.style.display = 'none'; materialBadge.style.display = 'none'; calcSection.style.display = 'none'; if (vizState.points.length > 0) { pointCounter.style.display = 'block'; pointCounter.innerHTML = vizState.points.length + ' point' + (vizState.points.length !== 1 ? 's' : '') + (vizState.points.length >= 3 ? ' • tap green to close' : ''); } else pointCounter.style.display = 'none'; }
+    if (vizState.isComplete) {
+        step3Title.textContent = '3. Adjust Preview'; instructionsDiv.style.display = 'none'; controlsDiv.style.display = 'block';
+        pointCounter.style.display = 'none'; materialBadge.style.display = 'block';
+        document.getElementById('vizBadgeName').textContent = vizState.selectedMaterial.name;
+        calcSection.style.display = 'block';
+        document.getElementById('vizCalcMaterial').innerHTML = 'Calculating for: <strong>' + vizState.selectedMaterial.name + '</strong>';
+    } else {
+        step3Title.textContent = '3. Outline Area';
+        instructionsDiv.innerHTML = '<p class="viz-instruction">Tap to add points. Tap the <span class="green">green point</span> to close the shape.</p>' + (vizState.points.length > 0 ? '<button class="viz-reset-btn" onclick="resetVisualizerPoints()">↺ Reset Points</button>' : '');
+        instructionsDiv.style.display = 'block'; controlsDiv.style.display = 'none'; materialBadge.style.display = 'none'; calcSection.style.display = 'none';
+        if (vizState.points.length > 0) { pointCounter.style.display = 'block'; pointCounter.innerHTML = vizState.points.length + ' point' + (vizState.points.length !== 1 ? 's' : '') + (vizState.points.length >= 3 ? ' • tap green to close' : ''); }
+        else pointCounter.style.display = 'none';
+    }
 }
 
 function calculateVisualizerMaterial() {
@@ -1179,8 +1277,21 @@ function calculateVisualizerMaterial() {
     document.getElementById('vizCalcResult').style.display = 'block';
 }
 
-function getVisualizerQuoteWithQuantity() { closeVisualizer(); openCalculatorModal(); const mappedMaterial = vizToQuoteMaterialMapping[vizState.selectedMaterial.id] || ''; if (mappedMaterial) document.getElementById('quoteProduct').value = mappedMaterial; if (vizCalculatedQuantity) document.getElementById('quoteQuantity').value = vizCalculatedQuantity; recalculateQuote(); showToast('info', 'Ready for Quote', vizCalculatedQuantity + ' yd³ of ' + vizState.selectedMaterial.name + ' - enter your ZIP!'); }
-function getVisualizerQuote() { closeVisualizer(); openCalculatorModal(); const mappedMaterial = vizToQuoteMaterialMapping[vizState.selectedMaterial.id] || ''; if (mappedMaterial) { document.getElementById('quoteProduct').value = mappedMaterial; recalculateQuote(); } showToast('info', 'Material Selected', vizState.selectedMaterial.name + ' - Enter your ZIP and quantity for pricing!'); }
+function getVisualizerQuoteWithQuantity() {
+    closeVisualizer(); openCalculatorModal();
+    const mappedMaterial = vizToQuoteMaterialMapping[vizState.selectedMaterial.id] || '';
+    if (mappedMaterial) document.getElementById('quoteProduct').value = mappedMaterial;
+    if (vizCalculatedQuantity) document.getElementById('quoteQuantity').value = vizCalculatedQuantity;
+    recalculateQuote();
+    showToast('info', 'Ready for Quote', vizCalculatedQuantity + ' yd³ of ' + vizState.selectedMaterial.name + ' - enter your ZIP!');
+}
+
+function getVisualizerQuote() {
+    closeVisualizer(); openCalculatorModal();
+    const mappedMaterial = vizToQuoteMaterialMapping[vizState.selectedMaterial.id] || '';
+    if (mappedMaterial) { document.getElementById('quoteProduct').value = mappedMaterial; recalculateQuote(); }
+    showToast('info', 'Material Selected', vizState.selectedMaterial.name + ' - Enter your ZIP and quantity for pricing!');
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     const materialGrid = document.getElementById('vizMaterialGrid');
@@ -1190,8 +1301,16 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!btn) return;
             document.querySelectorAll('.material-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            vizState.selectedMaterial = vizMaterials.find(m => m.id === btn.dataset.id);
-            if (vizState.selectedMaterial && vizState.selectedMaterial.image) { const textureImg = new Image(); textureImg.onload = function() { const canvas = document.getElementById('vizMainCanvas'); if (canvas) { vizState.materialPattern = canvas.getContext('2d').createPattern(textureImg, 'repeat'); drawVisualizerCanvas(); } }; textureImg.src = vizState.selectedMaterial.image; }
+            const materialId = btn.dataset.id;
+            vizState.selectedMaterial = vizMaterials.find(m => m.id === materialId);
+            if (vizState.selectedMaterial && vizState.selectedMaterial.image) {
+                const textureImg = new Image();
+                textureImg.onload = function() {
+                    const canvas = document.getElementById('vizMainCanvas');
+                    if (canvas) { vizState.materialPattern = canvas.getContext('2d').createPattern(textureImg, 'repeat'); drawVisualizerCanvas(); }
+                };
+                textureImg.src = vizState.selectedMaterial.image;
+            }
             document.getElementById('vizMaterialPrice').textContent = '$' + vizState.selectedMaterial.price + '/ton';
             const calcMaterial = document.getElementById('vizCalcMaterial');
             if (calcMaterial) calcMaterial.innerHTML = 'Calculating for: <strong>' + vizState.selectedMaterial.name + '</strong>';
@@ -1202,11 +1321,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function toggleVisualizerOverlay() { vizState.showOverlay = document.getElementById('vizShowOverlay').checked; drawVisualizerCanvas(); }
 function updateVisualizerOpacity() { const slider = document.getElementById('vizOpacitySlider'); vizState.opacity = slider.value / 100; document.getElementById('vizOpacityValue').textContent = slider.value + '%'; drawVisualizerCanvas(); }
-function resetVisualizerPoints() { vizState.points = []; vizState.isComplete = false; vizCalculatedQuantity = null; vizCalculatedTons = null; vizCanvasDimensions = { width: 0, height: 0 }; document.getElementById('vizCalcLength').value = ''; document.getElementById('vizCalcWidth').value = ''; document.getElementById('vizCalcDepth').value = ''; document.getElementById('vizCalcResult').style.display = 'none'; updateVisualizerUI(); drawVisualizerCanvas(); }
-function resetVisualizer() { vizState.image = null; vizState.points = []; vizState.isComplete = false; vizCalculatedQuantity = null; vizCalculatedTons = null; vizCanvasDimensions = { width: 0, height: 0 }; document.getElementById('vizCalcLength').value = ''; document.getElementById('vizCalcWidth').value = ''; document.getElementById('vizCalcDepth').value = ''; document.getElementById('vizCalcResult').style.display = 'none'; document.getElementById('vizFileInput').value = ''; document.getElementById('vizCameraInput').value = ''; updateVisualizerUI(); }
+
+function resetVisualizerPoints() {
+    vizState.points = []; vizState.isComplete = false; vizCalculatedQuantity = null; vizCalculatedTons = null;
+    vizCanvasDimensions = { width: 0, height: 0 };
+    document.getElementById('vizCalcLength').value = ''; document.getElementById('vizCalcWidth').value = ''; document.getElementById('vizCalcDepth').value = '';
+    document.getElementById('vizCalcResult').style.display = 'none';
+    updateVisualizerUI(); drawVisualizerCanvas();
+}
+
+function resetVisualizer() {
+    vizState.image = null; vizState.points = []; vizState.isComplete = false;
+    vizCalculatedQuantity = null; vizCalculatedTons = null; vizCanvasDimensions = { width: 0, height: 0 };
+    document.getElementById('vizCalcLength').value = ''; document.getElementById('vizCalcWidth').value = ''; document.getElementById('vizCalcDepth').value = '';
+    document.getElementById('vizCalcResult').style.display = 'none';
+    document.getElementById('vizFileInput').value = ''; document.getElementById('vizCameraInput').value = '';
+    updateVisualizerUI();
+}
 
 // =====================================================
-// VIDEO PLAYER
+// SELF-HOSTED VIDEO PLAYER
 // =====================================================
 let promoVideo = null;
 let videoOverlay = null;
@@ -1220,24 +1354,68 @@ document.addEventListener('DOMContentLoaded', function() {
     videoProgress = document.getElementById('videoProgress');
     videoTime = document.getElementById('videoTime');
     playPauseBtn = document.getElementById('playPauseBtn');
-    if (promoVideo) { promoVideo.addEventListener('timeupdate', updateVideoProgress); promoVideo.addEventListener('loadedmetadata', updateVideoTime); promoVideo.addEventListener('ended', onVideoEnded); promoVideo.addEventListener('play', onVideoPlay); promoVideo.addEventListener('pause', onVideoPause); }
+    if (promoVideo) {
+        promoVideo.addEventListener('timeupdate', updateVideoProgress);
+        promoVideo.addEventListener('loadedmetadata', updateVideoTime);
+        promoVideo.addEventListener('ended', onVideoEnded);
+        promoVideo.addEventListener('play', onVideoPlay);
+        promoVideo.addEventListener('pause', onVideoPause);
+    }
 });
 
 function togglePromoVideo() { if (!promoVideo) return; if (promoVideo.paused) promoVideo.play(); else promoVideo.pause(); }
 function onVideoPlay() { trackVideoPlay(); if (videoOverlay) videoOverlay.classList.add('hidden'); if (playPauseBtn) { playPauseBtn.querySelector('.play-icon').style.display = 'none'; playPauseBtn.querySelector('.pause-icon').style.display = 'inline'; } promoVideo.parentElement.classList.add('playing'); }
 function onVideoPause() { if (playPauseBtn) { playPauseBtn.querySelector('.play-icon').style.display = 'inline'; playPauseBtn.querySelector('.pause-icon').style.display = 'none'; } }
 function onVideoEnded() { trackVideoComplete(); if (videoOverlay) videoOverlay.classList.remove('hidden'); promoVideo.parentElement.classList.remove('playing'); if (playPauseBtn) { playPauseBtn.querySelector('.play-icon').style.display = 'inline'; playPauseBtn.querySelector('.pause-icon').style.display = 'none'; } }
-function updateVideoProgress() { if (!promoVideo || !videoProgress) return; videoProgress.style.width = (promoVideo.currentTime / promoVideo.duration) * 100 + '%'; updateVideoTime(); }
-function updateVideoTime() { if (!promoVideo || !videoTime) return; videoTime.textContent = formatTime(promoVideo.currentTime) + ' / ' + formatTime(promoVideo.duration); }
-function formatTime(seconds) { if (isNaN(seconds)) return '0:00'; const mins = Math.floor(seconds / 60); const secs = Math.floor(seconds % 60); return mins + ':' + (secs < 10 ? '0' : '') + secs; }
-function seekVideo(event) { if (!promoVideo) return; const rect = event.currentTarget.getBoundingClientRect(); promoVideo.currentTime = ((event.clientX - rect.left) / rect.width) * promoVideo.duration; }
-function toggleMute() { if (!promoVideo) return; promoVideo.muted = !promoVideo.muted; const muteIcon = document.getElementById('muteIcon'); if (muteIcon) muteIcon.textContent = promoVideo.muted ? '🔇' : '🔊'; }
-function toggleFullscreen() { const container = document.querySelector('.self-hosted-video-container'); if (!container) return; if (document.fullscreenElement) document.exitFullscreen(); else container.requestFullscreen(); }
+
+function updateVideoProgress() {
+    if (!promoVideo || !videoProgress) return;
+    const percent = (promoVideo.currentTime / promoVideo.duration) * 100;
+    videoProgress.style.width = percent + '%';
+    updateVideoTime();
+}
+
+function updateVideoTime() {
+    if (!promoVideo || !videoTime) return;
+    videoTime.textContent = formatTime(promoVideo.currentTime) + ' / ' + formatTime(promoVideo.duration);
+}
+
+function formatTime(seconds) {
+    if (isNaN(seconds)) return '0:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return mins + ':' + (secs < 10 ? '0' : '') + secs;
+}
+
+function seekVideo(event) {
+    if (!promoVideo) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    promoVideo.currentTime = ((event.clientX - rect.left) / rect.width) * promoVideo.duration;
+}
+
+function toggleMute() {
+    if (!promoVideo) return;
+    promoVideo.muted = !promoVideo.muted;
+    const muteIcon = document.getElementById('muteIcon');
+    if (muteIcon) muteIcon.textContent = promoVideo.muted ? '🔇' : '🔊';
+}
+
+function toggleFullscreen() {
+    const container = document.querySelector('.self-hosted-video-container');
+    if (!container) return;
+    if (document.fullscreenElement) document.exitFullscreen();
+    else container.requestFullscreen();
+}
 
 // =====================================================
-// GOOGLE ANALYTICS
+// GOOGLE ANALYTICS EVENT TRACKING
 // =====================================================
-function trackEvent(eventName, eventParams) { eventParams = eventParams || {}; eventParams.site_version = typeof SITE_VERSION !== 'undefined' ? SITE_VERSION : 'unknown'; if (typeof gtag !== 'undefined') gtag('event', eventName, eventParams); }
+function trackEvent(eventName, eventParams) {
+    eventParams = eventParams || {};
+    eventParams.site_version = typeof SITE_VERSION !== 'undefined' ? SITE_VERSION : 'unknown';
+    if (typeof gtag !== 'undefined') gtag('event', eventName, eventParams);
+}
+
 function trackCalculatorOpen(source) { trackEvent('calculator_opened', { event_category: 'engagement', trigger_source: source || 'unknown' }); }
 function trackQuoteViewed(material, quantity, price, zip) { trackEvent('quote_viewed', { event_category: 'conversion', material: material, quantity: quantity, value: price, zip_code: zip }); }
 function trackAddToCart(material, quantity, price) { trackEvent('add_to_cart', { event_category: 'ecommerce', currency: 'USD', value: price, items: [{ item_name: material, quantity: quantity, price: price }] }); }
@@ -1248,5 +1426,74 @@ function trackVideoComplete() { trackEvent('video_complete', { event_category: '
 
 document.addEventListener('DOMContentLoaded', function() {
     const howItWorks = document.getElementById('how-it-works');
-    if (howItWorks) { const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { trackEvent('section_view', { section_name: 'How It Works' }); observer.unobserve(entry.target); } }); }, { threshold: 0.5 }); observer.observe(howItWorks); }
+    if (howItWorks) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) { trackEvent('section_view', { section_name: 'How It Works' }); observer.unobserve(entry.target); }
+            });
+        }, { threshold: 0.5 });
+        observer.observe(howItWorks);
+    }
 });
+
+// =====================================================
+// BEFORE/AFTER IMAGE SLIDER
+// =====================================================
+(function() {
+    const slider = document.getElementById('beforeAfterSlider');
+    const handle = document.getElementById('baSliderHandle');
+    const beforeWrapper = slider ? slider.querySelector('.ba-before-wrapper') : null;
+    
+    if (!slider || !handle || !beforeWrapper) return;
+    
+    let isDragging = false;
+    
+    function getPositionX(e) {
+        return e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+    }
+    
+    function updateSliderPosition(clientX) {
+        const rect = slider.getBoundingClientRect();
+        let position = ((clientX - rect.left) / rect.width) * 100;
+        position = Math.max(0, Math.min(100, position));
+        
+        handle.style.left = position + '%';
+        beforeWrapper.style.width = position + '%';
+    }
+    
+    function startDrag(e) {
+        e.preventDefault();
+        isDragging = true;
+        slider.classList.add('dragging');
+    }
+    
+    function endDrag() {
+        isDragging = false;
+        slider.classList.remove('dragging');
+    }
+    
+    function drag(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        updateSliderPosition(getPositionX(e));
+    }
+    
+    // Mouse events
+    handle.addEventListener('mousedown', startDrag);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', endDrag);
+    
+    // Touch events
+    handle.addEventListener('touchstart', startDrag, { passive: false });
+    document.addEventListener('touchmove', drag, { passive: false });
+    document.addEventListener('touchend', endDrag);
+    
+    // Click on slider to move handle
+    slider.addEventListener('click', function(e) {
+        if (e.target === handle || handle.contains(e.target)) return;
+        updateSliderPosition(getPositionX(e));
+    });
+    
+    // Initialize at 50%
+    updateSliderPosition(slider.getBoundingClientRect().left + slider.getBoundingClientRect().width / 2);
+})();
