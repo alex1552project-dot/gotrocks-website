@@ -1,1550 +1,1138 @@
-// =====================================================
-// TEXAS GOT ROCKS - COMPLETE MAIN.JS
-// Last Updated: January 8, 2026
-// INCLUDES: Smart truck selection, delivery minimums, 48-ton cap
-// NEW: 2-yard minimum per material, tiered margins, value proposition upsell
-// NEW: 41 additional ZIP codes (189 total)
-// REPLACE YOUR ENTIRE main.js WITH THIS FILE
-// =====================================================
-
-// =====================================================
-// CALL/TEXT DROPDOWN TOGGLE FUNCTIONS (Grasshopper Integration)
-// =====================================================
-function toggleNavCallDropdown(event) {
-    event.stopPropagation();
-    const menu = document.getElementById('navCallMenu');
-    closeAllCallDropdowns();
-    menu.classList.toggle('show');
-}
-
-function toggleHeroCallDropdown(event) {
-    event.stopPropagation();
-    const menu = document.getElementById('heroCallMenu');
-    closeAllCallDropdowns();
-    menu.classList.toggle('show');
-}
-
-function toggleCtaCallDropdown(event) {
-    event.stopPropagation();
-    const menu = document.getElementById('ctaCallMenu');
-    closeAllCallDropdowns();
-    menu.classList.toggle('show');
-}
-
-function toggleFooterCallDropdown(event) {
-    event.stopPropagation();
-    const menu = document.getElementById('footerCallMenu');
-    closeAllCallDropdowns();
-    menu.classList.toggle('show');
-}
-
-function closeAllCallDropdowns() {
-    document.querySelectorAll('.nav-call-menu, .call-dropdown-menu, .footer-call-menu').forEach(menu => {
-        menu.classList.remove('show');
-    });
-}
-
-document.addEventListener('click', function(e) {
-    if (!e.target.closest('.nav-call-dropdown') && 
-        !e.target.closest('.call-dropdown-container') && 
-        !e.target.closest('.footer-call-dropdown')) {
-        closeAllCallDropdowns();
-    }
-});
-
-// =====================================================
-// NAVIGATION
-// =====================================================
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-        nav.classList.add('scrolled');
-    } else {
-        nav.classList.remove('scrolled');
-    }
-});
-
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        const href = this.getAttribute('href');
-        if (href === '#' || href === '') return;
-        e.preventDefault();
-        const target = document.querySelector(href);
-        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-});
-
-// =====================================================
-// CALCULATOR MODAL FUNCTIONS
-// =====================================================
-function openCalculatorModal() {
-    document.getElementById('calculator-modal').classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeCalculatorModal() {
-    document.getElementById('calculator-modal').classList.remove('active');
-    document.body.style.overflow = '';
-}
-
-document.getElementById('calculator-modal').addEventListener('click', function(e) {
-    if (e.target === this) closeCalculatorModal();
-});
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeCalculatorModal();
-        closeModal('exit-modal');
-        closeAllCallDropdowns();
-    }
-});
-
-// =====================================================
-// MODAL FUNCTIONS
-// =====================================================
-function openModal(modalId) {
-    document.getElementById(modalId).classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeModal(modalId) {
-    document.getElementById(modalId).classList.remove('active');
-    document.body.style.overflow = '';
-}
-
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', function(e) {
-        if (e.target === this) {
-            this.classList.remove('active');
-            document.body.style.overflow = '';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9N8HZT4KRL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-9N8HZT4KRL');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Texas Got Rocks? | The Woodlands & Conroe's Direct Rock, Gravel, Mulch & Topsoil Source</title>
+    <meta name="description" content="Texas Got Rocks delivers rock, gravel, mulch & topsoil direct to The Woodlands and Conroe. Always FREE delivery. Family-owned, not brokers. Get an instant quote!">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        /* Fix product card price alignment */
+        .products-grid .product-card {
+            display: flex;
+            flex-direction: column;
         }
-    });
-});
-
-const exitForm = document.getElementById('exit-capture-form');
-if (exitForm) {
-    exitForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const email = document.getElementById('exit-email').value;
-        const phone = document.getElementById('exit-phone').value;
-        console.log('Lead Captured (Exit Intent):', { email, phone });
-        closeModal('exit-modal');
-        showToast('success', 'Discount Sent!', 'Check your email for your 10% off code');
-    });
-}
-
-// =====================================================
-// ZIP CODE DATABASE - EXPANDED TO 189 ZIP CODES
-// Includes 41 new ZIP codes from gap analysis
-// Pre-calculated distances from Conroe yard
-// =====================================================
-const ZIP_DATA = {
-    // =========================================================
-    // ZONE 1: Conroe & Immediate Area (0-15 miles from yard)
-    // =========================================================
-    '77301': { city: 'Conroe', distance: 3, time: 8, zone: 1 },
-    '77302': { city: 'Conroe', distance: 7, time: 15, zone: 1 },
-    '77303': { city: 'Conroe', distance: 5, time: 12, zone: 1 },
-    '77304': { city: 'Conroe', distance: 6, time: 14, zone: 1 },
-    '77305': { city: 'Conroe', distance: 4, time: 10, zone: 1 },
-    '77306': { city: 'Conroe', distance: 8, time: 18, zone: 1 },
-    '77384': { city: 'Conroe', distance: 10, time: 20, zone: 1 },
-    '77385': { city: 'Conroe', distance: 2, time: 5, zone: 1 },
-    
-    // Montgomery
-    '77316': { city: 'Montgomery', distance: 12, time: 22, zone: 1 },
-    '77356': { city: 'Montgomery', distance: 14, time: 25, zone: 1 },
-    
-    // Willis
-    '77318': { city: 'Willis', distance: 10, time: 18, zone: 1 },
-    '77378': { city: 'Willis', distance: 12, time: 20, zone: 1 },
-    
-    // Oak Ridge North
-    '77386': { city: 'Oak Ridge North', distance: 14, time: 24, zone: 1 },
-    
-    // Shenandoah
-    '77381': { city: 'Shenandoah', distance: 12, time: 22, zone: 1 },
-    
-    // =========================================================
-    // ZONE 2: The Woodlands, Spring, Magnolia (15-30 miles)
-    // =========================================================
-    
-    // The Woodlands
-    '77380': { city: 'The Woodlands', distance: 18, time: 30, zone: 2 },
-    '77382': { city: 'The Woodlands', distance: 17, time: 29, zone: 2 },
-    '77387': { city: 'The Woodlands', distance: 19, time: 32, zone: 2 },
-    '77389': { city: 'The Woodlands', distance: 22, time: 38, zone: 2 },
-    
-    // Magnolia
-    '77354': { city: 'Magnolia', distance: 15, time: 28, zone: 2 },
-    '77355': { city: 'Magnolia', distance: 18, time: 32, zone: 2 },
-    
-    // NEW: Pinehurst
-    '77362': { city: 'Pinehurst', distance: 20, time: 35, zone: 2 },
-    
-    // Spring
-    '77373': { city: 'Spring', distance: 25, time: 40, zone: 2 },
-    '77379': { city: 'Spring', distance: 24, time: 42, zone: 2 },
-    '77388': { city: 'Spring', distance: 26, time: 45, zone: 2 },
-    
-    // Tomball
-    '77375': { city: 'Tomball', distance: 22, time: 38, zone: 2 },
-    '77377': { city: 'Tomball', distance: 25, time: 42, zone: 2 },
-    
-    // Splendora
-    '77372': { city: 'Splendora', distance: 22, time: 35, zone: 2 },
-    
-    // Porter
-    '77365': { city: 'Porter', distance: 26, time: 40, zone: 2 },
-    
-    // New Caney
-    '77357': { city: 'New Caney', distance: 28, time: 42, zone: 2 },
-    
-    // Plantersville
-    '77363': { city: 'Plantersville', distance: 25, time: 40, zone: 2 },
-    
-    // New Waverly
-    '77358': { city: 'New Waverly', distance: 20, time: 32, zone: 2 },
-    
-    // =========================================================
-    // ZONE 3: Huntsville, Humble, Cypress, Katy, Cleveland + NEW AREAS (30-60 miles)
-    // =========================================================
-    
-    // Huntsville (about 40 miles north)
-    '77320': { city: 'Huntsville', distance: 40, time: 50, zone: 3 },
-    '77340': { city: 'Huntsville', distance: 42, time: 52, zone: 3 },
-    '77341': { city: 'Huntsville', distance: 42, time: 52, zone: 3 },
-    '77344': { city: 'Huntsville', distance: 44, time: 55, zone: 3 },
-    '77348': { city: 'Huntsville', distance: 44, time: 55, zone: 3 },
-    '77349': { city: 'Huntsville', distance: 44, time: 55, zone: 3 },
-    
-    // Cleveland (about 35 miles east)
-    '77327': { city: 'Cleveland', distance: 35, time: 45, zone: 3 },
-    '77328': { city: 'Cleveland', distance: 37, time: 48, zone: 3 },
-    
-    // NEW: Romayor, Rye, Shepherd (east)
-    '77368': { city: 'Romayor', distance: 45, time: 55, zone: 3 },
-    '77369': { city: 'Rye', distance: 50, time: 60, zone: 3 },
-    '77371': { city: 'Shepherd', distance: 42, time: 52, zone: 3 },
-    
-    // Humble / Kingwood
-    '77338': { city: 'Humble', distance: 32, time: 50, zone: 3 },
-    '77339': { city: 'Kingwood', distance: 30, time: 48, zone: 3 },
-    '77345': { city: 'Kingwood', distance: 32, time: 52, zone: 3 },
-    '77346': { city: 'Humble', distance: 35, time: 55, zone: 3 },
-    '77347': { city: 'Humble', distance: 33, time: 52, zone: 3 },
-    '77396': { city: 'Humble', distance: 34, time: 54, zone: 3 },
-    
-    // NEW: Crosby, Huffman, Highlands (east of Humble)
-    '77532': { city: 'Crosby', distance: 42, time: 55, zone: 3 },
-    '77336': { city: 'Huffman', distance: 38, time: 50, zone: 3 },
-    '77562': { city: 'Highlands', distance: 45, time: 58, zone: 3 },
-    
-    // NEW: Channelview
-    '77530': { city: 'Channelview', distance: 48, time: 60, zone: 3 },
-    
-    // NEW: Baytown
-    '77520': { city: 'Baytown', distance: 52, time: 65, zone: 3 },
-    '77521': { city: 'Baytown', distance: 50, time: 62, zone: 3 },
-    '77522': { city: 'Baytown', distance: 51, time: 63, zone: 3 },
-    '77523': { city: 'Baytown', distance: 48, time: 60, zone: 3 },
-    
-    // NEW: Dayton
-    '77535': { city: 'Dayton', distance: 45, time: 55, zone: 3 },
-    
-    // NEW: Deer Park
-    '77536': { city: 'Deer Park', distance: 52, time: 65, zone: 3 },
-    
-    // NEW: La Porte
-    '77571': { city: 'La Porte', distance: 55, time: 68, zone: 3 },
-    
-    // NEW: Pasadena
-    '77501': { city: 'Pasadena', distance: 50, time: 65, zone: 3 },
-    '77502': { city: 'Pasadena', distance: 52, time: 67, zone: 3 },
-    '77503': { city: 'Pasadena', distance: 53, time: 68, zone: 3 },
-    '77504': { city: 'Pasadena', distance: 54, time: 70, zone: 3 },
-    '77505': { city: 'Pasadena', distance: 55, time: 72, zone: 3 },
-    '77506': { city: 'Pasadena', distance: 51, time: 66, zone: 3 },
-    '77507': { city: 'Pasadena', distance: 56, time: 72, zone: 3 },
-    '77508': { city: 'Pasadena', distance: 52, time: 67, zone: 3 },
-    
-    // NEW: Pearland
-    '77581': { city: 'Pearland', distance: 55, time: 70, zone: 3 },
-    '77584': { city: 'Pearland', distance: 58, time: 72, zone: 3 },
-    '77588': { city: 'Pearland', distance: 56, time: 70, zone: 3 },
-    
-    // NEW: Friendswood
-    '77546': { city: 'Friendswood', distance: 55, time: 70, zone: 3 },
-    
-    // NEW: League City
-    '77573': { city: 'League City', distance: 58, time: 75, zone: 3 },
-    
-    // NEW: Seabrook
-    '77586': { city: 'Seabrook', distance: 55, time: 70, zone: 3 },
-    
-    // NEW: Kemah
-    '77565': { city: 'Kemah', distance: 58, time: 72, zone: 3 },
-    
-    // Cypress (about 35 miles southwest)
-    '77410': { city: 'Cypress', distance: 35, time: 50, zone: 3 },
-    '77429': { city: 'Cypress', distance: 35, time: 50, zone: 3 },
-    '77433': { city: 'Cypress', distance: 38, time: 55, zone: 3 },
-    
-    // Katy (about 50 miles southwest)
-    '77449': { city: 'Katy', distance: 50, time: 65, zone: 3 },
-    '77450': { city: 'Katy', distance: 52, time: 68, zone: 3 },
-    '77491': { city: 'Katy', distance: 50, time: 65, zone: 3 },
-    '77492': { city: 'Katy', distance: 50, time: 65, zone: 3 },
-    '77493': { city: 'Katy', distance: 48, time: 62, zone: 3 },
-    '77494': { city: 'Katy', distance: 52, time: 68, zone: 3 },
-    
-    // NEW: Brookshire
-    '77423': { city: 'Brookshire', distance: 55, time: 70, zone: 3 },
-    
-    // NEW: Fulshear
-    '77441': { city: 'Fulshear', distance: 55, time: 70, zone: 3 },
-    
-    // NEW: Richmond
-    '77406': { city: 'Richmond', distance: 58, time: 75, zone: 3 },
-    '77407': { city: 'Richmond', distance: 55, time: 70, zone: 3 },
-    '77469': { city: 'Richmond', distance: 58, time: 75, zone: 3 },
-    
-    // NEW: Rosenberg
-    '77471': { city: 'Rosenberg', distance: 60, time: 78, zone: 3 },
-    
-    // NEW: Simonton
-    '77476': { city: 'Simonton', distance: 58, time: 75, zone: 3 },
-    
-    // NEW: Sugar Land
-    '77478': { city: 'Sugar Land', distance: 52, time: 68, zone: 3 },
-    '77479': { city: 'Sugar Land', distance: 55, time: 70, zone: 3 },
-    '77498': { city: 'Sugar Land', distance: 53, time: 68, zone: 3 },
-    
-    // NEW: Bellaire
-    '77401': { city: 'Bellaire', distance: 48, time: 65, zone: 3 },
-    
-    // =========================================================
-    // HOUSTON - North & Northwest (closest to Conroe)
-    // =========================================================
-    '77014': { city: 'Houston', distance: 35, time: 55, zone: 3 },
-    '77018': { city: 'Houston', distance: 42, time: 64, zone: 3 },
-    '77022': { city: 'Houston', distance: 40, time: 60, zone: 3 },
-    '77032': { city: 'Houston', distance: 38, time: 58, zone: 3 },
-    '77037': { city: 'Houston', distance: 36, time: 56, zone: 3 },
-    '77038': { city: 'Houston', distance: 34, time: 54, zone: 3 },
-    '77039': { city: 'Houston', distance: 35, time: 55, zone: 3 },
-    '77040': { city: 'Houston', distance: 36, time: 56, zone: 3 },
-    '77041': { city: 'Houston', distance: 38, time: 58, zone: 3 },
-    '77043': { city: 'Houston', distance: 40, time: 62, zone: 3 },
-    '77044': { city: 'Houston', distance: 38, time: 58, zone: 3 },
-    '77049': { city: 'Houston', distance: 42, time: 55, zone: 3 },
-    '77050': { city: 'Houston', distance: 40, time: 60, zone: 3 },
-    '77060': { city: 'Houston', distance: 35, time: 55, zone: 3 },
-    '77064': { city: 'Houston', distance: 32, time: 52, zone: 3 },
-    '77065': { city: 'Houston', distance: 33, time: 54, zone: 3 },
-    '77066': { city: 'Houston', distance: 30, time: 48, zone: 3 },
-    '77067': { city: 'Houston', distance: 32, time: 50, zone: 3 },
-    '77068': { city: 'Houston', distance: 28, time: 45, zone: 3 },
-    '77069': { city: 'Houston', distance: 26, time: 42, zone: 3 },
-    '77070': { city: 'Houston', distance: 28, time: 46, zone: 3 },
-    '77073': { city: 'Houston', distance: 30, time: 48, zone: 3 },
-    '77078': { city: 'Houston', distance: 38, time: 58, zone: 3 },
-    '77080': { city: 'Houston', distance: 40, time: 62, zone: 3 },
-    '77086': { city: 'Houston', distance: 32, time: 50, zone: 3 },
-    '77088': { city: 'Houston', distance: 38, time: 60, zone: 3 },
-    '77090': { city: 'Houston', distance: 30, time: 48, zone: 3 },
-    '77091': { city: 'Houston', distance: 40, time: 62, zone: 3 },
-    '77092': { city: 'Houston', distance: 42, time: 65, zone: 3 },
-    '77093': { city: 'Houston', distance: 40, time: 62, zone: 3 },
-    
-    // =========================================================
-    // HOUSTON - Central, West, Southwest (farther from Conroe)
-    // =========================================================
-    '77002': { city: 'Houston', distance: 45, time: 65, zone: 3 },
-    '77003': { city: 'Houston', distance: 46, time: 66, zone: 3 },
-    '77004': { city: 'Houston', distance: 48, time: 70, zone: 3 },
-    '77005': { city: 'Houston', distance: 50, time: 72, zone: 3 },
-    '77006': { city: 'Houston', distance: 48, time: 70, zone: 3 },
-    '77007': { city: 'Houston', distance: 45, time: 68, zone: 3 },
-    '77008': { city: 'Houston', distance: 42, time: 64, zone: 3 },
-    '77009': { city: 'Houston', distance: 40, time: 60, zone: 3 },
-    '77010': { city: 'Houston', distance: 45, time: 65, zone: 3 },
-    '77011': { city: 'Houston', distance: 48, time: 70, zone: 3 },
-    '77012': { city: 'Houston', distance: 50, time: 72, zone: 3 },
-    '77013': { city: 'Houston', distance: 45, time: 68, zone: 3 },
-    '77015': { city: 'Houston', distance: 50, time: 72, zone: 3 },
-    '77016': { city: 'Houston', distance: 42, time: 64, zone: 3 },
-    '77017': { city: 'Houston', distance: 52, time: 75, zone: 3 },
-    '77019': { city: 'Houston', distance: 48, time: 70, zone: 3 },
-    '77020': { city: 'Houston', distance: 45, time: 68, zone: 3 },
-    '77021': { city: 'Houston', distance: 50, time: 72, zone: 3 },
-    '77023': { city: 'Houston', distance: 48, time: 70, zone: 3 },
-    '77024': { city: 'Houston', distance: 45, time: 68, zone: 3 },
-    '77025': { city: 'Houston', distance: 52, time: 75, zone: 3 },
-    '77026': { city: 'Houston', distance: 45, time: 68, zone: 3 },
-    '77027': { city: 'Houston', distance: 48, time: 70, zone: 3 },
-    '77028': { city: 'Houston', distance: 44, time: 66, zone: 3 },
-    '77029': { city: 'Houston', distance: 50, time: 72, zone: 3 },
-    '77030': { city: 'Houston', distance: 50, time: 72, zone: 3 },
-    '77031': { city: 'Houston', distance: 55, time: 78, zone: 3 },
-    '77033': { city: 'Houston', distance: 52, time: 75, zone: 3 },
-    '77034': { city: 'Houston', distance: 55, time: 78, zone: 3 },
-    '77035': { city: 'Houston', distance: 55, time: 78, zone: 3 },
-    '77036': { city: 'Houston', distance: 52, time: 75, zone: 3 },
-    '77042': { city: 'Houston', distance: 48, time: 70, zone: 3 },
-    '77045': { city: 'Houston', distance: 55, time: 78, zone: 3 },
-    '77046': { city: 'Houston', distance: 50, time: 72, zone: 3 },
-    '77047': { city: 'Houston', distance: 58, time: 80, zone: 3 },
-    '77048': { city: 'Houston', distance: 58, time: 80, zone: 3 },
-    '77051': { city: 'Houston', distance: 55, time: 78, zone: 3 },
-    '77053': { city: 'Houston', distance: 58, time: 80, zone: 3 },
-    '77054': { city: 'Houston', distance: 52, time: 75, zone: 3 },
-    '77055': { city: 'Houston', distance: 45, time: 68, zone: 3 },
-    '77056': { city: 'Houston', distance: 48, time: 70, zone: 3 },
-    '77057': { city: 'Houston', distance: 48, time: 70, zone: 3 },
-    '77058': { city: 'Houston', distance: 60, time: 85, zone: 3 },
-    '77059': { city: 'Houston', distance: 58, time: 82, zone: 3 },
-    '77061': { city: 'Houston', distance: 55, time: 78, zone: 3 },
-    '77062': { city: 'Houston', distance: 58, time: 82, zone: 3 },
-    '77063': { city: 'Houston', distance: 50, time: 72, zone: 3 },
-    '77071': { city: 'Houston', distance: 55, time: 78, zone: 3 },
-    '77072': { city: 'Houston', distance: 55, time: 78, zone: 3 },
-    '77074': { city: 'Houston', distance: 52, time: 75, zone: 3 },
-    '77075': { city: 'Houston', distance: 55, time: 78, zone: 3 },
-    '77076': { city: 'Houston', distance: 38, time: 58, zone: 3 },
-    '77077': { city: 'Houston', distance: 50, time: 72, zone: 3 },
-    '77079': { city: 'Houston', distance: 48, time: 70, zone: 3 },
-    '77081': { city: 'Houston', distance: 52, time: 75, zone: 3 },
-    '77082': { city: 'Houston', distance: 52, time: 75, zone: 3 },
-    '77083': { city: 'Houston', distance: 55, time: 78, zone: 3 },
-    '77084': { city: 'Houston', distance: 42, time: 62, zone: 3 },
-    '77085': { city: 'Houston', distance: 55, time: 78, zone: 3 },
-    '77087': { city: 'Houston', distance: 52, time: 75, zone: 3 },
-    '77089': { city: 'Houston', distance: 58, time: 82, zone: 3 },
-    '77094': { city: 'Houston', distance: 50, time: 72, zone: 3 },
-    '77095': { city: 'Houston', distance: 42, time: 62, zone: 3 },
-    '77096': { city: 'Houston', distance: 55, time: 78, zone: 3 },
-    '77098': { city: 'Houston', distance: 48, time: 70, zone: 3 },
-    '77099': { city: 'Houston', distance: 55, time: 78, zone: 3 }
-};
-
-// =====================================================
-// TRUCK & PRICING CONFIGURATION
-// =====================================================
-const TRUCK_CONFIG = {
-    tandem: { hourlyRate: 100, capacityTons: 15, minimumCharge: 75 },
-    endDump: { hourlyRate: 130, capacityTons: 24, minimumCharge: 100 },
-    loadTime: 5,
-    dumpTime: 5,
-    taxRate: 0.0825,
-    serviceFeeRate: 0.035,
-    maxTons: 48,
-    // NEW: Minimum Yard & Tiered Margin Configuration
-    minimumYards: 2,
-    smallOrderThreshold: 3,
-    smallOrderMargin: 0.30,
-    standardMargin: 0.20
-};
-
-// =====================================================
-// SMART TRUCK SELECTION
-// =====================================================
-function selectOptimalTrucks(tons) {
-    const TANDEM = TRUCK_CONFIG.tandem;
-    const END_DUMP = TRUCK_CONFIG.endDump;
-    
-    if (tons <= 15) {
-        return { description: '1 Tandem', trucks: [{ type: 'tandem', tons: tons }], totalHourlyRate: TANDEM.hourlyRate, trips: 1, minimumCharge: TANDEM.minimumCharge };
-    } else if (tons <= 24) {
-        return { description: '1 End Dump', trucks: [{ type: 'endDump', tons: tons }], totalHourlyRate: END_DUMP.hourlyRate, trips: 1, minimumCharge: END_DUMP.minimumCharge };
-    } else if (tons <= 30) {
-        return { description: '2 Tandems', trucks: [{ type: 'tandem', tons: 15 }, { type: 'tandem', tons: tons - 15 }], totalHourlyRate: TANDEM.hourlyRate * 2, trips: 2, minimumCharge: TANDEM.minimumCharge * 2 };
-    } else if (tons <= 39) {
-        return { description: '1 End Dump + 1 Tandem', trucks: [{ type: 'endDump', tons: 24 }, { type: 'tandem', tons: tons - 24 }], totalHourlyRate: END_DUMP.hourlyRate + TANDEM.hourlyRate, trips: 2, minimumCharge: END_DUMP.minimumCharge + TANDEM.minimumCharge };
-    } else if (tons <= 48) {
-        return { description: '2 End Dumps', trucks: [{ type: 'endDump', tons: 24 }, { type: 'endDump', tons: tons - 24 }], totalHourlyRate: END_DUMP.hourlyRate * 2, trips: 2, minimumCharge: END_DUMP.minimumCharge * 2 };
-    }
-    return null;
-}
-
-// =====================================================
-// STATE VARIABLES
-// =====================================================
-let currentZipData = null;
-let currentQuote = null;
-
-function lookupZip(zip) {
-    const cleaned = zip.replace(/\D/g, '').substring(0, 5);
-    return ZIP_DATA[cleaned] || null;
-}
-
-// =====================================================
-// HANDLE ZIP INPUT
-// =====================================================
-function handleQuoteZipInput(e) {
-    const zip = e.target.value.replace(/\D/g, '');
-    e.target.value = zip;
-    
-    const statusEl = document.getElementById('quoteZipStatus');
-    const deliveryInfo = document.getElementById('quoteDeliveryInfo');
-    const outOfArea = document.getElementById('quoteOutOfArea');
-    
-    if (zip.length < 5) {
-        statusEl.classList.add('hidden');
-        deliveryInfo.classList.add('hidden');
-        outOfArea.classList.add('hidden');
-        currentZipData = null;
-        recalculateQuote();
-        return;
-    }
-    
-    const data = lookupZip(zip);
-    
-    if (data) {
-        currentZipData = data;
-        statusEl.textContent = ' We deliver here!';
-        statusEl.className = 'zip-status valid';
-        document.getElementById('quoteCityName').textContent = data.city;
-        document.getElementById('quoteDistanceMiles').textContent = data.distance;
-        document.getElementById('quoteTravelTime').textContent = data.time;
-        deliveryInfo.classList.remove('hidden');
-        outOfArea.classList.add('hidden');
-        document.getElementById('quoteDeliveryCityBadge').textContent = data.city.toUpperCase();
-    } else {
-        currentZipData = null;
-        statusEl.textContent = 'Outside area';
-        statusEl.className = 'zip-status invalid';
-        deliveryInfo.classList.add('hidden');
-        outOfArea.classList.remove('hidden');
-    }
-    
-    recalculateQuote();
-}
-
-function adjustQuoteQuantity(delta) {
-    const input = document.getElementById('quoteQuantity');
-    let value = parseFloat(input.value) || 1;
-    value = Math.max(1, Math.min(100, value + delta));
-    input.value = value;
-    recalculateQuote();
-}
-
-// =====================================================
-// CALCULATE FULL PRICE HELPER
-// Used for both current order and upsell comparison
-// =====================================================
-function calculateFullPrice(quantity, pricePerTon, weightPerYard, travelTime, margin) {
-    const tons = quantity * weightPerYard;
-    const baseMaterialCost = tons * pricePerTon;
-    const truckConfig = selectOptimalTrucks(tons);
-    const timePerTrip = TRUCK_CONFIG.loadTime + travelTime + TRUCK_CONFIG.dumpTime;
-    const totalHours = (timePerTrip * truckConfig.trips) / 60;
-    const calculatedDeliveryCost = totalHours * truckConfig.totalHourlyRate;
-    const deliveryCost = Math.max(calculatedDeliveryCost, truckConfig.minimumCharge);
-    const subtotal = baseMaterialCost + deliveryCost;
-    const materialWithMargin = subtotal * (1 + margin);
-    const pricePerYard = materialWithMargin / quantity;
-    const salesTax = baseMaterialCost * TRUCK_CONFIG.taxRate;
-    const serviceFee = (materialWithMargin + salesTax) * TRUCK_CONFIG.serviceFeeRate;
-    const total = materialWithMargin + salesTax + serviceFee;
-    
-    return {
-        quantity, tons, baseMaterialCost, deliveryCost, truckConfig, margin, materialWithMargin,
-        pricePerYard, pricePerTon: materialWithMargin / tons, salesTax, serviceFee, total
-    };
-}
-
-// =====================================================
-// RECALCULATE QUOTE - MAIN PRICING FORMULA
-// With 2-yard minimum, tiered margins, and value proposition upsell
-// =====================================================
-function recalculateQuote() {
-    const productSelect = document.getElementById('quoteProduct');
-    const quantity = parseFloat(document.getElementById('quoteQuantity').value) || 0;
-    const ctaButton = document.getElementById('quoteCtaButton');
-    const minimumWarning = document.getElementById('quoteMinimumWarning');
-    const upsellSection = document.getElementById('quoteUpsellSection');
-    
-    // Hide warnings/upsells by default
-    if (minimumWarning) minimumWarning.classList.add('hidden');
-    if (upsellSection) upsellSection.classList.add('hidden');
-    
-    // Check if we have all required data
-    if (!currentZipData || !productSelect.value || quantity <= 0) {
-        document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
-        document.getElementById('quoteTotalSection').classList.add('hidden');
-        document.getElementById('needAProSection').classList.add('hidden');
+        .products-grid .product-card .product-info {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .products-grid .product-card .product-description {
+            flex-grow: 1;
+        }
+        /* Align top of hero mascot with top of text */
+        .hero-top-row {
+            align-items: flex-start !important;
+        }
+    </style>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9N8HZT4KRL');
+        const SITE_VERSION = 'B';
+        gtag('set', 'user_properties', { 'site_version': SITE_VERSION });
+    </script>
+</head>
+<body>
+<!-- Navigation -->
+<nav class="nav" id="nav">
+    <div class="nav-container">
+        <a href="#" class="nav-logo"><img src="/images/logo.png" alt="Texas Got Rocks?"></a>
         
-        if (!currentZipData) ctaButton.textContent = 'Enter ZIP Code to Get Quote';
-        else if (!productSelect.value) ctaButton.textContent = 'Select a Material';
-        else ctaButton.textContent = 'Enter Quantity';
-        ctaButton.disabled = true;
-        return;
-    }
-    
-    const selectedOption = productSelect.options[productSelect.selectedIndex];
-    const pricePerTon = parseFloat(selectedOption.dataset.price);
-    const weightPerYard = parseFloat(selectedOption.dataset.weight);
-    const materialName = selectedOption.text;
-    
-    // =========================================================
-    // CHECK: 2-YARD MINIMUM PER MATERIAL
-    // =========================================================
-    if (quantity < TRUCK_CONFIG.minimumYards) {
-        if (minimumWarning) {
-            document.getElementById('minWarningMaterialName').textContent = materialName;
-            minimumWarning.classList.remove('hidden');
-        }
-        document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
-        document.getElementById('quoteTotalSection').classList.add('hidden');
-        document.getElementById('needAProSection').classList.add('hidden');
-        ctaButton.innerHTML = '&#9888; 2 Yard Minimum Required';
-        ctaButton.disabled = true;
-        return;
-    }
-    
-    const tons = quantity * weightPerYard;
-    
-    // CHECK: 48-TON CAP
-    if (tons > TRUCK_CONFIG.maxTons) {
-        document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
-        document.getElementById('quoteTotalSection').classList.add('hidden');
-        document.getElementById('needAProSection').classList.add('hidden');
-        ctaButton.innerHTML = '&#128222; Order Over 48 Tons - Get Commercial Quote';
-        ctaButton.disabled = false;
-        ctaButton.onclick = function() {
-            closeCalculatorModal();
-            const bulkSection = document.getElementById('bulk-pricing') || document.querySelector('.commercial-cta');
-            if (bulkSection) setTimeout(() => bulkSection.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
-        };
-        return;
-    }
-    
-    // Reset onclick for normal orders
-    ctaButton.onclick = function() { addToCartWithCaptcha(); };
-    
-    // =========================================================
-    // DETERMINE MARGIN BASED ON QUANTITY
-    // 30% for 2-2.99 yards, 20% for 3+ yards
-    // =========================================================
-    const margin = (quantity < TRUCK_CONFIG.smallOrderThreshold) 
-        ? TRUCK_CONFIG.smallOrderMargin 
-        : TRUCK_CONFIG.standardMargin;
-    
-    // Calculate current order pricing
-    const currentPricing = calculateFullPrice(quantity, pricePerTon, weightPerYard, currentZipData.time, margin);
-    
-    // =========================================================
-    // VALUE PROPOSITION UPSELL (for 2-2.99 yard orders)
-    // Shows customer they pay MORE total but get BETTER per-yard rate
-    // =========================================================
-    if (quantity >= TRUCK_CONFIG.minimumYards && quantity < TRUCK_CONFIG.smallOrderThreshold) {
-        const upsellPricing = calculateFullPrice(3, pricePerTon, weightPerYard, currentZipData.time, TRUCK_CONFIG.standardMargin);
-        const savingsPerYard = currentPricing.pricePerYard - upsellPricing.pricePerYard;
+        <ul class="nav-links">
+            <li><a href="#products">Products</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li class="nav-dropdown">
+                <a href="#service-areas" class="dropdown-toggle">Service Areas &#9662;</a>
+                <div class="dropdown-menu">
+                    <div class="dropdown-grid">
+                        <a href="/conroe/">Conroe</a>
+                        <a href="/the-woodlands/">The Woodlands</a>
+                        <a href="/spring/">Spring</a>
+                        <a href="/houston/">Houston</a>
+                        <a href="/humble/">Humble</a>
+                        <a href="/cypress/">Cypress</a>
+                        <a href="/katy/">Katy</a>
+                        <a href="/tomball/">Tomball</a>
+                        <a href="/magnolia/">Magnolia</a>
+                        <a href="/willis/">Willis</a>
+                        <a href="/montgomery/">Montgomery</a>
+                        <a href="/huntsville/">Huntsville</a>
+                        <a href="/new-caney/">New Caney</a>
+                        <a href="/splendora/">Splendora</a>
+                        <a href="/cleveland/">Cleveland</a>
+                        <a href="/plantersville/">Plantersville</a>
+                        <a href="/new-waverly/">New Waverly</a>
+                        <a href="/oak-ridge-north/">Oak Ridge North</a>
+                        <a href="/shenandoah/">Shenandoah</a>
+                        <a href="/porter/">Porter</a>
+                    </div>
+                </div>
+            </li>
+            <li><a href="#reviews">Reviews</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li class="nav-call-dropdown">
+                <button class="nav-call-btn" onclick="toggleNavCallDropdown(event)">
+                    &#128222; Call Or Text Now &#9662;
+                </button>
+                <div class="nav-call-menu" id="navCallMenu">
+                    <a href="tel:9362592887">&#128222; Call (936) 259-2887</a>
+                    <a href="sms:9362592887">&#128172; Text (936) 259-2887</a>
+                </div>
+            </li>
+        </ul>
         
-        if (upsellSection && savingsPerYard > 0) {
-            document.getElementById('upsellCurrentQty').textContent = quantity;
-            document.getElementById('upsellCurrentTotal').textContent = currentPricing.total.toFixed(2);
-            document.getElementById('upsellCurrentPerYard').textContent = currentPricing.pricePerYard.toFixed(2);
-            document.getElementById('upsellUpgradeTotal').textContent = upsellPricing.total.toFixed(2);
-            document.getElementById('upsellUpgradePerYard').textContent = upsellPricing.pricePerYard.toFixed(2);
-            document.getElementById('upsellSavingsPerYard').textContent = savingsPerYard.toFixed(2);
-            upsellSection.classList.remove('hidden');
-        }
+        <div class="nav-right">
+            <div class="nav-cart" onclick="openCartDrawer()">
+                <span class="nav-cart-icon">&#128722;</span>
+                <span class="cart-count hidden" id="navCartCount">0</span>
+            </div>
+            <button class="mobile-menu-btn" id="mobile-menu-btn">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Announcement Bar -->
+<div class="announcement-bar">
+    &#128666; <span class="highlight">ALWAYS FREE DELIVERY</span> in Conroe & The Woodlands &bull; Locally Owned&mdash;Direct Supplier Pricing
+</div>
+
+<!-- Hero Section -->
+<section class="hero" id="home">
+    <div class="hero-container">
+        <div class="hero-content">
+            <div class="hero-top-row">
+                <div class="hero-mascot-wrapper animate-fade-in">
+                    <video autoplay muted playsinline id="heroRockyVideo" class="hero-combined-logo" poster="/images/rocky-logo-transparent.png">
+                        <source src="/videos/RockyLetsGoTexas.mp4" type="video/mp4">
+                        <img src="/images/rocky-logo-transparent.png" alt="Rocky - Texas Got Rocks?">
+                    </video>
+                </div>
+                <div class="hero-text-content animate-fade-in delay-1">
+                    <h1 class="hero-title">
+                        The Woodlands and Conroe's Direct Rock, Gravel, Mulch & Topsoil Source&mdash;<span class="highlight">We're Your Neighbors, Not Brokers</span>&mdash;Stop making 12 trips to the BIG BOX stores, we deliver right to you!
+                    </h1>
+                    <p class="hero-description">
+                        <strong>We are local and one of your neighbors</strong>, so we can reduce your prices by eliminating broker markups. Instant online quotes, same day delivery in most cases and honest service from a family that owns their own trucks and inventory.
+                    </p>
+                    <div class="hero-ctas">
+                        <div class="hero-dropdown">
+                            <button class="btn btn-primary hero-dropdown-btn">&#127968; The Communities We Serve &#9662;</button>
+                            <div class="hero-dropdown-menu">
+                                <div class="hero-dropdown-grid">
+                                    <a href="/conroe/">&#128205;Conroe</a>
+                                    <a href="/the-woodlands/">&#128205;The Woodlands</a>
+                                    <a href="/spring/">&#128205;Spring</a>
+                                    <a href="/houston/">&#128205;Houston</a>
+                                    <a href="/humble/">&#128205;Humble</a>
+                                    <a href="/cypress/">&#128205;Cypress</a>
+                                    <a href="/katy/">&#128205;Katy</a>
+                                    <a href="/tomball/">&#128205;Tomball</a>
+                                    <a href="/magnolia/">&#128205;Magnolia</a>
+                                    <a href="/willis/">&#128205;Willis</a>
+                                    <a href="/montgomery/">&#128205;Montgomery</a>
+                                    <a href="/huntsville/">&#128205;Huntsville</a>
+                                    <a href="/new-caney/">&#128205;New Caney</a>
+                                    <a href="/splendora/">&#128205;Splendora</a>
+                                    <a href="/cleveland/">&#128205;Cleveland</a>
+                                    <a href="/plantersville/">&#128205;Plantersville</a>
+                                    <a href="/new-waverly/">&#128205;New Waverly</a>
+                                    <a href="/oak-ridge-north/">&#128205;Oak Ridge North</a>
+                                    <a href="/shenandoah/">&#128205;Shenandoah</a>
+                                    <a href="/porter/">&#128205;Porter</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="call-dropdown-container">
+                            <button class="btn btn-call-text" onclick="toggleHeroCallDropdown(event)">&#128222; Call Or Text Now &#9662;</button>
+                            <div class="call-dropdown-menu" id="heroCallMenu">
+                                <a href="tel:9362592887">&#128222; Call (936) 259-2887</a>
+                                <a href="sms:9362592887">&#128172; Text (936) 259-2887</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-bottom-row">
+                <div class="value-card animate-fade-in delay-2">
+                    <div class="free-delivery-badge">
+                        <span class="badge-icon">&#128666;</span>
+                        <span class="badge-text">Always FREE Delivery</span>
+                    </div>
+                    <h3>Why Pay More Elsewhere?</h3>
+                    <ul class="value-list">
+                        <li> No delivery fees&mdash;ever</li>
+                        <li> No broker markups</li>
+                        <li> Same materials, better prices</li>
+                        <li> Local family-owned</li>
+                        <li> Same/next-day delivery</li>
+                        <li> Instant online quotes</li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 16px;" onclick="openCalculatorModal()">
+                        Get Your Free Quote &rarr;
+                    </button>
+                    <p style="text-align: center; margin-top: 10px; font-size: 13px; color: var(--earth-brown);">
+                        Takes 30 seconds &bull; No obligation
+                    </p>
+                </div>
+
+                <div class="trust-grid animate-fade-in delay-3">
+                    <div class="trust-item"><div class="trust-icon">&#128666;</div><span><strong>Always FREE Delivery</strong></span></div>
+                    <div class="trust-item"><div class="trust-icon">&#9889;</div><span>Same/Next-Day in Conroe</span></div>
+                    <div class="trust-item"><div class="trust-icon">&#128176;</div><span>Direct pricing&mdash;No broker markups</span></div>
+                    <div class="trust-item"><div class="trust-icon">&#11088;</div><span>4.9&#9733; &bull; 500+ local deliveries</span></div>
+                    <div class="trust-item"><div class="trust-icon">&#128106;</div><span>Family-owned&mdash;Not a call center</span></div>
+                    <div class="trust-item"><div class="trust-icon">&#9989;</div><span>Price locks at quote&mdash;No surprises</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Field Photos Gallery -->
+<section class="field-gallery-section">
+    <div class="field-gallery">
+        <div class="field-photo"><img src="/images/field1.jpg" alt="Texas Got Rocks delivery"></div>
+        <div class="field-photo"><img src="/images/field2.jpg" alt="Texas Got Rocks materials"></div>
+        <div class="field-photo"><img src="/images/field3.jpg" alt="Texas Got Rocks project"></div>
+    </div>
+</section>
+
+<!-- Visualizer Feature Section -->
+<section class="visualizer-feature-section" id="visualizer">
+    <div class="section-container">
+        <div class="visualizer-feature-wrapper">
+            <div class="before-after-slider" id="beforeAfterSlider">
+                <div class="ba-image-container">
+                    <img src="/images/after.jpg" alt="After - Texas Got Rocks Transformation" class="ba-after-img">
+                    <div class="ba-before-wrapper">
+                        <img src="/images/before.jpg" alt="Before" class="ba-before-img">
+                    </div>
+                    <div class="ba-slider-handle" id="baSliderHandle">
+                        <div class="ba-handle-line"></div>
+                        <div class="ba-handle-circle"><span>&#9664; &#9654;</span></div>
+                        <div class="ba-handle-line"></div>
+                    </div>
+                    <div class="ba-label ba-label-before">BEFORE</div>
+                    <div class="ba-label ba-label-after">AFTER</div>
+                </div>
+            </div>
+            <div class="visualizer-feature-content">
+                <span class="section-label">Free Tool</span>
+                <h2 class="section-title">See It Before You Buy It</h2>
+                <p class="visualizer-feature-description">Upload a photo of your driveway, patio, or yard and preview exactly how different materials will look. No guessing&mdash;see the transformation before you order!</p>
+                <ul class="visualizer-feature-list">
+                    <li> Upload any photo of your space</li>
+                    <li> Choose from 6+ material types</li>
+                    <li> Outline your project area</li>
+                    <li> See realistic material preview</li>
+                    <li> Get instant quote when ready</li>
+                </ul>
+                <div class="turnstile-wrapper">
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAACLhbHDiLonhYq3P" data-callback="onTurnstileVisualizer"></div>
+                </div>
+                <button class="btn btn-primary btn-lg" id="visualizerBtn" onclick="openVisualizerWithCaptcha()" disabled>&#128205; Try the Visualizer Free &rarr;</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Material Calculator Section -->
+<section class="material-calc-section" id="material-calculator">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-label">Free Calculator</span>
+            <h2 class="section-title">Not Sure How Much Material You Need?</h2>
+            <p class="section-subtitle">Enter your project dimensions and we'll calculate it for you</p>
+        </div>
+        <div class="material-calc-wrapper">
+            <div class="material-calc-visual">
+                <svg viewBox="0 0 450 320" xmlns="http://www.w3.org/2000/svg" class="bed-image" style="background: #fff; border-radius: 12px; padding: 20px;">
+                    <defs>
+                        <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#FF6F00"/></marker>
+                        <marker id="arrow-start" markerWidth="10" markerHeight="7" refX="1" refY="3.5" orient="auto"><polygon points="10 0, 0 3.5, 10 7" fill="#FF6F00"/></marker>
+                    </defs>
+                    <line x1="70" y1="140" x2="130" y2="90" stroke="#FF6F00" stroke-width="3" marker-end="url(#arrow)" marker-start="url(#arrow-start)"/>
+                    <text x="60" y="75" fill="#FF6F00" font-family="Arial, sans-serif" font-weight="700" font-size="14">WIDTH</text>
+                    <polygon points="100,140 320,140 380,100 160,100" fill="#5D4037" stroke="#3E2723" stroke-width="2"/>
+                    <polygon points="100,140 320,140 320,240 100,240" fill="#8D6E63" stroke="#3E2723" stroke-width="2"/>
+                    <polygon points="320,140 380,100 380,200 320,240" fill="#6D4C41" stroke="#3E2723" stroke-width="2"/>
+                    <circle cx="140" cy="122" r="5" fill="#795548"/><circle cx="180" cy="118" r="6" fill="#6D4C41"/><circle cx="220" cy="125" r="5" fill="#8D6E63"/><circle cx="260" cy="116" r="6" fill="#795548"/><circle cx="300" cy="122" r="5" fill="#6D4C41"/><circle cx="190" cy="110" r="4" fill="#8D6E63"/><circle cx="240" cy="108" r="5" fill="#795548"/><circle cx="280" cy="112" r="4" fill="#6D4C41"/>
+                    <line x1="100" y1="173" x2="320" y2="173" stroke="#5D4037" stroke-width="1.5"/>
+                    <line x1="100" y1="206" x2="320" y2="206" stroke="#5D4037" stroke-width="1.5"/>
+                    <line x1="100" y1="270" x2="320" y2="270" stroke="#FF6F00" stroke-width="3" marker-end="url(#arrow)" marker-start="url(#arrow-start)"/>
+                    <text x="210" y="295" text-anchor="middle" fill="#FF6F00" font-family="Arial, sans-serif" font-weight="700" font-size="16">LENGTH</text>
+                    <line x1="410" y1="100" x2="410" y2="200" stroke="#FF6F00" stroke-width="3" marker-end="url(#arrow)" marker-start="url(#arrow-start)"/>
+                    <text x="420" y="155" fill="#FF6F00" font-family="Arial, sans-serif" font-weight="700" font-size="14">DEPTH</text>
+                </svg>
+            </div>
+            <div class="material-calc-form">
+                <div class="form-group">
+                    <label>Material Type</label>
+                    <select id="inline-calc-material">
+                        <option value="" data-weight="1.4">-- Select Material --</option>
+                        <optgroup label="Rock & Gravel">
+                            <option value="decomposed-granite" data-weight="1.4">1/4" Minus Decomposed Granite</option>
+                            <option value="granite-base" data-weight="1.4">Granite Base</option>
+                            <option value="limestone-1" data-weight="1.4">1" Limestone</option>
+                            <option value="limestone-3/4" data-weight="1.4">3/4" Limestone</option>
+                            <option value="limestone-3/8" data-weight="1.4">3/8" Limestone</option>
+                            <option value="limestone-base" data-weight="1.4">Limestone Base</option>
+                            <option value="bull-rock-3x5" data-weight="1.4">3x5 Bull Rock Gravel</option>
+                            <option value="gravel-2x3" data-weight="1.4">2x3 Gravel</option>
+                            <option value="gravel-1.5-minus" data-weight="1.4">1.5" Minus Gravel</option>
+                            <option value="pea-gravel" data-weight="1.4">3/8" Pea Gravel</option>
+                            <option value="rainbow-gravel" data-weight="1.4">Rainbow Gravel</option>
+                            <option value="blackstar" data-weight="1.4">5/8" Black Star</option>
+                            <option value="colorado-bull-rock" data-weight="1.4">1x3 Colorado Bull Rock</option>
+                            <option value="fairland-pink" data-weight="1.4">1x2 Fairland Pink</option>
+                        </optgroup>
+                        <optgroup label="Soil & Sand">
+                            <option value="bank-sand" data-weight="1.4">Bank Sand</option>
+                            <option value="select-fill" data-weight="1.4">Select Fill</option>
+                            <option value="topsoil" data-weight="1.4">Topsoil</option>
+                            <option value="torpedo-sand" data-weight="1.4">Torpedo Sand</option>
+                            <option value="mason-sand" data-weight="1.4">Mason Sand</option>
+                        </optgroup>
+                        <optgroup label="Mulch">
+                            <option value="mulch-black" data-weight="0.5">Black Mulch</option>
+                            <option value="mulch-brown" data-weight="0.5">Brown Hardwood Mulch</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
+                    <div class="form-group"><label>Length (ft)</label><input type="number" id="inline-calc-length" placeholder="20" min="1" step="0.5"></div>
+                    <div class="form-group"><label>Width (ft)</label><input type="number" id="inline-calc-width" placeholder="10" min="1" step="0.5"></div>
+                    <div class="form-group"><label>Depth (in)</label><input type="number" id="inline-calc-depth" placeholder="3" min="1" step="0.5"></div>
+                </div>
+                <button type="button" class="btn btn-primary" style="width: 100%;" onclick="calculateInlineMaterial()">CALCULATE</button>
+                <div class="inline-calc-result" id="inline-calc-result" style="display: none;">
+                    <div class="result-box">
+                        <div class="result-label">You Need Approximately</div>
+                        <div class="result-values">
+                            <div class="result-item"><span class="result-number" id="inline-result-yards">2.5</span><span class="result-unit">Cubic Yards</span></div>
+                            <div class="result-divider">or</div>
+                            <div class="result-item"><span class="result-number" id="inline-result-tons">3.4</span><span class="result-unit">Tons</span></div>
+                        </div>
+                        <div class="result-material-note" id="result-material-note"></div>
+                    </div>
+                    <div class="quantity-recommendations">
+                        <h4>&#128205; Quantity Recommendations</h4>
+                        <ul>
+                            <li><strong>Orders Under 5 Tons</strong> &mdash; Add 20% extra to your estimated material needs.</li>
+                            <li><strong>5+ Ton Orders</strong> &mdash; Add around 10% to ensure enough additional material on hand.</li>
+                        </ul>
+                    </div>
+                    <div class="get-price-box">
+                        <h4>&#128666; Ready to order?</h4>
+                        <p>Get an instant delivery price for this material</p>
+                        <div class="turnstile-wrapper"><div class="cf-turnstile" data-sitekey="0x4AAAAAACLhbHDiLonhYq3P" data-callback="onTurnstilePrice"></div></div>
+                        <button type="button" class="btn btn-primary" id="getPriceBtn" style="width: 100%;" onclick="getDeliveryPriceWithCaptcha()" disabled>Get Delivery Price &rarr;</button>
+                    </div>
+                </div>
+                <div class="callback-box">
+                    <h4>Want help from a specialist?</h4>
+                    <p>Get a callback during business hours</p>
+                    <div class="form-row">
+                        <div class="form-group"><input type="text" id="inline-callback-name" placeholder="Your Name"></div>
+                        <div class="form-group"><input type="tel" id="inline-callback-phone" placeholder="(936) 259-2887"></div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" style="width: 100%;" onclick="requestInlineCallback()">&#128222; Request Callback</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="products" id="products">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-label">Our Materials</span>
+            <h2 class="section-title">Browse Available Products</h2>
+            <p class="section-subtitle">Premium landscape materials delivered direct from local suppliers&mdash;no middleman markups</p>
+        </div>
+        <div class="products-grid">
+            <a href="/materials/black-mulch/" class="product-card" data-product="black-mulch">
+                <div class="product-image" style="background-image: url('/images/black-mulch.png'); background-size: cover; background-position: center;"><span class="product-badge">Popular</span></div>
+                <div class="product-info"><h3 class="product-name">Black Mulch</h3><p class="product-description">Creates dramatic contrast against greenery. Retains moisture and suppresses weeds naturally.</p><div class="product-price"><span class="amount">Starting at $35.00</span><span class="unit">per cubic yard</span></div></div>
+            </a>
+            <a href="/materials/brown-mulch/" class="product-card" data-product="brown-mulch">
+                <div class="product-image" style="background-image: url('/images/brown-mulch.png'); background-size: cover; background-position: center;"><span class="product-badge">Best Seller</span></div>
+                <div class="product-info"><h3 class="product-name">Brown Mulch</h3><p class="product-description">Classic natural look that mimics the forest floor. Blends seamlessly with wooded environments.</p><div class="product-price"><span class="amount">Starting at $32.00</span><span class="unit">per cubic yard</span></div></div>
+            </a>
+            <a href="/materials/blackstar-gravel/" class="product-card" data-product="blackstar-gravel">
+                <div class="product-image" style="background-image: url('/images/blackstar-gravel.png'); background-size: cover; background-position: center;"><span class="product-badge">Premium</span></div>
+                <div class="product-info"><h3 class="product-name">5/8" Black Star</h3><p class="product-description">Stunning basalt volcanic rock. Dark, elegant, and incredibly durable for modern landscapes.</p><div class="product-price"><span class="amount">Starting at $190.00</span><span class="unit">per cubic yard</span></div></div>
+            </a>
+            <a href="/materials/decomposed-granite/" class="product-card" data-product="decomposed-granite">
+                <div class="product-image" style="background-image: url('/images/decomposed-granite.png'); background-size: cover; background-position: center;"><span class="product-badge">Texas Favorite</span></div>
+                <div class="product-info"><h3 class="product-name">Decomposed Granite</h3><p class="product-description">Natural, rustic look that compacts well. Great for paths, patios, and xeriscaping.</p><div class="product-price"><span class="amount">Starting at $85.00</span><span class="unit">per cubic yard</span></div></div>
+            </a>
+            <a href="/materials/bull-rock/" class="product-card" data-product="bull-rock">
+                <div class="product-image" style="background-image: url('/images/bull-rock.png'); background-size: cover; background-position: center;"><span class="product-badge">Drainage</span></div>
+                <div class="product-info"><h3 class="product-name">3x5 Bull Rock</h3><p class="product-description">Large, rounded landscape stones perfect for borders, drainage, and accent areas.</p><div class="product-price"><span class="amount">Starting at $80.00</span><span class="unit">per cubic yard</span></div></div>
+            </a>
+            <a href="/materials/topsoil/" class="product-card" data-product="topsoil">
+                <div class="product-image" style="background-image: url('/images/topsoil.png'); background-size: cover; background-position: center;"><span class="product-badge">Garden Grade</span></div>
+                <div class="product-info"><h3 class="product-name">Topsoil</h3><p class="product-description">Nutrient-rich screened topsoil for gardens, lawns, and raised beds.</p><div class="product-price"><span class="amount">Starting at $35.00</span><span class="unit">per cubic yard</span></div></div>
+            </a>
+            <div class="product-card" data-product="more" onclick="openMoreProductsModal()">
+                <div class="product-image" style="background-image: url('/images/more-materials.png'); background-size: cover; background-position: center;"></div>
+                <div class="product-info"><h3 class="product-name">And Much More...</h3><p class="product-description">Pea gravel, river rock, crushed concrete, fill dirt, and more. Click to see all available materials.</p><div class="product-price"><span class="amount">View All</span><span class="unit">materials</span></div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Commercial Projects Redirect -->
+<section class="commercial-section" id="bulk-pricing">
+    <div class="section-container">
+        <div class="commercial-box">
+            <div class="commercial-content"><h3>Commercial Project Needing 48+ Tons?</h3><p>For large-scale commercial projects, we offer bulk pricing and dedicated project support. Contact us for a custom quote.</p></div>
+            <a href="https://www.tcmaterialsllc.com" target="_blank" class="btn btn-yellow">Get Bulk Commercial Pricing &rarr;</a>
+        </div>
+    </div>
+</section>
+
+<!-- Contractor Referral Section -->
+<section class="contractor-section">
+    <div class="section-container">
+        <div class="contractor-box">
+            <div class="contractor-icon"><img src="/images/contractor-mascot.png" alt="Faust Landscaping" class="contractor-mascot-small"></div>
+            <div class="contractor-content"><h3>Got the Materials? Faust Has the Muscle!</h3><p>Not everyone wants to spend their Saturday spreading gravel&mdash;and that's okay! We've partnered with <strong>Faust Landscaping</strong>, Montgomery County's premier landscaping company. From design to installation, they'll transform your yard while you kick back and enjoy the results.</p></div>
+            <a href="/faust-landscaping.html" class="btn btn-contractor"><span class="btn-icon">&#127793;</span>Meet Faust Landscaping &rarr;</a>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works" id="how-it-works">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-label">Simple Process</span>
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-subtitle">From quote to delivery in four easy steps&mdash;no phone tag, no surprises</p>
+        </div>
+        <div class="how-it-works-layout">
+            <div class="how-it-works-steps">
+                <div class="step-item"><div class="step-number">1</div><div class="step-content"><h3 class="step-title">Select Your Material</h3><p class="step-description">Browse our products and use our calculator to determine exactly how much you need.</p></div></div>
+                <div class="step-item"><div class="step-number">2</div><div class="step-content"><h3 class="step-title">Get Instant Pricing</h3><p class="step-description">Enter your ZIP code and see your exact total&mdash;no hidden fees, ever.</p></div></div>
+                <div class="step-item"><div class="step-number">3</div><div class="step-content"><h3 class="step-title">Schedule Delivery</h3><p class="step-description">Pick your delivery date. Same-day available for orders before noon.</p></div></div>
+                <div class="step-item"><div class="step-number">4</div><div class="step-content"><h3 class="step-title">Track & Receive</h3><p class="step-description">Get real-time text updates. Know exactly when your driver arrives.</p></div></div>
+            </div>
+            <a href="#" onclick="openCalculatorModal(); return false;" class="how-it-works-cta">Get Your Instant Quote &rarr;</a>
+        </div>
+    </div>
+</section>
+
+<!-- Service Areas Section -->
+<section class="service-areas" id="service-areas">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-label">Delivery Coverage</span>
+            <h2 class="section-title">Service Areas</h2>
+            <p class="section-subtitle">Serving Conroe, The Woodlands, and surrounding Montgomery County communities</p>
+        </div>
+        <div class="areas-grid">
+            <div class="areas-list">
+                <a href="/conroe/" class="area-item"><span class="icon"></span> Conroe</a>
+                <a href="/the-woodlands/" class="area-item"><span class="icon"></span> The Woodlands</a>
+                <a href="/spring/" class="area-item"><span class="icon"></span> Spring</a>
+                <a href="/houston/" class="area-item"><span class="icon"></span> Houston</a>
+                <a href="/humble/" class="area-item"><span class="icon"></span> Humble</a>
+                <a href="/cypress/" class="area-item"><span class="icon"></span> Cypress</a>
+                <a href="/katy/" class="area-item"><span class="icon"></span> Katy</a>
+                <a href="/tomball/" class="area-item"><span class="icon"></span> Tomball</a>
+                <a href="/magnolia/" class="area-item"><span class="icon"></span> Magnolia</a>
+                <a href="/willis/" class="area-item"><span class="icon"></span> Willis</a>
+                <a href="/montgomery/" class="area-item"><span class="icon"></span> Montgomery</a>
+                <a href="/huntsville/" class="area-item"><span class="icon"></span> Huntsville</a>
+            </div>
+            <div class="areas-map">
+                <div class="free-delivery-banner-large">&#128666; ALWAYS FREE DELIVERY</div>
+                <h3>Delivery Zones</h3>
+                <p>Free delivery to all zones&mdash;timing based on distance from our Conroe yard</p>
+                <div class="delivery-zones">
+                    <div class="zone"><span class="zone-name">&#128994; Zone 1: 0-10 miles</span><span class="zone-delivery">Same-day available &bull; FREE</span></div>
+                    <div class="zone"><span class="zone-name">&#128993; Zone 2: 10-25 miles</span><span class="zone-delivery">Next-day available &bull; FREE</span></div>
+                    <div class="zone"><span class="zone-name">&#128992; Zone 3: 25-40 miles</span><span class="zone-delivery">2-3 day delivery &bull; FREE</span></div>
+                </div>
+                <p style="margin-top: 24px; font-size: 14px; color: var(--earth-brown);">Not sure if we deliver to your area?<br><a href="#" onclick="openCalculatorModal(); return false;" style="color: var(--warm-orange); font-weight: 700;">Open our calculator</a> to check availability.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials" id="reviews">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-label">Customer Reviews</span>
+            <h2 class="section-title">What Conroe Homeowners Say</h2>
+            <p class="section-subtitle">Join 500+ satisfied customers who chose direct supplier pricing</p>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testimonial-text">"Ordered Friday at 10am, gravel arrived at 2pm same day. Price was exactly what the website said&mdash;no games. This is how all deliveries should work!"</p>
+                <div class="testimonial-author"><div class="testimonial-avatar">MT</div><div class="testimonial-info"><strong>Mike T.</strong><span>Conroe, TX</span></div></div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testimonial-text">"HelloGravel wanted $215 for delivery. Texas Got Rocks charged me $145 for the same thing. Saved $70 and got better service from actual locals."</p>
+                <div class="testimonial-author"><div class="testimonial-avatar">JR</div><div class="testimonial-info"><strong>Jennifer R.</strong><span>The Woodlands, TX</span></div></div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testimonial-text">"The driver called when he was 15 minutes out, placed the gravel exactly where I wanted it, and was done in 10 minutes. Professional operation."</p>
+                <div class="testimonial-author"><div class="testimonial-avatar">DK</div><div class="testimonial-info"><strong>David K.</strong><span>Spring, TX</span></div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq" id="faq">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-label">Questions?</span>
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-subtitle">Everything you need to know about ordering and delivery</p>
+        </div>
+        <div class="faq-grid">
+            <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>How quickly can you deliver?</span><span class="faq-icon">+</span></button><div class="faq-answer"><p>For orders placed before noon within our Zone 1 delivery area (0-10 miles from Conroe), we can often deliver same-day. Most orders are delivered within 24-48 hours. You'll see available delivery dates when you complete your quote.</p></div></div>
+            <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>How much material do I need?</span><span class="faq-icon">+</span></button><div class="faq-answer"><p>Use our <a href="#material-calculator" style="color: var(--warm-orange); font-weight: 700;">Material Calculator</a>! Enter your project dimensions (length &times; width &times; depth) and we'll calculate the cubic yards needed. As a general rule: 1 cubic yard covers about 100 square feet at 3 inches deep.</p></div></div>
+            <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>What if I order too much or too little?</span><span class="faq-icon">+</span></button><div class="faq-answer"><p>We always recommend ordering slightly more than you think you need (about 10% extra) to account for settling and spreading. If you end up needing more, we can usually do a follow-up delivery within a day or two.</p></div></div>
+            <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>Where will you dump the materials?</span><span class="faq-icon">+</span></button><div class="faq-answer"><p>Our drivers will dump materials on your driveway, street (with your permission), or designated area that's accessible by truck. Please ensure the drop area is clear and accessible. Our trucks need about 10 feet of clearance width.</p></div></div>
+            <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>Why are your prices lower than other services?</span><span class="faq-icon">+</span></button><div class="faq-answer"><p>Simple: we're the actual supplier, not a broker. Other sites take your order, then find a local supplier like us to fulfill it&mdash;and they add their markup. When you order from Texas Got Rocks, you're going direct. Same materials, same trucks, but without the middleman fees. That's how we can offer better prices AND better service&mdash;plus <strong>always FREE delivery</strong>!</p></div></div>
+            <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>What payment methods do you accept?</span><span class="faq-icon">+</span></button><div class="faq-answer"><p>We accept all major credit cards (Visa, MasterCard, American Express, Discover) through our secure online checkout. Payment is processed when you place your order, and your price is locked in&mdash;no surprise charges at delivery.</p></div></div>
+            <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>Is delivery really free?</span><span class="faq-icon">+</span></button><div class="faq-answer"><p>Yes! <strong>Delivery is always 100% FREE</strong> within our service area. No hidden fees, no fuel surcharges, no surprise charges. The price you see is the price you pay&mdash;just the cost of your materials. That's our promise as your local, direct supplier.</p></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="section-container">
+        <div class="cta-content">
+            <h2 class="cta-title">Ready to Get Started?</h2>
+            <p class="cta-subtitle">Get your instant quote now&mdash;<strong>delivery is ALWAYS FREE</strong>, no hidden fees, just honest local pricing.</p>
+            <div class="cta-buttons">
+                <a href="#" onclick="openCalculatorModal(); return false;" class="btn btn-yellow">&#128666; Get Your Free Quote &rarr;</a>
+                <div class="call-dropdown-container">
+                    <button class="btn btn-secondary" style="border-color: #fff; color: #fff;" onclick="toggleCtaCallDropdown(event)">&#128222; Call Or Text Now &#9662;</button>
+                    <div class="call-dropdown-menu" id="ctaCallMenu">
+                        <a href="tel:9362592887">&#128222; Call (936) 259-2887</a>
+                        <a href="sms:9362592887">&#128172; Text (936) 259-2887</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-grid">
+        <div class="footer-brand">
+            <img src="/images/logo.png" alt="Texas Got Rocks?" class="footer-logo-img">
+            <p>Conroe's direct rock, gravel, mulch & topsoil supplier. We're your neighbors, not brokers&mdash;delivering honest prices and reliable service to Montgomery County since 2020.</p>
+            <div class="footer-call-dropdown">
+                <button class="footer-call-btn" onclick="toggleFooterCallDropdown(event)">&#128222; Call Or Text Now &#9662;</button>
+                <div class="footer-call-menu" id="footerCallMenu">
+                    <a href="tel:9362592887">&#128222; Call (936) 259-2887</a>
+                    <a href="sms:9362592887">&#128172; Text (936) 259-2887</a>
+                </div>
+            </div>
+            <div class="footer-contact-item"><span>&#128205;</span><a href="/cdn-cgi/l/email-protection#85ecebe3eac5f1e0fde4f6e2eaf1f7eae6eef6abe6eae8"><span class="__cf_email__" data-cfemail="dfb6b1b9b09fabbaa7beacb8b0abadb0bcb4acf1bcb0b2">[email&#160;protected]</span></a></div>
+            <div class="footer-contact-item"><span>&#128205;/span><span>Conroe, TX 77301</span></div>
+        </div>
+        <div class="footer-column">
+            <h4>Products</h4>
+            <ul class="footer-links">
+                <li><a href="/materials/black-mulch/">Black Mulch</a></li>
+                <li><a href="/materials/brown-mulch/">Brown Mulch</a></li>
+                <li><a href="/materials/blackstar-gravel/">5/8" Black Star</a></li>
+                <li><a href="/materials/decomposed-granite/">Decomposed Granite</a></li>
+                <li><a href="/materials/bull-rock/">3x5 Bull Rock</a></li>
+                <li><a href="/materials/topsoil/">Topsoil</a></li>
+                <li><em>And Much More...</em></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h4>Company</h4>
+            <ul class="footer-links">
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#service-areas">Service Areas</a></li>
+                <li><a href="#reviews">Reviews</a></li>
+                <li><a href="#faq">FAQ</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="/privacy-policy.html">Privacy Policy</a></li>
+                <li><a href="/terms-of-service.html">Terms of Service</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h4>Service Areas</h4>
+            <ul class="footer-links">
+                <li><a href="/conroe/">Conroe</a></li>
+                <li><a href="/the-woodlands/">The Woodlands</a></li>
+                <li><a href="/spring/">Spring</a></li>
+                <li><a href="/magnolia/">Magnolia</a></li>
+                <li><a href="/willis/">Willis</a></li>
+                <li><a href="/montgomery/">Montgomery</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 TexasGotRocks.com. All rights reserved. Locally owned in Conroe, TX.</p>
+        <p><a href="/privacy-policy.html" style="color: var(--sand-tan);">Privacy Policy</a> &bull; <a href="/terms-of-service.html" style="color: var(--sand-tan);">Terms of Service</a></p>
+    </div>
+</footer>
+
+<!-- Lead Capture Modal - Exit Intent -->
+<div class="modal-overlay" id="exit-modal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('exit-modal')">&times;</button>
+        <div class="modal-header">
+            <div class="modal-icon">&#128176;</div>
+            <h3 class="modal-title">Wait! Don't Miss This</h3>
+            <p class="modal-subtitle">Save your quote and get 10% off your first order</p>
+        </div>
+        <div class="modal-body">
+            <div class="modal-discount"><div class="modal-discount-code">NEIGHBOR10</div><div class="modal-discount-text">10% off your first delivery</div></div>
+            <form id="exit-capture-form">
+                <div class="form-group"><label>Email Address</label><input type="email" id="exit-email" placeholder="your@email.com" required></div>
+                <div class="form-group"><label>Phone Number (Optional)</label><input type="tel" id="exit-phone" placeholder="(936) 259-2887"></div>
+                <div class="form-group consent-checkbox-group">
+                    <label class="consent-checkbox-label"><input type="checkbox" id="exit-marketing-consent" required><span class="checkbox-text">I agree to receive promotional emails and text messages from Texas Got Rocks. Message frequency varies. Msg & data rates may apply. Reply STOP to unsubscribe. View our <a href="/privacy-policy.html" onclick="event.stopPropagation();">Privacy Policy</a> and <a href="/terms-of-service.html" onclick="event.stopPropagation();">Terms</a>.</span></label>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Send My Discount Code</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notifications Container -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- Calculator Modal -->
+<div class="calculator-modal-overlay" id="calculator-modal">
+    <div class="calculator-modal">
+        <button class="modal-close" onclick="closeCalculatorModal()">&times;</button>
+        <div class="calculator-modal-header">
+            <div class="free-delivery-banner">&#128666; FREE DELIVERY ON ALL ORDERS</div>
+            <h3>Get Your Instant Quote</h3>
+            <p>See your exact price in seconds</p>
+        </div>
+        <div class="calculator-modal-body">
+            <!-- ZIP CODE -->
+            <div class="quote-calc-section">
+                <div class="calc-section-title">&#128205;Delivery Location</div>
+                <div class="form-group">
+                    <label>Enter Your ZIP Code</label>
+                    <div class="zip-input-wrapper">
+                        <input type="text" id="quoteZipCode" placeholder="e.g., 77385" maxlength="5" inputmode="numeric">
+                        <span id="quoteZipStatus" class="zip-status hidden"></span>
+                    </div>
+                </div>
+                <div id="quoteDeliveryInfo" class="delivery-info-box hidden">
+                    <div><div class="city-name" id="quoteCityName">--</div><div class="distance-info"><span id="quoteDistanceMiles">--</span> miles &bull; <span id="quoteTravelTime">--</span> min from our yard</div></div>
+                </div>
+                <div id="quoteOutOfArea" class="out-of-area-box hidden">
+                    <h4>&#128222; Give Us a Call!</h4>
+                    <p>We may be able to deliver to your area.<br><a href="tel:9362592887">Call (936) 259-2887</a> for a custom quote.</p>
+                </div>
+            </div>
+            <!-- PRODUCT -->
+            <div class="quote-calc-section">
+                <div class="calc-section-title">&#129704; Select Material</div>
+                <div class="form-group">
+                    <label>Material Type</label>
+                    <select id="quoteProduct">
+                        <option value="">-- Select Material --</option>
+                        <optgroup label="Rock & Gravel">
+                            <option value="decomposed-granite" data-price="48" data-weight="1.4">1/4" Minus Decomposed Granite</option>
+                            <option value="granite-base" data-price="39" data-weight="1.4">Granite Base</option>
+                            <option value="limestone-1" data-price="55" data-weight="1.4">1" Limestone</option>
+                            <option value="limestone-3/4" data-price="55" data-weight="1.4">3/4" Limestone</option>
+                            <option value="limestone-3/8" data-price="55" data-weight="1.4">3/8" Limestone</option>
+                            <option value="limestone-base" data-price="55" data-weight="1.4">Limestone Base</option>
+                            <option value="bull-rock-3x5" data-price="41" data-weight="1.4">3x5 Bull Rock Gravel</option>
+                            <option value="gravel-2x3" data-price="41" data-weight="1.4">2x3 Gravel</option>
+                            <option value="gravel-1.5-minus" data-price="41" data-weight="1.4">1.5" Minus Gravel</option>
+                            <option value="pea-gravel" data-price="41" data-weight="1.4">3/8" Pea Gravel</option>
+                            <option value="rainbow-gravel" data-price="46" data-weight="1.4">Rainbow Gravel</option>
+                            <option value="blackstar" data-price="96" data-weight="1.4">5/8" Black Star</option>
+                            <option value="colorado-bull-rock" data-price="71" data-weight="1.4">1x3 Colorado Bull Rock</option>
+                            <option value="fairland-pink" data-price="45" data-weight="1.4">1x2 Fairland Pink</option>
+                        </optgroup>
+                        <optgroup label="Soil & Sand">
+                            <option value="bank-sand" data-price="12" data-weight="1.4">Bank Sand</option>
+                            <option value="select-fill" data-price="12" data-weight="1.4">Select Fill</option>
+                            <option value="topsoil" data-price="24" data-weight="1.4">Topsoil</option>
+                            <option value="torpedo-sand" data-price="32" data-weight="1.4">Torpedo Sand</option>
+                            <option value="mason-sand" data-price="21" data-weight="1.4">Mason Sand</option>
+                        </optgroup>
+                        <optgroup label="Mulch">
+                            <option value="mulch-black" data-price="25" data-weight="0.5">Black Mulch</option>
+                            <option value="mulch-brown" data-price="25" data-weight="0.5">Brown Hardwood Mulch</option>
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+            <!-- QUANTITY -->
+            <div class="quote-calc-section">
+                <div class="calc-section-title">&#128205; Quantity</div>
+                <div class="form-group">
+                    <label>Cubic Yards</label>
+                    <div class="quantity-wrapper">
+                        <button type="button" class="qty-btn" onclick="adjustQuoteQuantity(-1)">&rarr;</button>
+                        <input type="number" id="quoteQuantity" value="5" min="1" max="100" step="0.5">
+                        <button type="button" class="qty-btn" onclick="adjustQuoteQuantity(1)">+</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 2-YARD MINIMUM WARNING -->
+            <div id="quoteMinimumWarning" class="minimum-warning-box hidden">
+                <div class="warning-icon">&#9888;</div>
+                <div class="warning-content">
+                    <strong>2 Yard Minimum Required</strong>
+                    <p><span id="minWarningMaterialName">This material</span> requires a minimum order of 2 cubic yards. Please adjust your quantity to continue.</p>
+                </div>
+            </div>
+            
+            <!-- VALUE PROPOSITION UPSELL -->
+            <div id="quoteUpsellSection" class="upsell-section hidden">
+                <div class="upsell-header"><span class="upsell-icon">&#128172;</span><strong>Get More Value!</strong></div>
+                <div class="upsell-comparison">
+                    <div class="upsell-option current"><div class="option-label">Your Order</div><div class="option-qty"><span id="upsellCurrentQty">2</span> yards</div><div class="option-total">$<span id="upsellCurrentTotal">0.00</span></div><div class="option-per-yard">$<span id="upsellCurrentPerYard">0.00</span>/yard</div></div>
+                    <div class="upsell-arrow">&rarr;</div>
+                    <div class="upsell-option upgrade"><div class="option-label">Upgrade to</div><div class="option-qty">3 yards</div><div class="option-total">$<span id="upsellUpgradeTotal">0.00</span></div><div class="option-per-yard">$<span id="upsellUpgradePerYard">0.00</span>/yard</div></div>
+                </div>
+                <div class="upsell-savings">You save <strong>$<span id="upsellSavingsPerYard">0.00</span> per yard!</strong></div>
+                <button type="button" class="btn-upsell" onclick="upgradeToThreeYards()"> Upgrade to 3 Yards</button>
+            </div>
+            
+            <!-- FREE DELIVERY BADGE -->
+            <div id="quoteFreeDeliveryBadge" class="free-delivery-badge-calc hidden"> FREE DELIVERY TO <span id="quoteDeliveryCityBadge">YOUR AREA</span></div>
+            
+            <!-- QUOTE BREAKDOWN -->
+            <div id="quoteTotalSection" class="quote-total-section hidden">
+                <div class="quote-conversion"><span id="quoteYardsAmount">0</span> cubic yards = <strong><span id="quoteTonsAmount">0</span> tons</strong></div>
+                <div class="quote-line-items">
+                    <div class="quote-line-item"><span class="line-label"><span id="quoteMaterialName">Material</span> (<span id="quoteTonsDisplay">0</span> tons @ $<span id="quotePerTonPrice">0.00</span>/ton)</span><span class="line-amount">$<span id="quoteMaterialTotal">0.00</span></span></div>
+                    <div class="quote-line-item"><span class="line-label">Sales Tax</span><span class="line-amount">$<span id="quoteSalesTax">0.00</span></span></div>
+                    <div class="quote-line-item"><span class="line-label">Service Fee</span><span class="line-amount">$<span id="quoteServiceFee">0.00</span></span></div>
+                </div>
+                <div class="quote-total-row"><span class="total-label">TOTAL</span><span class="total-amount">$<span id="quoteTotalAmount">0.00</span></span></div>
+            </div>
+            
+            <!-- Need a Pro Link -->
+            <div id="needAProSection" class="need-a-pro-section hidden">
+                <a href="/faust-landscaping.html?from=quote" class="need-a-pro-link"><span class="need-pro-icon">&#128119;</span><span class="need-pro-text">Need a Pro to install it?</span><span class="need-pro-arrow">&rarr;</span></a>
+            </div>
+            
+            <!-- Cloudflare Turnstile -->
+            <div class="turnstile-wrapper" id="quoteTurnstileWrapper">
+                <div class="cf-turnstile" data-sitekey="0x4AAAAAACLhbHDiLonhYq3P" data-callback="onTurnstileQuote"></div>
+            </div>
+            
+            <!-- CTA -->
+            <button id="quoteCtaButton" class="quote-cta-button" onclick="addToCartWithCaptcha()" disabled>Enter ZIP Code to Get Quote</button>
+            <p class="service-area-note">Serving the Greater Houston & Conroe area<br><small>Full address collected at checkout</small></p>
+        </div>
+    </div>
+</div>
+
+<!-- Cart Drawer -->
+<div class="cart-drawer-overlay" id="cartDrawerOverlay" onclick="closeCartDrawer()"></div>
+<div class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer-header"><h3>&#128722; Your Cart</h3><button class="cart-drawer-close" onclick="closeCartDrawer()">&times;</button></div>
+    <div class="cart-drawer-body" id="cartDrawerBody">
+        <div class="cart-empty" id="cartEmpty">
+            <div class="cart-empty-icon">&#128722;</div><h4>Your cart is empty</h4><p>Add materials to get started with your order</p>
+            <button class="btn btn-primary" onclick="closeCartDrawer(); openCalculatorModal();">Get Your Free Quote &rarr;</button>
+        </div>
+        <div id="cartItemsContainer"></div>
+    </div>
+    <div class="cart-drawer-footer" id="cartDrawerFooter" style="display: none;">
+        <div class="cart-summary" id="cartSummary">
+            <div class="cart-summary-row"><span>Subtotal (<span id="cartItemCount">0</span> items)</span><span id="cartSubtotal">$0</span></div>
+            <div class="cart-summary-row"><span>Delivery</span><span style="color: var(--success-green); font-weight: 700;">FREE</span></div>
+            <div class="cart-summary-row total"><span>Total</span><span id="cartTotal">$0</span></div>
+        </div>
+        <a href="/faust-landscaping.html?from=quote" class="need-a-pro-link cart-pro-link"><span class="need-pro-icon">&#128119;</span><span class="need-pro-text">Need a Pro to install it?</span><span class="need-pro-arrow">&rarr;</span></a>
+        <button class="cart-checkout-btn" onclick="proceedToCheckout()">Proceed to Checkout &rarr;</button>
+        <p class="free-delivery-reminder">&#128666; FREE delivery on all orders!</p>
+        <p class="cart-add-more-link">Need more materials? <a href="#" onclick="closeCartDrawer(); openCalculatorModal(); return false;">+ Add Another Item</a></p>
+    </div>
+</div>
+
+<!-- Checkout Confirmation Modal -->
+<div class="checkout-modal-overlay" id="checkoutModal">
+    <div class="checkout-modal">
+        <div class="checkout-modal-header"><h3 id="checkoutModalTitle">&#128205; Contact Information</h3><button class="modal-close" onclick="closeCheckoutModal()">&times;</button></div>
+        <div class="checkout-modal-body">
+            <div class="checkout-steps">
+                <div class="checkout-step active" id="step1indicator"><span class="step-number">1</span><span class="step-label">Contact</span></div>
+                <div class="checkout-step" id="step2indicator"><span class="step-number">2</span><span class="step-label">Delivery</span></div>
+                <div class="checkout-step" id="step3indicator"><span class="step-number">3</span><span class="step-label">Payment</span></div>
+            </div>
+            <div class="checkout-step-content" id="checkoutStep1">
+                <div class="form-group"><label>Full Name *</label><input type="text" id="checkoutName" placeholder="John Smith" required></div>
+                <div class="form-group"><label>Email Address *</label><input type="email" id="checkoutEmail" placeholder="john@example.com" required></div>
+                <div class="form-group"><label>Phone Number *</label><input type="tel" id="checkoutPhone" placeholder="(936) 259-2887" required></div>
+                <div class="form-group"><label>Delivery Address *</label><input type="text" id="checkoutAddress" placeholder="123 Main St" required></div>
+                <div class="form-row">
+                    <div class="form-group"><label>City *</label><input type="text" id="checkoutCity" placeholder="Conroe" required></div>
+                    <div class="form-group" style="max-width: 100px;"><label>ZIP *</label><input type="text" id="checkoutZipConfirm" placeholder="77385" maxlength="5" required></div>
+                </div>
+                <div class="form-group consent-checkbox-group"><label class="consent-checkbox-label"><input type="checkbox" id="checkoutMarketingConsent"><span class="checkbox-text">Send me updates about my order and occasional promotions via email/text. Msg & data rates may apply. Reply STOP to unsubscribe.</span></label></div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="goToDeliveryStep()">Continue to Delivery Date &rarr;</button>
+            </div>
+            <div class="checkout-step-content" id="checkoutStep2" style="display: none;">
+                <div class="checkout-order-items" id="checkoutDeliveryItems"></div>
+                <div class="checkout-nav-buttons"><button class="btn btn-secondary" onclick="goToContactStep()">&larr; Back</button><button class="btn btn-primary" onclick="goToPaymentStep()">Continue to Payment &rarr;</button></div>
+            </div>
+            <div class="checkout-step-content" id="checkoutStep3" style="display: none;">
+                <div class="checkout-order-summary" id="checkoutOrderSummary"></div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="processPayment()">&#128179; Pay Now</button>
+                <div class="checkout-nav-buttons" style="margin-top: 12px;"><button class="btn btn-secondary" style="width: 100%;" onclick="goToDeliveryStep()">&larr; Back to Delivery</button></div>
+                <p style="text-align: center; margin-top: 12px; font-size: 13px; color: var(--earth-brown);">&#128274; Secure payment powered by Square</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Photo Consent Modal -->
+<div class="consent-modal-overlay" id="photoConsentModal">
+    <div class="consent-modal">
+        <div class="consent-modal-header"><span class="consent-icon">&#128205;</span><h3>Photo Upload Consent</h3></div>
+        <div class="consent-modal-body">
+            <p>By uploading a photo, you agree to the following:</p>
+            <ul class="consent-list">
+                <li>Your photo will be processed locally in your browser for visualization purposes only</li>
+                <li>We do not store, save, or transmit your photos to any server</li>
+                <li>Your photo will be deleted when you close the visualizer or refresh the page</li>
+                <li>You have the right to use and share the photo you are uploading</li>
+            </ul>
+            <p class="consent-note">Your privacy is important to us. This tool runs entirely in your browser.</p>
+        </div>
+        <div class="consent-modal-footer"><button class="btn btn-secondary" onclick="declinePhotoConsent()">Cancel</button><button class="btn btn-primary" onclick="acceptPhotoConsent()">I Agree - Continue</button></div>
+    </div>
+</div>
+
+<!-- Material Visualizer Modal -->
+<div class="visualizer-modal-overlay" id="visualizerModal">
+    <div class="visualizer-modal">
+        <div class="visualizer-header">
+            <div class="visualizer-logo"><img src="/images/logo.png" alt="Texas Got Rocks?"><p>Aggregate Visualizer</p></div>
+            <button class="visualizer-close" onclick="closeVisualizer()">&times;</button>
+        </div>
+        <div class="visualizer-content">
+            <div class="visualizer-controls">
+                <div class="visualizer-section">
+                    <h3>1. Your Photo</h3>
+                    <div class="photo-buttons">
+                        <label class="upload-btn">&#128205; Choose Photo<input type="file" accept="image/*" id="vizFileInput" onchange="handleVisualizerUpload(event)"></label>
+                        <label class="upload-btn camera-btn">&#128205; Use Camera<input type="file" accept="image/*" capture="environment" id="vizCameraInput" onchange="handleVisualizerUpload(event)"></label>
+                    </div>
+                    <button class="start-over-btn" id="vizStartOver" onclick="resetVisualizer()" style="display: none;">Start Over</button>
+                </div>
+                <div class="visualizer-section">
+                    <h3>2. Select Material</h3>
+                    <div class="material-grid" id="vizMaterialGrid">
+                        <button class="material-btn active" data-id="black-mulch" data-color="#1a1a1a" style="background-image: url('/images/materials/black-mulch.jpg'); background-size: cover;"><span>Black Mulch</span></button>
+                        <button class="material-btn" data-id="brown-mulch" data-color="#8B4513" style="background-image: url('/images/materials/brown-mulch.jpg'); background-size: cover;"><span>Brown Mulch</span></button>
+                        <button class="material-btn" data-id="blackstar-gravel" data-color="#2d2d2d" style="background-image: url('/images/materials/black-star.jpg'); background-size: cover;"><span>Blackstar Gravel</span></button>
+                        <button class="material-btn" data-id="decomposed-granite" data-color="#C9A66B" style="background-image: url('/images/materials/Decomposed-Granite.jpg'); background-size: cover;"><span>Decomposed Granite</span></button>
+                        <button class="material-btn" data-id="bull-rock" data-color="#a08060" style="background-image: url('/images/materials/2x3-bull-rock.jpeg'); background-size: cover;"><span>3x5 Bull Rock</span></button>
+                        <button class="material-btn" data-id="topsoil" data-color="#3d3225" style="background-image: url('/images/materials/top-soil.jpg'); background-size: cover;"><span>Topsoil</span></button>
+                    </div>
+                    <p class="material-price" id="vizMaterialPrice">Starting at $12.50/cy</p>
+                </div>
+                <div class="visualizer-section">
+                    <h3 id="vizStep3Title">3. Outline Area</h3>
+                    <div id="vizInstructions"><p class="viz-instruction">Upload a photo to get started</p></div>
+                    <div id="vizControls" style="display: none;">
+                        <label class="viz-checkbox"><input type="checkbox" id="vizShowOverlay" checked onchange="toggleVisualizerOverlay()">Show Material Preview</label>
+                        <div class="viz-opacity"><div class="viz-opacity-header"><span>Opacity</span><span id="vizOpacityValue">70%</span></div><input type="range" min="30" max="100" value="70" id="vizOpacitySlider" oninput="updateVisualizerOpacity()"></div>
+                        <button class="viz-reset-btn" onclick="resetVisualizerPoints()">&#8634; Draw New Area</button>
+                    </div>
+                </div>
+                <div class="visualizer-section" id="vizCalcSection" style="display: none;">
+                    <h3>4. Calculate Amount Needed</h3>
+                    <p class="viz-calc-material" id="vizCalcMaterial">Calculating for: <strong>Decomposed Granite</strong></p>
+                    <div class="viz-calc-inputs">
+                        <div class="viz-calc-row">
+                            <div class="viz-calc-field"><label>Length (ft)</label><input type="number" id="vizCalcLength" placeholder="20" min="1" step="0.5"></div>
+                            <div class="viz-calc-field"><label>Width (ft)</label><input type="number" id="vizCalcWidth" placeholder="10" min="1" step="0.5"></div>
+                            <div class="viz-calc-field"><label>Depth (in)</label><input type="number" id="vizCalcDepth" placeholder="3" min="1" step="0.5"></div>
+                        </div>
+                        <button class="viz-calc-btn" onclick="calculateVisualizerMaterial()">Calculate</button>
+                    </div>
+                    <div class="viz-calc-result" id="vizCalcResult" style="display: none;">
+                        <div class="viz-calc-result-box">
+                            <div class="viz-calc-result-label">You Need Approximately</div>
+                            <div class="viz-calc-result-values">
+                                <div class="viz-calc-result-item"><span class="viz-calc-number" id="vizCalcYards">0</span><span class="viz-calc-unit">Cubic Yards</span></div>
+                                <div class="viz-calc-divider">or</div>
+                                <div class="viz-calc-result-item"><span class="viz-calc-number" id="vizCalcTons">0</span><span class="viz-calc-unit">Tons</span></div>
+                            </div>
+                        </div>
+                        <button class="viz-quote-btn" onclick="getVisualizerQuoteWithQuantity()">Get Delivery Price &rarr;</button>
+                    </div>
+                </div>
+            </div>
+            <div class="visualizer-canvas-container" id="vizCanvasContainer" ondragover="handleVizDragOver(event)" ondragleave="handleVizDragLeave(event)" ondrop="handleVizDrop(event)">
+                <div class="viz-placeholder" id="vizPlaceholder">
+                    <div class="viz-placeholder-icon">&#127968;</div><p>Upload a photo of your space</p><p class="viz-placeholder-sub">Driveway, patio, yard, walkway...</p><p class="viz-placeholder-hint">Or drag & drop an image here</p>
+                </div>
+                <div class="viz-canvas-wrapper" id="vizCanvasWrapper" style="display: none;">
+                    <canvas id="vizMainCanvas" onclick="handleVisualizerClick(event)"></canvas>
+                    <canvas id="vizOverlayCanvas"></canvas>
+                    <div class="viz-material-badge" id="vizMaterialBadge" style="display: none;"> <span id="vizBadgeName">Decomposed Granite</span></div>
+                    <div class="viz-point-counter" id="vizPointCounter" style="display: none;"><span id="vizPointCount">0</span> points</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- More Products Modal Styles (inline for reliability) -->
+<style>
+.more-products-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.more-products-modal-overlay.active {
+    display: flex !important;
+}
+.more-products-modal {
+    background: white;
+    border-radius: 20px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.more-products-modal .modal-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: rgba(255,255,255,0.2);
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+.more-products-modal .modal-close:hover {
+    background: rgba(255,255,255,0.3);
+}
+.more-products-header {
+    background: linear-gradient(135deg, #3E2723, #FF6F00);
+    color: white;
+    padding: 30px;
+    border-radius: 20px 20px 0 0;
+    text-align: center;
+}
+.more-products-header h3 {
+    font-size: 1.5rem;
+    margin: 0 0 8px 0;
+}
+.more-products-header p {
+    opacity: 0.9;
+    margin: 0;
+}
+.more-products-body {
+    padding: 25px 30px;
+}
+.more-products-modal .product-category {
+    margin-bottom: 25px;
+}
+.more-products-modal .product-category:last-child {
+    margin-bottom: 0;
+}
+.more-products-modal .product-category h4 {
+    color: #3E2723;
+    font-size: 1.1rem;
+    margin: 0 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #eee;
+}
+.more-products-modal .product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 10px;
+}
+.more-products-modal .product-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: #f8f8f8;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+.more-products-modal .product-item:hover {
+    background: #fff;
+    border-color: #FF6F00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.more-products-modal .product-name {
+    font-weight: 500;
+    color: #3E2723;
+    font-size: 0.9rem;
+}
+.more-products-modal .product-price {
+    font-weight: 600;
+    color: #FF6F00;
+    white-space: nowrap;
+    font-size: 0.85rem;
+}
+.more-products-footer {
+    padding: 20px 30px;
+    background: #f5f5f5;
+    border-radius: 0 0 20px 20px;
+    text-align: center;
+}
+.more-products-footer p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+.more-products-footer a {
+    color: #FF6F00;
+    font-weight: 600;
+}
+@media (max-width: 600px) {
+    .more-products-modal .product-list {
+        grid-template-columns: 1fr;
     }
-    
-    // =========================================================
-    // UPDATE DISPLAY
-    // =========================================================
-    document.getElementById('quoteYardsAmount').textContent = quantity;
-    document.getElementById('quoteTonsAmount').textContent = currentPricing.tons.toFixed(1);
-    document.getElementById('quoteMaterialName').textContent = materialName;
-    document.getElementById('quoteTonsDisplay').textContent = currentPricing.tons.toFixed(1);
-    document.getElementById('quotePerTonPrice').textContent = currentPricing.pricePerTon.toFixed(2);
-    document.getElementById('quoteMaterialTotal').textContent = currentPricing.materialWithMargin.toFixed(2);
-    document.getElementById('quoteSalesTax').textContent = currentPricing.salesTax.toFixed(2);
-    document.getElementById('quoteServiceFee').textContent = currentPricing.serviceFee.toFixed(2);
-    document.getElementById('quoteTotalAmount').textContent = currentPricing.total.toFixed(2);
-    
-    document.getElementById('quoteFreeDeliveryBadge').classList.remove('hidden');
-    document.getElementById('quoteTotalSection').classList.remove('hidden');
-    document.getElementById('needAProSection').classList.remove('hidden');
-    
-    if (typeof turnstileStatus !== 'undefined' && turnstileStatus.quote) {
-        ctaButton.innerHTML = '&#128722; Add to Cart &rarr;';
-        ctaButton.disabled = false;
-    } else {
-        ctaButton.textContent = 'Complete Verification to Continue';
-        ctaButton.disabled = true;
+    .more-products-header, .more-products-body, .more-products-footer {
+        padding: 20px;
     }
-    
-    // Store quote data for cart
-    currentQuote = {
-        zip: document.getElementById('quoteZipCode').value,
-        city: currentZipData.city,
-        distance: currentZipData.distance,
-        travelTime: currentZipData.time,
-        product: materialName,
-        productId: productSelect.value,
-        quantity: quantity,
-        tons: currentPricing.tons,
-        pricePerTon: currentPricing.pricePerTon,
-        pricePerYard: currentPricing.pricePerYard,
-        baseMaterialCost: currentPricing.baseMaterialCost,
-        deliveryCost: currentPricing.deliveryCost,
-        truckConfig: currentPricing.truckConfig.description,
-        margin: margin,
-        materialWithMargin: currentPricing.materialWithMargin,
-        salesTax: currentPricing.salesTax,
-        serviceFee: currentPricing.serviceFee,
-        total: currentPricing.total.toFixed(2)
-    };
 }
+</style>
 
-// =====================================================
-// UPGRADE TO 3 YARDS FUNCTION (called from upsell button)
-// =====================================================
-function upgradeToThreeYards() {
-    document.getElementById('quoteQuantity').value = 3;
-    recalculateQuote();
-    showToast('success', 'Upgraded!', 'Quantity updated to 3 yards for better pricing');
-}
+<!-- More Products Modal -->
+<div class="more-products-modal-overlay" id="moreProductsModal">
+    <div class="more-products-modal">
+        <button class="modal-close" onclick="closeMoreProductsModal()">&times;</button>
+        <div class="more-products-header">
+            <h3>&#129704; All Available Materials</h3>
+            <p>We deliver all these materials with FREE delivery</p>
+        </div>
+        <div class="more-products-body">
+            <div class="product-category">
+                <h4>Rock & Gravel</h4>
+                <div class="product-list">
+                    <div class="product-item" onclick="selectMoreProduct('decomposed-granite')"><span class="product-name">1/4" Minus Decomposed Granite</span><span class="product-price">Starting at $85.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('granite-base')"><span class="product-name">Granite Base</span><span class="product-price">Starting at $91.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('limestone-1')"><span class="product-name">1" Limestone</span><span class="product-price">Starting at $80.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('limestone-3/4')"><span class="product-name">3/4" Limestone</span><span class="product-price">Starting at $80.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('limestone-3/8')"><span class="product-name">3/8" Limestone</span><span class="product-price">Starting at $85.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('limestone-base')"><span class="product-name">Limestone Base</span><span class="product-price">Starting at $85.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('bull-rock-3x5')"><span class="product-name">3x5 Bull Rock Gravel</span><span class="product-price">Starting at $80.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('gravel-2x3')"><span class="product-name">2x3 Gravel</span><span class="product-price">Starting at $80.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('gravel-1.5-minus')"><span class="product-name">1.5" Minus Gravel</span><span class="product-price">Starting at $80.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('pea-gravel')"><span class="product-name">3/8" Pea Gravel</span><span class="product-price">Starting at $80.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('rainbow-gravel')"><span class="product-name">Rainbow Gravel</span><span class="product-price">Starting at $90.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('blackstar')"><span class="product-name">5/8" Black Star</span><span class="product-price">Starting at $190.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('colorado-bull-rock')"><span class="product-name">1x3 Colorado Bull Rock</span><span class="product-price">Starting at $120.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('fairland-pink')"><span class="product-name">1x2 Fairland Pink</span><span class="product-price">Starting at $80.00/cy</span></div>
+                </div>
+            </div>
+            <div class="product-category">
+                <h4>Soil & Sand</h4>
+                <div class="product-list">
+                    <div class="product-item" onclick="selectMoreProduct('bank-sand')"><span class="product-name">Bank Sand</span><span class="product-price">Starting at $40.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('select-fill')"><span class="product-name">Select Fill</span><span class="product-price">Starting at $40.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('topsoil')"><span class="product-name">Topsoil</span><span class="product-price">Starting at $35.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('torpedo-sand')"><span class="product-name">Torpedo Sand</span><span class="product-price">Starting at $30.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('mason-sand')"><span class="product-name">Mason Sand</span><span class="product-price">Starting at $30.00/cy</span></div>
+                </div>
+            </div>
+            <div class="product-category">
+                <h4>Mulch</h4>
+                <div class="product-list">
+                    <div class="product-item" onclick="selectMoreProduct('mulch-black')"><span class="product-name">Black Mulch</span><span class="product-price">Starting at $35.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('mulch-brown')"><span class="product-name">Brown Hardwood Mulch</span><span class="product-price">Starting at $32.00/cy</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="more-products-footer">
+            <p>Select a material to get an instant quote, or <a href="tel:9362592887">call us</a> for custom orders.</p>
+        </div>
+    </div>
+</div>
 
-// =====================================================
-// ATTACH ZIP CODE CALCULATOR EVENT LISTENERS
-// =====================================================
-const quoteZipInput = document.getElementById('quoteZipCode');
-if (quoteZipInput) quoteZipInput.addEventListener('input', handleQuoteZipInput);
+<!-- Scroll Navigation Arrows -->
+<div class="scroll-arrows">
+    <button class="scroll-arrow scroll-up" id="scrollUpBtn" aria-label="Scroll to top"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+    <button class="scroll-arrow scroll-down" id="scrollDownBtn" aria-label="Scroll down"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+</div>
 
-const quoteProductSelect = document.getElementById('quoteProduct');
-if (quoteProductSelect) quoteProductSelect.addEventListener('change', recalculateQuote);
-
-const quoteQuantityInput = document.getElementById('quoteQuantity');
-if (quoteQuantityInput) {
-    quoteQuantityInput.addEventListener('input', recalculateQuote);
-    quoteQuantityInput.addEventListener('change', recalculateQuote);
-}
-
-// =====================================================
-// TOAST NOTIFICATIONS
-// =====================================================
-function showToast(type, title, message) {
-    const container = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-    toast.className = 'toast ' + type;
-    const icons = { success: '&#10004;', error: '&#10005;', info: '&#8505;' };
-    toast.innerHTML = '<span class="toast-icon">' + icons[type] + '</span><div class="toast-message"><strong>' + title + '</strong><span>' + message + '</span></div>';
-    container.appendChild(toast);
-    setTimeout(() => { toast.style.animation = 'toastSlideIn 0.3s ease reverse'; setTimeout(() => toast.remove(), 300); }, 5000);
-}
-
-// =====================================================
-// FAQ TOGGLE
-// =====================================================
-function toggleFaq(button) {
-    const faqItem = button.parentElement;
-    const answer = faqItem.querySelector('.faq-answer');
-    const icon = button.querySelector('.faq-icon');
-    
-    document.querySelectorAll('.faq-item').forEach(item => {
-        if (item !== faqItem) {
-            item.classList.remove('active');
-            const otherAnswer = item.querySelector('.faq-answer');
-            const otherIcon = item.querySelector('.faq-icon');
-            if (otherAnswer) otherAnswer.style.maxHeight = null;
-            if (otherIcon) otherIcon.textContent = '+';
-        }
-    });
-    
-    faqItem.classList.toggle('active');
-    if (faqItem.classList.contains('active')) { answer.style.maxHeight = answer.scrollHeight + 'px'; icon.textContent = '&rarr;'; }
-    else { answer.style.maxHeight = null; icon.textContent = '+'; }
-}
-
-// =====================================================
-// HERO DROPDOWN
-// =====================================================
-const heroDropdownBtn = document.querySelector('.hero-dropdown-btn');
-const heroDropdownMenu = document.querySelector('.hero-dropdown-menu');
-
-if (heroDropdownBtn && heroDropdownMenu) {
-    heroDropdownBtn.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); heroDropdownMenu.classList.toggle('show'); });
-    document.addEventListener('click', function(e) { if (!e.target.closest('.hero-dropdown')) heroDropdownMenu.classList.remove('show'); });
-    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') heroDropdownMenu.classList.remove('show'); });
-}
-
-// =====================================================
-// SHOPPING CART
-// =====================================================
-let cart = [];
-let cartIdCounter = 1;
-
-function getMinDeliveryDate() { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().split('T')[0]; }
-function getDefaultDeliveryDate() { const d = new Date(); d.setDate(d.getDate() + 2); return d.toISOString().split('T')[0]; }
-
-function addToCart() {
-    if (!currentQuote) return;
-    const cartItem = {
-        id: cartIdCounter++, product: currentQuote.product, productId: currentQuote.productId,
-        quantity: currentQuote.quantity, tons: currentQuote.tons, zip: currentQuote.zip,
-        city: currentQuote.city, distance: currentQuote.distance, travelTime: currentQuote.travelTime,
-        pricePerTon: currentQuote.pricePerTon, pricePerYard: currentQuote.pricePerYard,
-        truckConfig: currentQuote.truckConfig, margin: currentQuote.margin,
-        materialWithMargin: currentQuote.materialWithMargin, salesTax: currentQuote.salesTax,
-        serviceFee: currentQuote.serviceFee, total: parseFloat(currentQuote.total),
-        deliveryDate: getDefaultDeliveryDate()
-    };
-    cart.push(cartItem);
-    updateCartCount();
-    updateCartDrawer();
-    showToast('success', 'Added to Cart!', cartItem.quantity + ' yd&sup3; ' + cartItem.product + ' - $' + cartItem.total.toFixed(2));
-    const cartCount = document.getElementById('navCartCount');
-    cartCount.classList.add('pulse');
-    setTimeout(() => cartCount.classList.remove('pulse'), 300);
-    closeCalculatorModal();
-    setTimeout(() => openCartDrawer(), 300);
-    resetCalculatorForm();
-}
-
-function removeFromCart(itemId) {
-    cart = cart.filter(item => item.id !== itemId);
-    updateCartCount();
-    updateCartDrawer();
-    showToast('info', 'Item Removed', 'Item removed from your cart');
-}
-
-function updateCartCount() {
-    const countEl = document.getElementById('navCartCount');
-    if (cart.length > 0) { countEl.textContent = cart.length; countEl.classList.remove('hidden'); }
-    else countEl.classList.add('hidden');
-}
-
-function updateCartDrawer() {
-    const emptyEl = document.getElementById('cartEmpty');
-    const itemsContainer = document.getElementById('cartItemsContainer');
-    const footerEl = document.getElementById('cartDrawerFooter');
-    
-    if (cart.length === 0) {
-        emptyEl.style.display = 'block';
-        itemsContainer.innerHTML = '';
-        footerEl.style.display = 'none';
-        return;
-    }
-    
-    emptyEl.style.display = 'none';
-    footerEl.style.display = 'block';
-    
-    let itemsHtml = '';
-    let subtotal = 0;
-    cart.forEach(item => {
-        subtotal += item.total;
-        itemsHtml += '<div class="cart-item"><div class="cart-item-header"><div><div class="cart-item-name">' + item.product + '</div><div class="cart-item-location"> ' + item.city + ' (' + item.zip + ')</div></div><button class="cart-item-remove" onclick="removeFromCart(' + item.id + ')"></button></div><div class="cart-item-details"><span class="cart-item-qty">' + item.quantity + ' yd&sup3; (' + item.tons.toFixed(1) + ' tons)</span><span class="cart-item-price">$' + item.total.toFixed(2) + '</span></div><div class="cart-item-per-unit">$' + item.pricePerYard.toFixed(2) + '/yard delivered</div></div>';
-    });
-    
-    itemsContainer.innerHTML = itemsHtml;
-    document.getElementById('cartItemCount').textContent = cart.length;
-    document.getElementById('cartSubtotal').textContent = '$' + subtotal.toFixed(2);
-    document.getElementById('cartTotal').textContent = '$' + subtotal.toFixed(2);
-}
-
-function openCartDrawer() {
-    document.getElementById('cartDrawerOverlay').classList.add('active');
-    document.getElementById('cartDrawer').classList.add('active');
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="/js/main.js"></script>
+<script>
+// More Products Modal Functions
+function openMoreProductsModal() {
+    document.getElementById('moreProductsModal').classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 
-function closeCartDrawer() {
-    document.getElementById('cartDrawerOverlay').classList.remove('active');
-    document.getElementById('cartDrawer').classList.remove('active');
+function closeMoreProductsModal() {
+    document.getElementById('moreProductsModal').classList.remove('active');
     document.body.style.overflow = '';
 }
 
-// =====================================================
-// CHECKOUT SYSTEM
-// =====================================================
-var customerInfo = { name: '', email: '', phone: '', address: '', city: '', zip: '', marketingConsent: false };
-
-function proceedToCheckout() {
-    if (cart.length === 0) return;
-    closeCartDrawer();
-    if (cart.length > 0) {
-        document.getElementById('checkoutCity').value = cart[0].city || '';
-        document.getElementById('checkoutZipConfirm').value = cart[0].zip || '';
-    }
-    showCheckoutStep(1);
-    document.getElementById('checkoutModal').classList.add('active');
-}
-
-function showCheckoutStep(step) {
-    document.getElementById('checkoutStep1').style.display = 'none';
-    document.getElementById('checkoutStep2').style.display = 'none';
-    document.getElementById('checkoutStep3').style.display = 'none';
-    document.getElementById('step1indicator').classList.remove('active', 'completed');
-    document.getElementById('step2indicator').classList.remove('active', 'completed');
-    document.getElementById('step3indicator').classList.remove('active', 'completed');
-    
-    if (step === 1) {
-        document.getElementById('checkoutStep1').style.display = 'block';
-        document.getElementById('step1indicator').classList.add('active');
-        document.getElementById('checkoutModalTitle').textContent = ' Contact Information';
-    } else if (step === 2) {
-        document.getElementById('checkoutStep2').style.display = 'block';
-        document.getElementById('step1indicator').classList.add('completed');
-        document.getElementById('step2indicator').classList.add('active');
-        document.getElementById('checkoutModalTitle').textContent = ' Select Delivery Date';
-    } else if (step === 3) {
-        document.getElementById('checkoutStep3').style.display = 'block';
-        document.getElementById('step1indicator').classList.add('completed');
-        document.getElementById('step2indicator').classList.add('completed');
-        document.getElementById('step3indicator').classList.add('active');
-        document.getElementById('checkoutModalTitle').textContent = '&sup3; Review & Pay';
-    }
-}
-
-function goToContactStep() { showCheckoutStep(1); }
-
-function goToDeliveryStep() {
-    var name = document.getElementById('checkoutName').value.trim();
-    var email = document.getElementById('checkoutEmail').value.trim();
-    var phone = document.getElementById('checkoutPhone').value.trim();
-    var address = document.getElementById('checkoutAddress').value.trim();
-    var city = document.getElementById('checkoutCity').value.trim();
-    var zip = document.getElementById('checkoutZipConfirm').value.trim();
-    
-    if (!name || !email || !phone || !address || !city || !zip) {
-        showToast('error', 'Missing Information', 'Please fill in all required fields');
-        return;
-    }
-    if (!email.includes('@') || !email.includes('.')) {
-        showToast('error', 'Invalid Email', 'Please enter a valid email address');
-        return;
-    }
-    
-    customerInfo = { name, email, phone, address, city, zip, marketingConsent: document.getElementById('checkoutMarketingConsent').checked };
-    
-    var deliveryHtml = '';
-    cart.forEach(function(item, index) {
-        deliveryHtml += '<div class="checkout-delivery-item"><div class="checkout-delivery-item-header"><div><div class="checkout-delivery-item-name">' + item.product + '</div><div class="checkout-delivery-item-details">' + item.quantity + ' yd&sup3; (' + item.tons.toFixed(1) + ' tons) &rarr; ' + item.city + '</div></div><div class="checkout-delivery-item-price">$' + item.total.toFixed(2) + '</div></div><label> Preferred Delivery Date</label><input type="date" id="deliveryDate' + index + '" value="' + item.deliveryDate + '" min="' + getMinDeliveryDate() + '"></div>';
-    });
-    document.getElementById('checkoutDeliveryItems').innerHTML = deliveryHtml;
-    showCheckoutStep(2);
-}
-
-function goToPaymentStep() {
-    cart.forEach(function(item, index) {
-        var dateInput = document.getElementById('deliveryDate' + index);
-        if (dateInput) item.deliveryDate = dateInput.value;
-    });
-    
-    var summaryHtml = '<div class="checkout-customer-summary"><h4> Delivery To:</h4><p><strong>' + customerInfo.name + '</strong><br>' + customerInfo.address + '<br>' + customerInfo.city + ', TX ' + customerInfo.zip + '<br>&#128222; ' + customerInfo.phone + '<br> ' + customerInfo.email + '</p></div>';
-    var total = 0;
-    cart.forEach(function(item) {
-        total += item.total;
-        var deliveryDate = new Date(item.deliveryDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-        summaryHtml += '<div class="checkout-order-item"><div><strong>' + item.product + '</strong><br><small>' + item.quantity + ' yd&sup3; (' + item.tons.toFixed(1) + ' tons)</small><br><small> ' + deliveryDate + '</small></div><strong>$' + item.total.toFixed(2) + '</strong></div>';
-    });
-    summaryHtml += '<div class="checkout-order-total"><span>Total (FREE Delivery)</span><span>$' + total.toFixed(2) + '</span></div>';
-    document.getElementById('checkoutOrderSummary').innerHTML = summaryHtml;
-    showCheckoutStep(3);
-}
-
-function closeCheckoutModal() { document.getElementById('checkoutModal').classList.remove('active'); }
-
-function processPayment() {
-    if (cart.length === 0) return;
-    const total = cart.reduce((sum, item) => sum + item.total, 0);
-    document.getElementById('checkoutModal').classList.remove('active');
-    showToast('success', 'Order Placed!', '$' + total.toFixed(2) + " - We'll contact you to confirm delivery details.");
-    
-    let orderDetails = 'ORDER CONFIRMED!\n\n';
-    cart.forEach((item, index) => {
-        const deliveryDate = new Date(item.deliveryDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-        orderDetails += 'Item ' + (index + 1) + ': ' + item.quantity + ' yd&sup3; (' + item.tons.toFixed(1) + ' tons) ' + item.product + '\n';
-        orderDetails += '  &rarr; Delivery to ' + item.city + ' (' + item.zip + ')\n';
-        orderDetails += '  &rarr; Scheduled: ' + deliveryDate + '\n';
-        orderDetails += '  &rarr; Truck: ' + item.truckConfig + '\n';
-        orderDetails += '  &rarr; Price: $' + item.total.toFixed(2) + '\n\n';
-    });
-    orderDetails += 'TOTAL: $' + total.toFixed(2) + ' (FREE DELIVERY)\n\n';
-    orderDetails += "We'll send a confirmation email and text with tracking info!";
-    alert(orderDetails);
-    cart = [];
-    updateCartCount();
-    updateCartDrawer();
-}
-
-function resetCalculatorForm() {
-    document.getElementById('quoteZipCode').value = '';
-    document.getElementById('quoteProduct').value = '';
-    document.getElementById('quoteQuantity').value = '5';
-    document.getElementById('quoteZipStatus').classList.add('hidden');
-    document.getElementById('quoteDeliveryInfo').classList.add('hidden');
-    document.getElementById('quoteOutOfArea').classList.add('hidden');
-    document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
-    document.getElementById('quoteTotalSection').classList.add('hidden');
-    document.getElementById('needAProSection').classList.add('hidden');
-    const minimumWarning = document.getElementById('quoteMinimumWarning');
-    const upsellSection = document.getElementById('quoteUpsellSection');
-    if (minimumWarning) minimumWarning.classList.add('hidden');
-    if (upsellSection) upsellSection.classList.add('hidden');
-    document.getElementById('quoteCtaButton').disabled = true;
-    document.getElementById('quoteCtaButton').textContent = 'Enter ZIP Code to Get Quote';
-    currentZipData = null;
-    currentQuote = null;
-}
-
-// =====================================================
-// INLINE MATERIAL CALCULATOR
-// =====================================================
-let calculatedMaterial = null;
-
-function calculateInlineMaterial() {
-    const materialSelect = document.getElementById('inline-calc-material');
-    const length = parseFloat(document.getElementById('inline-calc-length').value) || 0;
-    const width = parseFloat(document.getElementById('inline-calc-width').value) || 0;
-    const depth = parseFloat(document.getElementById('inline-calc-depth').value) || 0;
-    
-    if (!materialSelect.value) { showToast('error', 'Select Material', 'Please select a material type first'); return; }
-    if (length <= 0 || width <= 0 || depth <= 0) { showToast('error', 'Missing Info', 'Please enter length, width, and depth'); return; }
-    
-    const selectedOption = materialSelect.options[materialSelect.selectedIndex];
-    const weightPerYard = parseFloat(selectedOption.dataset.weight) || 1.4;
-    const materialName = selectedOption.text;
-    
-    let cubicYards = (length * width * depth) / 324;
-    if (cubicYards < TRUCK_CONFIG.minimumYards) {
-        cubicYards = TRUCK_CONFIG.minimumYards;
-        showToast('info', '2 Yard Minimum', 'Adjusted to minimum order of ' + TRUCK_CONFIG.minimumYards + ' yards');
-    }
-    
-    const tons = cubicYards * weightPerYard;
-    document.getElementById('inline-result-yards').textContent = cubicYards.toFixed(1);
-    document.getElementById('inline-result-tons').textContent = tons.toFixed(1);
-    
-    const noteEl = document.getElementById('result-material-note');
-    noteEl.innerHTML = 'Based on <strong>' + materialName + '</strong> (' + weightPerYard + ' tons/yd&sup3;)';
-    noteEl.style.display = 'block';
-    
-    calculatedMaterial = { materialValue: materialSelect.value, materialName, cubicYards, tons, weightPerYard };
-    document.getElementById('inline-calc-result').style.display = 'block';
-    document.getElementById('inline-calc-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function getDeliveryPrice() {
-    if (!calculatedMaterial) { showToast('error', 'Calculate First', 'Please calculate your material needs first'); return; }
+function selectMoreProduct(productValue) {
+    closeMoreProductsModal();
     openCalculatorModal();
-    if (calculatedMaterial.materialValue) document.getElementById('quoteProduct').value = calculatedMaterial.materialValue;
-    let quantity = Math.ceil(calculatedMaterial.cubicYards * 2) / 2;
-    if (quantity < TRUCK_CONFIG.minimumYards) quantity = TRUCK_CONFIG.minimumYards;
-    document.getElementById('quoteQuantity').value = quantity;
-    showToast('info', 'Material Pre-filled', quantity + ' yd&sup3; of ' + calculatedMaterial.materialName + ' - enter your ZIP for pricing!');
-    recalculateQuote();
-}
-
-function requestInlineCallback() {
-    const name = document.getElementById('inline-callback-name').value;
-    const phone = document.getElementById('inline-callback-phone').value;
-    if (!name || !phone) { showToast('error', 'Missing Info', 'Please enter your name and phone number'); return; }
-    console.log('Callback requested:', { name, phone });
-    showToast('success', 'Callback Requested!', "We'll call you during business hours.");
-    document.getElementById('inline-callback-name').value = '';
-    document.getElementById('inline-callback-phone').value = '';
-}
-
-// =====================================================
-// CLOUDFLARE TURNSTILE
-// =====================================================
-let turnstileStatus = { visualizer: false, price: false, quote: false };
-
-function onTurnstileVisualizer(token) { turnstileStatus.visualizer = true; const btn = document.getElementById('visualizerBtn'); if (btn) btn.disabled = false; }
-function onTurnstilePrice(token) { turnstileStatus.price = true; const btn = document.getElementById('getPriceBtn'); if (btn) btn.disabled = false; }
-function onTurnstileQuote(token) { turnstileStatus.quote = true; if (typeof recalculateQuote === 'function') recalculateQuote(); }
-function openVisualizerWithCaptcha() { if (turnstileStatus.visualizer) openVisualizer(); else alert('Please complete the verification first.'); }
-function getDeliveryPriceWithCaptcha() { if (turnstileStatus.price) getDeliveryPrice(); else alert('Please complete the verification first.'); }
-function addToCartWithCaptcha() { if (turnstileStatus.quote) addToCart(); else alert('Please complete the verification first.'); }
-
-// =====================================================
-// MOBILE MENU
-// =====================================================
-const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-const navLinks = document.querySelector('.nav-links');
-
-if (mobileMenuBtn && navLinks) {
-    mobileMenuBtn.addEventListener('click', function() { this.classList.toggle('active'); navLinks.classList.toggle('active'); });
-    navLinks.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => { mobileMenuBtn.classList.remove('active'); navLinks.classList.remove('active'); }); });
-    const navDropdown = document.querySelector('.nav-dropdown > a');
-    if (navDropdown) { navDropdown.addEventListener('click', function(e) { if (window.innerWidth <= 968) { e.preventDefault(); this.parentElement.classList.toggle('active'); } }); }
-}
-
-document.addEventListener('click', function(e) {
-    if (navLinks && mobileMenuBtn && !e.target.closest('.nav-links') && !e.target.closest('.mobile-menu-btn')) {
-        mobileMenuBtn.classList.remove('active');
-        navLinks.classList.remove('active');
-    }
-});
-
-// =====================================================
-// MATERIAL VISUALIZER
-// =====================================================
-const vizState = {
-    image: null,
-    selectedMaterial: { id: 'black-mulch', name: 'Black Mulch', color: '#1a1a1a', price: 25, image: '/images/materials/black-mulch.jpg' },
-    points: [],
-    isComplete: false,
-    showOverlay: true,
-    opacity: 0.7,
-    materialPattern: null
-};
-
-const vizMaterials = [
-    { id: 'black-mulch', name: 'Black Mulch', color: '#1a1a1a', price: 25, image: '/images/materials/black-mulch.jpg' },
-    { id: 'brown-mulch', name: 'Brown Mulch', color: '#8B4513', price: 25, image: '/images/materials/brown-mulch.jpg' },
-    { id: 'blackstar-gravel', name: 'Blackstar Gravel', color: '#2d2d2d', price: 96, image: '/images/materials/black-star.jpg' },
-    { id: 'decomposed-granite', name: 'Decomposed Granite', color: '#C9A66B', price: 48, image: '/images/materials/Decomposed-Granite.jpg' },
-    { id: 'bull-rock', name: '3x5 Bull Rock', color: '#a08060', price: 41, image: '/images/materials/2x3-bull-rock.jpeg' },
-    { id: 'topsoil', name: 'Topsoil', color: '#3d3225', price: 24, image: '/images/materials/top-soil.jpg' }
-];
-
-const vizMaterialWeights = { 'black-mulch': 0.5, 'brown-mulch': 0.5, 'blackstar-gravel': 1.4, 'decomposed-granite': 1.4, 'bull-rock': 1.4, 'topsoil': 1.4 };
-const vizToQuoteMaterialMapping = { 'black-mulch': 'mulch-black', 'brown-mulch': 'mulch-brown', 'blackstar-gravel': 'blackstar', 'decomposed-granite': 'decomposed-granite', 'bull-rock': 'bull-rock-3x5', 'topsoil': 'topsoil' };
-
-let vizCalculatedQuantity = null;
-let vizCalculatedTons = null;
-let vizCanvasDimensions = { width: 0, height: 0 };
-
-function openVisualizer() { document.getElementById('visualizerModal').classList.add('active'); document.body.style.overflow = 'hidden'; }
-function closeVisualizer() { document.getElementById('visualizerModal').classList.remove('active'); document.body.style.overflow = ''; }
-
-var pendingPhotoFile = null;
-var photoConsentGiven = false;
-
-function openPhotoConsent() { document.getElementById('photoConsentModal').classList.add('active'); }
-function closePhotoConsent() { document.getElementById('photoConsentModal').classList.remove('active'); }
-
-function handleVisualizerUpload(event) {
-    var file = event.target.files[0];
-    if (!file) return;
-    if (photoConsentGiven) processVisualizerFile(file);
-    else { pendingPhotoFile = file; openPhotoConsent(); }
-}
-
-function acceptPhotoConsent() {
-    photoConsentGiven = true;
-    closePhotoConsent();
-    if (pendingPhotoFile) { processVisualizerFile(pendingPhotoFile); pendingPhotoFile = null; }
-}
-
-function declinePhotoConsent() {
-    closePhotoConsent();
-    document.getElementById('vizFileInput').value = '';
-    document.getElementById('vizCameraInput').value = '';
-    pendingPhotoFile = null;
-}
-
-function processVisualizerFile(file) {
-    if (!file || !file.type.startsWith('image/')) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-            const maxDim = 800;
-            let width = img.width, height = img.height;
-            if (width > maxDim || height > maxDim) {
-                if (width > height) { height = (height / width) * maxDim; width = maxDim; }
-                else { width = (width / height) * maxDim; height = maxDim; }
-            }
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = width; tempCanvas.height = height;
-            const tempCtx = tempCanvas.getContext('2d');
-            tempCtx.drawImage(img, 0, 0, width, height);
-            vizState.image = tempCanvas.toDataURL('image/jpeg', 0.8);
-            vizState.points = []; vizState.isComplete = false;
-            vizCanvasDimensions = { width: 0, height: 0 };
-            updateVisualizerUI(); drawVisualizerCanvas();
-        };
-        img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-}
-
-function handleVizDragOver(event) { event.preventDefault(); event.stopPropagation(); document.getElementById('vizCanvasContainer').classList.add('dragging'); }
-function handleVizDragLeave(event) { event.preventDefault(); event.stopPropagation(); document.getElementById('vizCanvasContainer').classList.remove('dragging'); }
-function handleVizDrop(event) {
-    event.preventDefault(); event.stopPropagation();
-    document.getElementById('vizCanvasContainer').classList.remove('dragging');
-    var file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
-    if (file) { if (photoConsentGiven) processVisualizerFile(file); else { pendingPhotoFile = file; openPhotoConsent(); } }
-}
-
-function handleVisualizerClick(event) {
-    if (!vizState.image || vizState.isComplete) return;
-    const canvas = document.getElementById('vizMainCanvas');
-    const rect = canvas.getBoundingClientRect();
-    const x = (event.clientX - rect.left) * (canvas.width / rect.width);
-    const y = (event.clientY - rect.top) * (canvas.height / rect.height);
-    if (vizState.points.length > 2) {
-        const first = vizState.points[0];
-        const dist = Math.sqrt((x - first.x) ** 2 + (y - first.y) ** 2);
-        if (dist < 25) { vizState.isComplete = true; updateVisualizerUI(); drawVisualizerCanvas(); return; }
-    }
-    vizState.points.push({x, y}); updateVisualizerUI(); drawVisualizerCanvas();
-}
-
-function drawVisualizerCanvas() {
-    if (!vizState.image) return;
-    const canvas = document.getElementById('vizMainCanvas');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-    img.onload = function() {
-        if (vizCanvasDimensions.width === 0) {
-            const maxDim = 500; let w = img.width, h = img.height;
-            if (w > maxDim || h > maxDim) { if (w > h) { h = (h/w) * maxDim; w = maxDim; } else { w = (w/h) * maxDim; h = maxDim; } }
-            vizCanvasDimensions.width = Math.floor(w); vizCanvasDimensions.height = Math.floor(h);
-        }
-        canvas.width = vizCanvasDimensions.width; canvas.height = vizCanvasDimensions.height;
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        if (vizState.points.length > 0) {
-            ctx.strokeStyle = '#E85D04'; ctx.lineWidth = 3;
-            ctx.beginPath(); ctx.moveTo(vizState.points[0].x, vizState.points[0].y);
-            for (let i = 1; i < vizState.points.length; i++) ctx.lineTo(vizState.points[i].x, vizState.points[i].y);
-            if (vizState.isComplete) ctx.closePath();
-            ctx.stroke();
-            if (!vizState.isComplete) {
-                vizState.points.forEach(function(p, i) {
-                    ctx.beginPath(); ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
-                    ctx.fillStyle = (i === 0 && vizState.points.length > 2) ? '#22c55e' : '#E85D04';
-                    ctx.fill(); ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.stroke();
-                });
-            }
-            if (vizState.isComplete && vizState.showOverlay) {
-                ctx.globalAlpha = vizState.opacity;
-                ctx.fillStyle = vizState.materialPattern || vizState.selectedMaterial.color;
-                ctx.beginPath(); ctx.moveTo(vizState.points[0].x, vizState.points[0].y);
-                for (let i = 1; i < vizState.points.length; i++) ctx.lineTo(vizState.points[i].x, vizState.points[i].y);
-                ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1;
-            }
-        }
-    };
-    img.src = vizState.image;
-}
-
-function updateVisualizerUI() {
-    const placeholder = document.getElementById('vizPlaceholder');
-    const canvasWrapper = document.getElementById('vizCanvasWrapper');
-    const startOverBtn = document.getElementById('vizStartOver');
-    const instructionsDiv = document.getElementById('vizInstructions');
-    const controlsDiv = document.getElementById('vizControls');
-    const step3Title = document.getElementById('vizStep3Title');
-    const pointCounter = document.getElementById('vizPointCounter');
-    const materialBadge = document.getElementById('vizMaterialBadge');
-    const calcSection = document.getElementById('vizCalcSection');
-    
-    if (!vizState.image) {
-        placeholder.style.display = 'block'; canvasWrapper.style.display = 'none'; startOverBtn.style.display = 'none';
-        instructionsDiv.innerHTML = '<p class="viz-instruction">Upload a photo to get started</p>';
-        instructionsDiv.style.display = 'block'; controlsDiv.style.display = 'none'; calcSection.style.display = 'none';
-        return;
-    }
-    placeholder.style.display = 'none'; canvasWrapper.style.display = 'block'; startOverBtn.style.display = 'block';
-    if (vizState.isComplete) {
-        step3Title.textContent = '3. Adjust Preview'; instructionsDiv.style.display = 'none'; controlsDiv.style.display = 'block';
-        pointCounter.style.display = 'none'; materialBadge.style.display = 'block';
-        document.getElementById('vizBadgeName').textContent = vizState.selectedMaterial.name;
-        calcSection.style.display = 'block';
-        document.getElementById('vizCalcMaterial').innerHTML = 'Calculating for: <strong>' + vizState.selectedMaterial.name + '</strong>';
-    } else {
-        step3Title.textContent = '3. Outline Area';
-        instructionsDiv.innerHTML = '<p class="viz-instruction">Tap to add points. Tap the <span class="green">green point</span> to close the shape.</p>' + (vizState.points.length > 0 ? '<button class="viz-reset-btn" onclick="resetVisualizerPoints()">&#8634; Reset Points</button>' : '');
-        instructionsDiv.style.display = 'block'; controlsDiv.style.display = 'none'; materialBadge.style.display = 'none'; calcSection.style.display = 'none';
-        if (vizState.points.length > 0) { pointCounter.style.display = 'block'; pointCounter.innerHTML = vizState.points.length + ' point' + (vizState.points.length !== 1 ? 's' : '') + (vizState.points.length >= 3 ? ' &bull; tap green to close' : ''); }
-        else pointCounter.style.display = 'none';
-    }
-}
-
-function calculateVisualizerMaterial() {
-    const length = parseFloat(document.getElementById('vizCalcLength').value) || 0;
-    const width = parseFloat(document.getElementById('vizCalcWidth').value) || 0;
-    const depth = parseFloat(document.getElementById('vizCalcDepth').value) || 0;
-    if (length <= 0 || width <= 0 || depth <= 0) { showToast('error', 'Missing Info', 'Please enter length, width, and depth'); return; }
-    const cubicYards = (length * width * depth) / 324;
-    const weight = vizMaterialWeights[vizState.selectedMaterial.id] || 1.4;
-    const tons = cubicYards * weight;
-    document.getElementById('vizCalcYards').textContent = cubicYards.toFixed(1);
-    document.getElementById('vizCalcTons').textContent = tons.toFixed(1);
-    vizCalculatedQuantity = Math.ceil(cubicYards * 2) / 2;
-    if (vizCalculatedQuantity < TRUCK_CONFIG.minimumYards) vizCalculatedQuantity = TRUCK_CONFIG.minimumYards;
-    vizCalculatedTons = tons;
-    document.getElementById('vizCalcResult').style.display = 'block';
-}
-
-function getVisualizerQuoteWithQuantity() {
-    closeVisualizer(); openCalculatorModal();
-    const mappedMaterial = vizToQuoteMaterialMapping[vizState.selectedMaterial.id] || '';
-    if (mappedMaterial) document.getElementById('quoteProduct').value = mappedMaterial;
-    if (vizCalculatedQuantity) document.getElementById('quoteQuantity').value = vizCalculatedQuantity;
-    recalculateQuote();
-    showToast('info', 'Ready for Quote', vizCalculatedQuantity + ' yd&sup3; of ' + vizState.selectedMaterial.name + ' - enter your ZIP!');
-}
-
-function getVisualizerQuote() {
-    closeVisualizer(); openCalculatorModal();
-    const mappedMaterial = vizToQuoteMaterialMapping[vizState.selectedMaterial.id] || '';
-    if (mappedMaterial) { document.getElementById('quoteProduct').value = mappedMaterial; recalculateQuote(); }
-    showToast('info', 'Material Selected', vizState.selectedMaterial.name + ' - Enter your ZIP and quantity for pricing!');
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    const materialGrid = document.getElementById('vizMaterialGrid');
-    if (materialGrid) {
-        materialGrid.addEventListener('click', function(e) {
-            const btn = e.target.closest('.material-btn');
-            if (!btn) return;
-            document.querySelectorAll('.material-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const materialId = btn.dataset.id;
-            vizState.selectedMaterial = vizMaterials.find(m => m.id === materialId);
-            if (vizState.selectedMaterial && vizState.selectedMaterial.image) {
-                const textureImg = new Image();
-                textureImg.onload = function() {
-                    const canvas = document.getElementById('vizMainCanvas');
-                    if (canvas) { vizState.materialPattern = canvas.getContext('2d').createPattern(textureImg, 'repeat'); drawVisualizerCanvas(); }
-                };
-                textureImg.src = vizState.selectedMaterial.image;
-            }
-            document.getElementById('vizMaterialPrice').textContent = '$' + vizState.selectedMaterial.price + '/ton';
-            const calcMaterial = document.getElementById('vizCalcMaterial');
-            if (calcMaterial) calcMaterial.innerHTML = 'Calculating for: <strong>' + vizState.selectedMaterial.name + '</strong>';
-            if (vizState.isComplete) { document.getElementById('vizBadgeName').textContent = vizState.selectedMaterial.name; drawVisualizerCanvas(); }
-        });
-    }
-});
-
-function toggleVisualizerOverlay() { vizState.showOverlay = document.getElementById('vizShowOverlay').checked; drawVisualizerCanvas(); }
-function updateVisualizerOpacity() { const slider = document.getElementById('vizOpacitySlider'); vizState.opacity = slider.value / 100; document.getElementById('vizOpacityValue').textContent = slider.value + '%'; drawVisualizerCanvas(); }
-
-function resetVisualizerPoints() {
-    vizState.points = []; vizState.isComplete = false; vizCalculatedQuantity = null; vizCalculatedTons = null;
-    vizCanvasDimensions = { width: 0, height: 0 };
-    document.getElementById('vizCalcLength').value = ''; document.getElementById('vizCalcWidth').value = ''; document.getElementById('vizCalcDepth').value = '';
-    document.getElementById('vizCalcResult').style.display = 'none';
-    updateVisualizerUI(); drawVisualizerCanvas();
-}
-
-function resetVisualizer() {
-    vizState.image = null; vizState.points = []; vizState.isComplete = false;
-    vizCalculatedQuantity = null; vizCalculatedTons = null; vizCanvasDimensions = { width: 0, height: 0 };
-    document.getElementById('vizCalcLength').value = ''; document.getElementById('vizCalcWidth').value = ''; document.getElementById('vizCalcDepth').value = '';
-    document.getElementById('vizCalcResult').style.display = 'none';
-    document.getElementById('vizFileInput').value = ''; document.getElementById('vizCameraInput').value = '';
-    updateVisualizerUI();
-}
-
-// =====================================================
-// SELF-HOSTED VIDEO PLAYER
-// =====================================================
-let promoVideo = null;
-let videoOverlay = null;
-let videoProgress = null;
-let videoTime = null;
-let playPauseBtn = null;
-
-document.addEventListener('DOMContentLoaded', function() {
-    promoVideo = document.getElementById('promoVideo');
-    videoOverlay = document.getElementById('videoOverlay');
-    videoProgress = document.getElementById('videoProgress');
-    videoTime = document.getElementById('videoTime');
-    playPauseBtn = document.getElementById('playPauseBtn');
-    if (promoVideo) {
-        promoVideo.addEventListener('timeupdate', updateVideoProgress);
-        promoVideo.addEventListener('loadedmetadata', updateVideoTime);
-        promoVideo.addEventListener('ended', onVideoEnded);
-        promoVideo.addEventListener('play', onVideoPlay);
-        promoVideo.addEventListener('pause', onVideoPause);
-    }
-});
-
-function togglePromoVideo() { if (!promoVideo) return; if (promoVideo.paused) promoVideo.play(); else promoVideo.pause(); }
-function onVideoPlay() { trackVideoPlay(); if (videoOverlay) videoOverlay.classList.add('hidden'); if (playPauseBtn) { playPauseBtn.querySelector('.play-icon').style.display = 'none'; playPauseBtn.querySelector('.pause-icon').style.display = 'inline'; } promoVideo.parentElement.classList.add('playing'); }
-function onVideoPause() { if (playPauseBtn) { playPauseBtn.querySelector('.play-icon').style.display = 'inline'; playPauseBtn.querySelector('.pause-icon').style.display = 'none'; } }
-function onVideoEnded() { trackVideoComplete(); if (videoOverlay) videoOverlay.classList.remove('hidden'); promoVideo.parentElement.classList.remove('playing'); if (playPauseBtn) { playPauseBtn.querySelector('.play-icon').style.display = 'inline'; playPauseBtn.querySelector('.pause-icon').style.display = 'none'; } }
-
-function updateVideoProgress() {
-    if (!promoVideo || !videoProgress) return;
-    const percent = (promoVideo.currentTime / promoVideo.duration) * 100;
-    videoProgress.style.width = percent + '%';
-    updateVideoTime();
-}
-
-function updateVideoTime() {
-    if (!promoVideo || !videoTime) return;
-    videoTime.textContent = formatTime(promoVideo.currentTime) + ' / ' + formatTime(promoVideo.duration);
-}
-
-function formatTime(seconds) {
-    if (isNaN(seconds)) return '0:00';
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return mins + ':' + (secs < 10 ? '0' : '') + secs;
-}
-
-function seekVideo(event) {
-    if (!promoVideo) return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    promoVideo.currentTime = ((event.clientX - rect.left) / rect.width) * promoVideo.duration;
-}
-
-function toggleMute() {
-    if (!promoVideo) return;
-    promoVideo.muted = !promoVideo.muted;
-    const muteIcon = document.getElementById('muteIcon');
-    if (muteIcon) muteIcon.textContent = promoVideo.muted ? '' : '';
-}
-
-function toggleFullscreen() {
-    const container = document.querySelector('.self-hosted-video-container');
-    if (!container) return;
-    if (document.fullscreenElement) document.exitFullscreen();
-    else container.requestFullscreen();
-}
-
-// =====================================================
-// GOOGLE ANALYTICS EVENT TRACKING
-// =====================================================
-function trackEvent(eventName, eventParams) {
-    eventParams = eventParams || {};
-    eventParams.site_version = typeof SITE_VERSION !== 'undefined' ? SITE_VERSION : 'unknown';
-    if (typeof gtag !== 'undefined') gtag('event', eventName, eventParams);
-}
-
-function trackCalculatorOpen(source) { trackEvent('calculator_opened', { event_category: 'engagement', trigger_source: source || 'unknown' }); }
-function trackQuoteViewed(material, quantity, price, zip) { trackEvent('quote_viewed', { event_category: 'conversion', material: material, quantity: quantity, value: price, zip_code: zip }); }
-function trackAddToCart(material, quantity, price) { trackEvent('add_to_cart', { event_category: 'ecommerce', currency: 'USD', value: price, items: [{ item_name: material, quantity: quantity, price: price }] }); }
-function trackPhoneClick(location) { trackEvent('phone_click', { event_category: 'conversion', click_location: location || 'unknown' }); }
-function trackTextClick(location) { trackEvent('text_click', { event_category: 'conversion', click_location: location || 'unknown' }); }
-function trackVideoPlay() { trackEvent('video_play', { event_category: 'engagement', event_label: 'How It Works Video' }); }
-function trackVideoComplete() { trackEvent('video_complete', { event_category: 'engagement', event_label: 'How It Works Video' }); }
-
-document.addEventListener('DOMContentLoaded', function() {
-    const howItWorks = document.getElementById('how-it-works');
-    if (howItWorks) {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) { trackEvent('section_view', { section_name: 'How It Works' }); observer.unobserve(entry.target); }
-            });
-        }, { threshold: 0.5 });
-        observer.observe(howItWorks);
-    }
-});
-
-// =====================================================
-// BEFORE/AFTER IMAGE SLIDER
-// =====================================================
-(function() {
-    const slider = document.getElementById('beforeAfterSlider');
-    const handle = document.getElementById('baSliderHandle');
-    const beforeWrapper = slider ? slider.querySelector('.ba-before-wrapper') : null;
-    
-    if (!slider || !handle || !beforeWrapper) return;
-    
-    let isDragging = false;
-    
-    function getPositionX(e) {
-        return e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-    }
-    
-    function updateSliderPosition(clientX) {
-        const rect = slider.getBoundingClientRect();
-        let position = ((clientX - rect.left) / rect.width) * 100;
-        position = Math.max(0, Math.min(100, position));
-        
-        handle.style.left = position + '%';
-        beforeWrapper.style.width = position + '%';
-    }
-    
-    function startDrag(e) {
-        e.preventDefault();
-        isDragging = true;
-        slider.classList.add('dragging');
-    }
-    
-    function endDrag() {
-        isDragging = false;
-        slider.classList.remove('dragging');
-    }
-    
-    function drag(e) {
-        if (!isDragging) return;
-        e.preventDefault();
-        updateSliderPosition(getPositionX(e));
-    }
-    
-    // Mouse events
-    handle.addEventListener('mousedown', startDrag);
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('mouseup', endDrag);
-    
-    // Touch events
-    handle.addEventListener('touchstart', startDrag, { passive: false });
-    document.addEventListener('touchmove', drag, { passive: false });
-    document.addEventListener('touchend', endDrag);
-    
-    // Click on slider to move handle
-    slider.addEventListener('click', function(e) {
-        if (e.target === handle || handle.contains(e.target)) return;
-        updateSliderPosition(getPositionX(e));
-    });
-    
-    // Initialize at 50%
-    updateSliderPosition(slider.getBoundingClientRect().left + slider.getBoundingClientRect().width / 2);
-})();
-
-// =====================================================
-// SCROLL NAVIGATION ARROWS
-// =====================================================
-(function() {
-    const scrollUpBtn = document.getElementById('scrollUpBtn');
-    const scrollDownBtn = document.getElementById('scrollDownBtn');
-    
-    if (!scrollUpBtn || !scrollDownBtn) return;
-    
-    // Show/hide arrows based on scroll position
-    function updateScrollArrows() {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const scrollHeight = document.documentElement.scrollHeight;
-        const clientHeight = document.documentElement.clientHeight;
-        const atTop = scrollTop < 100;
-        const atBottom = scrollTop + clientHeight >= scrollHeight - 100;
-        
-        // At top: hide up arrow, show down arrow
-        // Mid page: show both arrows
-        // At bottom: show up arrow, hide down arrow
-        
-        if (atTop) {
-            scrollUpBtn.classList.remove('visible');
-        } else {
-            scrollUpBtn.classList.add('visible');
-        }
-        
-        if (atBottom) {
-            scrollDownBtn.classList.remove('visible');
-        } else {
-            scrollDownBtn.classList.add('visible');
-        }
-    }
-    
-    // Scroll to top
-    scrollUpBtn.addEventListener('click', function() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-    
-    // Scroll down one viewport height
-    scrollDownBtn.addEventListener('click', function() {
-        window.scrollBy({ top: window.innerHeight * 0.8, behavior: 'smooth' });
-    });
-    
-    // Update on scroll
-    window.addEventListener('scroll', updateScrollArrows, { passive: true });
-    
-    // Initial check
-    updateScrollArrows();
-})();
+    setTimeout(() => {
+        const productSelect = document.getElementById('quoteProduct');
+        if (productSelect) {
+            productSelect.value = productValue;
+            productSelect.dispatchEvent(new Event('change'))
