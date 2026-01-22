@@ -598,7 +598,7 @@ function recalculateQuote() {
         document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
         document.getElementById('quoteTotalSection').classList.add('hidden');
         document.getElementById('needAProSection').classList.add('hidden');
-        ctaButton.textContent = '&#9888; 2 Yard Minimum Required';
+        ctaButton.innerHTML = '&#9888; 2 Yard Minimum Required';
         ctaButton.disabled = true;
         return;
     }
@@ -610,7 +610,7 @@ function recalculateQuote() {
         document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
         document.getElementById('quoteTotalSection').classList.add('hidden');
         document.getElementById('needAProSection').classList.add('hidden');
-        ctaButton.textContent = '&#128222; Order Over 48 Tons - Get Commercial Quote';
+        ctaButton.innerHTML = '&#128222; Order Over 48 Tons - Get Commercial Quote';
         ctaButton.disabled = false;
         ctaButton.onclick = function() {
             closeCalculatorModal();
@@ -671,7 +671,7 @@ function recalculateQuote() {
     document.getElementById('needAProSection').classList.remove('hidden');
     
     if (typeof turnstileStatus !== 'undefined' && turnstileStatus.quote) {
-        ctaButton.textContent = '&#128722; Add to Cart &rarr;';
+        ctaButton.innerHTML = '&#128722; Add to Cart &rarr;';
         ctaButton.disabled = false;
     } else {
         ctaButton.textContent = 'Complete Verification to Continue';
