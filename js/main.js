@@ -1298,46 +1298,51 @@ function trackVideoComplete() { trackEvent('video_complete', { event_category: '
 document.addEventListener('DOMContentLoaded', function() {
     const howItWorks = document.getElementById('how-it-works');
     if (howItWorks) {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) { trackEvent('section_view', { section_name: 'How It Works' }); observer.unobserve(entry.target); }
-            });
-        }, { threshold: 0.5 });
-        observer.observe(howItWorks);
-    }
-});
- = scrollTop + clientHeight >= scrollHeight - 100;
+
+// =====================================================
+// SCROLL NAVIGATION ARROWS - FIXED
+// At top: only down arrow
+// Mid page: both arrows  
+// At bottom: only up arrow
+// =====================================================
+(function() {
+    const scrollUpBtn = document.getElementById('scrollUpBtn');
+    const scrollDownBtn = document.getElementById('scrollDownBtn');
+    
+    if (!scrollUpBtn || !scrollDownBtn) return;
+    
+    function updateScrollArrows() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight;
+        const clientHeight = document.documentElement.clientHeight;
+        const atTop = scrollTop < 100;
+        const atBottom = scrollTop + clientHeight >= scrollHeight - 100;
         
         // At top: hide up, show down
-        // Mid page: show both
-        // At bottom: show up, hide down
-        
         if (atTop) {
-            scrollUpBtn.style.display = 'none';
-        } else {
-            scrollUpBtn.style.display = 'flex';
+            scrollUpBtn.style.cssText = 'display: none !important;';
+            scrollDownBtn.style.cssText = 'display: flex !important;';
         }
-        
-        if (atBottom) {
-            scrollDownBtn.style.display = 'none';
-        } else {
-            scrollDownBtn.style.display = 'flex';
+        // At bottom: show up, hide down
+        else if (atBottom) {
+            scrollUpBtn.style.cssText = 'display: flex !important;';
+            scrollDownBtn.style.cssText = 'display: none !important;';
+        }
+        // Middle: show both
+        else {
+            scrollUpBtn.style.cssText = 'display: flex !important;';
+            scrollDownBtn.style.cssText = 'display: flex !important;';
         }
     }
     
-    // Scroll to top
     scrollUpBtn.addEventListener('click', function() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
     
-    // Scroll down one viewport height
     scrollDownBtn.addEventListener('click', function() {
         window.scrollBy({ top: window.innerHeight * 0.8, behavior: 'smooth' });
     });
     
-    // Update on scroll
     window.addEventListener('scroll', updateScrollArrows, { passive: true });
-    
-    // Initial check
     updateScrollArrows();
 })();
