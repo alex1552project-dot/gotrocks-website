@@ -502,7 +502,7 @@ function handleQuoteZipInput(e) {
     
     if (data) {
         currentZipData = data;
-        statusEl.textContent = 'âœ“ We deliver here!';
+        statusEl.textContent = ' We deliver here!';
         statusEl.className = 'zip-status valid';
         document.getElementById('quoteCityName').textContent = data.city;
         document.getElementById('quoteDistanceMiles').textContent = data.distance;
@@ -598,7 +598,7 @@ function recalculateQuote() {
         document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
         document.getElementById('quoteTotalSection').classList.add('hidden');
         document.getElementById('needAProSection').classList.add('hidden');
-        ctaButton.textContent = 'âš ï¸ 2 Yard Minimum Required';
+        ctaButton.textContent = '&#9888; 2 Yard Minimum Required';
         ctaButton.disabled = true;
         return;
     }
@@ -610,7 +610,7 @@ function recalculateQuote() {
         document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
         document.getElementById('quoteTotalSection').classList.add('hidden');
         document.getElementById('needAProSection').classList.add('hidden');
-        ctaButton.textContent = 'ðŸ“ž Order Over 48 Tons - Get Commercial Quote';
+        ctaButton.textContent = '&#128222; Order Over 48 Tons - Get Commercial Quote';
         ctaButton.disabled = false;
         ctaButton.onclick = function() {
             closeCalculatorModal();
@@ -671,7 +671,7 @@ function recalculateQuote() {
     document.getElementById('needAProSection').classList.remove('hidden');
     
     if (typeof turnstileStatus !== 'undefined' && turnstileStatus.quote) {
-        ctaButton.textContent = 'ðŸ›’ Add to Cart â†’';
+        ctaButton.textContent = '&#128722; Add to Cart &rarr;';
         ctaButton.disabled = false;
     } else {
         ctaButton.textContent = 'Complete Verification to Continue';
@@ -732,7 +732,7 @@ function showToast(type, title, message) {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
     toast.className = 'toast ' + type;
-    const icons = { success: 'âœ“', error: 'âœ•', info: 'â„¹' };
+    const icons = { success: '&#10004;', error: '&#10005;', info: '&#8505;' };
     toast.innerHTML = '<span class="toast-icon">' + icons[type] + '</span><div class="toast-message"><strong>' + title + '</strong><span>' + message + '</span></div>';
     container.appendChild(toast);
     setTimeout(() => { toast.style.animation = 'toastSlideIn 0.3s ease reverse'; setTimeout(() => toast.remove(), 300); }, 5000);
@@ -757,7 +757,7 @@ function toggleFaq(button) {
     });
     
     faqItem.classList.toggle('active');
-    if (faqItem.classList.contains('active')) { answer.style.maxHeight = answer.scrollHeight + 'px'; icon.textContent = 'âˆ’'; }
+    if (faqItem.classList.contains('active')) { answer.style.maxHeight = answer.scrollHeight + 'px'; icon.textContent = '&rarr;'; }
     else { answer.style.maxHeight = null; icon.textContent = '+'; }
 }
 
@@ -797,7 +797,7 @@ function addToCart() {
     cart.push(cartItem);
     updateCartCount();
     updateCartDrawer();
-    showToast('success', 'Added to Cart!', cartItem.quantity + ' ydÂ³ ' + cartItem.product + ' - $' + cartItem.total.toFixed(2));
+    showToast('success', 'Added to Cart!', cartItem.quantity + ' yd&sup3; ' + cartItem.product + ' - $' + cartItem.total.toFixed(2));
     const cartCount = document.getElementById('navCartCount');
     cartCount.classList.add('pulse');
     setTimeout(() => cartCount.classList.remove('pulse'), 300);
@@ -838,7 +838,7 @@ function updateCartDrawer() {
     let subtotal = 0;
     cart.forEach(item => {
         subtotal += item.total;
-        itemsHtml += '<div class="cart-item"><div class="cart-item-header"><div><div class="cart-item-name">' + item.product + '</div><div class="cart-item-location">ðŸ“ ' + item.city + ' (' + item.zip + ')</div></div><button class="cart-item-remove" onclick="removeFromCart(' + item.id + ')">âœ•</button></div><div class="cart-item-details"><span class="cart-item-qty">' + item.quantity + ' ydÂ³ (' + item.tons.toFixed(1) + ' tons)</span><span class="cart-item-price">$' + item.total.toFixed(2) + '</span></div><div class="cart-item-per-unit">$' + item.pricePerYard.toFixed(2) + '/yard delivered</div></div>';
+        itemsHtml += '<div class="cart-item"><div class="cart-item-header"><div><div class="cart-item-name">' + item.product + '</div><div class="cart-item-location"> ' + item.city + ' (' + item.zip + ')</div></div><button class="cart-item-remove" onclick="removeFromCart(' + item.id + ')"></button></div><div class="cart-item-details"><span class="cart-item-qty">' + item.quantity + ' yd&sup3; (' + item.tons.toFixed(1) + ' tons)</span><span class="cart-item-price">$' + item.total.toFixed(2) + '</span></div><div class="cart-item-per-unit">$' + item.pricePerYard.toFixed(2) + '/yard delivered</div></div>';
     });
     
     itemsContainer.innerHTML = itemsHtml;
@@ -886,18 +886,18 @@ function showCheckoutStep(step) {
     if (step === 1) {
         document.getElementById('checkoutStep1').style.display = 'block';
         document.getElementById('step1indicator').classList.add('active');
-        document.getElementById('checkoutModalTitle').textContent = 'ðŸ“‹ Contact Information';
+        document.getElementById('checkoutModalTitle').textContent = ' Contact Information';
     } else if (step === 2) {
         document.getElementById('checkoutStep2').style.display = 'block';
         document.getElementById('step1indicator').classList.add('completed');
         document.getElementById('step2indicator').classList.add('active');
-        document.getElementById('checkoutModalTitle').textContent = 'ðŸ“… Select Delivery Date';
+        document.getElementById('checkoutModalTitle').textContent = ' Select Delivery Date';
     } else if (step === 3) {
         document.getElementById('checkoutStep3').style.display = 'block';
         document.getElementById('step1indicator').classList.add('completed');
         document.getElementById('step2indicator').classList.add('completed');
         document.getElementById('step3indicator').classList.add('active');
-        document.getElementById('checkoutModalTitle').textContent = 'ðŸ’³ Review & Pay';
+        document.getElementById('checkoutModalTitle').textContent = '&sup3; Review & Pay';
     }
 }
 
@@ -924,7 +924,7 @@ function goToDeliveryStep() {
     
     var deliveryHtml = '';
     cart.forEach(function(item, index) {
-        deliveryHtml += '<div class="checkout-delivery-item"><div class="checkout-delivery-item-header"><div><div class="checkout-delivery-item-name">' + item.product + '</div><div class="checkout-delivery-item-details">' + item.quantity + ' ydÂ³ (' + item.tons.toFixed(1) + ' tons) â†’ ' + item.city + '</div></div><div class="checkout-delivery-item-price">$' + item.total.toFixed(2) + '</div></div><label>ðŸ“… Preferred Delivery Date</label><input type="date" id="deliveryDate' + index + '" value="' + item.deliveryDate + '" min="' + getMinDeliveryDate() + '"></div>';
+        deliveryHtml += '<div class="checkout-delivery-item"><div class="checkout-delivery-item-header"><div><div class="checkout-delivery-item-name">' + item.product + '</div><div class="checkout-delivery-item-details">' + item.quantity + ' yd&sup3; (' + item.tons.toFixed(1) + ' tons) &rarr; ' + item.city + '</div></div><div class="checkout-delivery-item-price">$' + item.total.toFixed(2) + '</div></div><label> Preferred Delivery Date</label><input type="date" id="deliveryDate' + index + '" value="' + item.deliveryDate + '" min="' + getMinDeliveryDate() + '"></div>';
     });
     document.getElementById('checkoutDeliveryItems').innerHTML = deliveryHtml;
     showCheckoutStep(2);
@@ -936,12 +936,12 @@ function goToPaymentStep() {
         if (dateInput) item.deliveryDate = dateInput.value;
     });
     
-    var summaryHtml = '<div class="checkout-customer-summary"><h4>ðŸ“ Delivery To:</h4><p><strong>' + customerInfo.name + '</strong><br>' + customerInfo.address + '<br>' + customerInfo.city + ', TX ' + customerInfo.zip + '<br>ðŸ“ž ' + customerInfo.phone + '<br>âœ‰ï¸ ' + customerInfo.email + '</p></div>';
+    var summaryHtml = '<div class="checkout-customer-summary"><h4> Delivery To:</h4><p><strong>' + customerInfo.name + '</strong><br>' + customerInfo.address + '<br>' + customerInfo.city + ', TX ' + customerInfo.zip + '<br>&#128222; ' + customerInfo.phone + '<br> ' + customerInfo.email + '</p></div>';
     var total = 0;
     cart.forEach(function(item) {
         total += item.total;
         var deliveryDate = new Date(item.deliveryDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-        summaryHtml += '<div class="checkout-order-item"><div><strong>' + item.product + '</strong><br><small>' + item.quantity + ' ydÂ³ (' + item.tons.toFixed(1) + ' tons)</small><br><small>ðŸ“… ' + deliveryDate + '</small></div><strong>$' + item.total.toFixed(2) + '</strong></div>';
+        summaryHtml += '<div class="checkout-order-item"><div><strong>' + item.product + '</strong><br><small>' + item.quantity + ' yd&sup3; (' + item.tons.toFixed(1) + ' tons)</small><br><small> ' + deliveryDate + '</small></div><strong>$' + item.total.toFixed(2) + '</strong></div>';
     });
     summaryHtml += '<div class="checkout-order-total"><span>Total (FREE Delivery)</span><span>$' + total.toFixed(2) + '</span></div>';
     document.getElementById('checkoutOrderSummary').innerHTML = summaryHtml;
@@ -959,11 +959,11 @@ function processPayment() {
     let orderDetails = 'ORDER CONFIRMED!\n\n';
     cart.forEach((item, index) => {
         const deliveryDate = new Date(item.deliveryDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-        orderDetails += 'Item ' + (index + 1) + ': ' + item.quantity + ' ydÂ³ (' + item.tons.toFixed(1) + ' tons) ' + item.product + '\n';
-        orderDetails += '  â†’ Delivery to ' + item.city + ' (' + item.zip + ')\n';
-        orderDetails += '  â†’ Scheduled: ' + deliveryDate + '\n';
-        orderDetails += '  â†’ Truck: ' + item.truckConfig + '\n';
-        orderDetails += '  â†’ Price: $' + item.total.toFixed(2) + '\n\n';
+        orderDetails += 'Item ' + (index + 1) + ': ' + item.quantity + ' yd&sup3; (' + item.tons.toFixed(1) + ' tons) ' + item.product + '\n';
+        orderDetails += '  &rarr; Delivery to ' + item.city + ' (' + item.zip + ')\n';
+        orderDetails += '  &rarr; Scheduled: ' + deliveryDate + '\n';
+        orderDetails += '  &rarr; Truck: ' + item.truckConfig + '\n';
+        orderDetails += '  &rarr; Price: $' + item.total.toFixed(2) + '\n\n';
     });
     orderDetails += 'TOTAL: $' + total.toFixed(2) + ' (FREE DELIVERY)\n\n';
     orderDetails += "We'll send a confirmation email and text with tracking info!";
@@ -1022,7 +1022,7 @@ function calculateInlineMaterial() {
     document.getElementById('inline-result-tons').textContent = tons.toFixed(1);
     
     const noteEl = document.getElementById('result-material-note');
-    noteEl.innerHTML = 'Based on <strong>' + materialName + '</strong> (' + weightPerYard + ' tons/ydÂ³)';
+    noteEl.innerHTML = 'Based on <strong>' + materialName + '</strong> (' + weightPerYard + ' tons/yd&sup3;)';
     noteEl.style.display = 'block';
     
     calculatedMaterial = { materialValue: materialSelect.value, materialName, cubicYards, tons, weightPerYard };
@@ -1037,7 +1037,7 @@ function getDeliveryPrice() {
     let quantity = Math.ceil(calculatedMaterial.cubicYards * 2) / 2;
     if (quantity < TRUCK_CONFIG.minimumYards) quantity = TRUCK_CONFIG.minimumYards;
     document.getElementById('quoteQuantity').value = quantity;
-    showToast('info', 'Material Pre-filled', quantity + ' ydÂ³ of ' + calculatedMaterial.materialName + ' - enter your ZIP for pricing!');
+    showToast('info', 'Material Pre-filled', quantity + ' yd&sup3; of ' + calculatedMaterial.materialName + ' - enter your ZIP for pricing!');
     recalculateQuote();
 }
 
@@ -1254,9 +1254,9 @@ function updateVisualizerUI() {
         document.getElementById('vizCalcMaterial').innerHTML = 'Calculating for: <strong>' + vizState.selectedMaterial.name + '</strong>';
     } else {
         step3Title.textContent = '3. Outline Area';
-        instructionsDiv.innerHTML = '<p class="viz-instruction">Tap to add points. Tap the <span class="green">green point</span> to close the shape.</p>' + (vizState.points.length > 0 ? '<button class="viz-reset-btn" onclick="resetVisualizerPoints()">â†º Reset Points</button>' : '');
+        instructionsDiv.innerHTML = '<p class="viz-instruction">Tap to add points. Tap the <span class="green">green point</span> to close the shape.</p>' + (vizState.points.length > 0 ? '<button class="viz-reset-btn" onclick="resetVisualizerPoints()">&#8634; Reset Points</button>' : '');
         instructionsDiv.style.display = 'block'; controlsDiv.style.display = 'none'; materialBadge.style.display = 'none'; calcSection.style.display = 'none';
-        if (vizState.points.length > 0) { pointCounter.style.display = 'block'; pointCounter.innerHTML = vizState.points.length + ' point' + (vizState.points.length !== 1 ? 's' : '') + (vizState.points.length >= 3 ? ' â€¢ tap green to close' : ''); }
+        if (vizState.points.length > 0) { pointCounter.style.display = 'block'; pointCounter.innerHTML = vizState.points.length + ' point' + (vizState.points.length !== 1 ? 's' : '') + (vizState.points.length >= 3 ? ' &bull; tap green to close' : ''); }
         else pointCounter.style.display = 'none';
     }
 }
@@ -1283,7 +1283,7 @@ function getVisualizerQuoteWithQuantity() {
     if (mappedMaterial) document.getElementById('quoteProduct').value = mappedMaterial;
     if (vizCalculatedQuantity) document.getElementById('quoteQuantity').value = vizCalculatedQuantity;
     recalculateQuote();
-    showToast('info', 'Ready for Quote', vizCalculatedQuantity + ' ydÂ³ of ' + vizState.selectedMaterial.name + ' - enter your ZIP!');
+    showToast('info', 'Ready for Quote', vizCalculatedQuantity + ' yd&sup3; of ' + vizState.selectedMaterial.name + ' - enter your ZIP!');
 }
 
 function getVisualizerQuote() {
@@ -1397,7 +1397,7 @@ function toggleMute() {
     if (!promoVideo) return;
     promoVideo.muted = !promoVideo.muted;
     const muteIcon = document.getElementById('muteIcon');
-    if (muteIcon) muteIcon.textContent = promoVideo.muted ? 'ðŸ”‡' : 'ðŸ”Š';
+    if (muteIcon) muteIcon.textContent = promoVideo.muted ? '' : '';
 }
 
 function toggleFullscreen() {
@@ -1519,18 +1519,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // Mid page: show both arrows
         // At bottom: show up arrow, hide down arrow
         
-        // Up arrow uses 'visible' class to show (hidden by default)
         if (atTop) {
             scrollUpBtn.classList.remove('visible');
         } else {
             scrollUpBtn.classList.add('visible');
         }
         
-        // Down arrow uses 'hidden' class to hide (visible by default)
         if (atBottom) {
-            scrollDownBtn.classList.add('hidden');
+            scrollDownBtn.classList.remove('visible');
         } else {
-            scrollDownBtn.classList.remove('hidden');
+            scrollDownBtn.classList.add('visible');
         }
     }
     
