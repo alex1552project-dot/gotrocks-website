@@ -1,4 +1,4 @@
-        * {
+* {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -1096,7 +1096,7 @@
         }
 
         .testimonial-card::before {
-            content: '"';
+            content: '\201C';
             font-family: 'Outfit', sans-serif;
             font-size: 120px;
             font-weight: 900;
@@ -2331,12 +2331,12 @@
 
         .arrow-line::before,
         .arrow-line::after {
-            content: '◄';
+            content: 'â—„';
             font-size: 10px;
         }
 
         .arrow-line::after {
-            content: '►';
+            content: 'â–º';
         }
 
         .arrow-line span {
