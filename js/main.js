@@ -1497,3 +1497,54 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize at 50%
     updateSliderPosition(slider.getBoundingClientRect().left + slider.getBoundingClientRect().width / 2);
 })();
+
+// =====================================================
+// SCROLL NAVIGATION ARROWS
+// =====================================================
+(function() {
+    const scrollUpBtn = document.getElementById('scrollUpBtn');
+    const scrollDownBtn = document.getElementById('scrollDownBtn');
+    
+    if (!scrollUpBtn || !scrollDownBtn) return;
+    
+    // Show/hide arrows based on scroll position
+    function updateScrollArrows() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight;
+        const clientHeight = document.documentElement.clientHeight;
+        const atTop = scrollTop < 100;
+        const atBottom = scrollTop + clientHeight >= scrollHeight - 100;
+        
+        // At top: hide up arrow, show down arrow
+        // Mid page: show both arrows
+        // At bottom: show up arrow, hide down arrow
+        
+        if (atTop) {
+            scrollUpBtn.classList.remove('visible');
+        } else {
+            scrollUpBtn.classList.add('visible');
+        }
+        
+        if (atBottom) {
+            scrollDownBtn.classList.remove('visible');
+        } else {
+            scrollDownBtn.classList.add('visible');
+        }
+    }
+    
+    // Scroll to top
+    scrollUpBtn.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    // Scroll down one viewport height
+    scrollDownBtn.addEventListener('click', function() {
+        window.scrollBy({ top: window.innerHeight * 0.8, behavior: 'smooth' });
+    });
+    
+    // Update on scroll
+    window.addEventListener('scroll', updateScrollArrows, { passive: true });
+    
+    // Initial check
+    updateScrollArrows();
+})();
