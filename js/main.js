@@ -1,10 +1,9 @@
 // =====================================================
 // TEXAS GOT ROCKS - COMPLETE MAIN.JS
-// Last Updated: January 8, 2026
+// Last Updated: January 22, 2026
 // INCLUDES: Smart truck selection, delivery minimums, 48-ton cap
 // NEW: 2-yard minimum per material, tiered margins, value proposition upsell
 // NEW: 41 additional ZIP codes (189 total)
-// REPLACE YOUR ENTIRE main.js WITH THIS FILE
 // =====================================================
 
 // =====================================================
@@ -135,13 +134,8 @@ if (exitForm) {
 
 // =====================================================
 // ZIP CODE DATABASE - EXPANDED TO 189 ZIP CODES
-// Includes 41 new ZIP codes from gap analysis
-// Pre-calculated distances from Conroe yard
 // =====================================================
 const ZIP_DATA = {
-    // =========================================================
-    // ZONE 1: Conroe & Immediate Area (0-15 miles from yard)
-    // =========================================================
     '77301': { city: 'Conroe', distance: 3, time: 8, zone: 1 },
     '77302': { city: 'Conroe', distance: 7, time: 15, zone: 1 },
     '77303': { city: 'Conroe', distance: 5, time: 12, zone: 1 },
@@ -150,115 +144,57 @@ const ZIP_DATA = {
     '77306': { city: 'Conroe', distance: 8, time: 18, zone: 1 },
     '77384': { city: 'Conroe', distance: 10, time: 20, zone: 1 },
     '77385': { city: 'Conroe', distance: 2, time: 5, zone: 1 },
-    
-    // Montgomery
     '77316': { city: 'Montgomery', distance: 12, time: 22, zone: 1 },
     '77356': { city: 'Montgomery', distance: 14, time: 25, zone: 1 },
-    
-    // Willis
     '77318': { city: 'Willis', distance: 10, time: 18, zone: 1 },
     '77378': { city: 'Willis', distance: 12, time: 20, zone: 1 },
-    
-    // Oak Ridge North
     '77386': { city: 'Oak Ridge North', distance: 14, time: 24, zone: 1 },
-    
-    // Shenandoah
     '77381': { city: 'Shenandoah', distance: 12, time: 22, zone: 1 },
-    
-    // =========================================================
-    // ZONE 2: The Woodlands, Spring, Magnolia (15-30 miles)
-    // =========================================================
-    
-    // The Woodlands
     '77380': { city: 'The Woodlands', distance: 18, time: 30, zone: 2 },
     '77382': { city: 'The Woodlands', distance: 17, time: 29, zone: 2 },
     '77387': { city: 'The Woodlands', distance: 19, time: 32, zone: 2 },
     '77389': { city: 'The Woodlands', distance: 22, time: 38, zone: 2 },
-    
-    // Magnolia
     '77354': { city: 'Magnolia', distance: 15, time: 28, zone: 2 },
     '77355': { city: 'Magnolia', distance: 18, time: 32, zone: 2 },
-    
-    // NEW: Pinehurst
     '77362': { city: 'Pinehurst', distance: 20, time: 35, zone: 2 },
-    
-    // Spring
     '77373': { city: 'Spring', distance: 25, time: 40, zone: 2 },
     '77379': { city: 'Spring', distance: 24, time: 42, zone: 2 },
     '77388': { city: 'Spring', distance: 26, time: 45, zone: 2 },
-    
-    // Tomball
     '77375': { city: 'Tomball', distance: 22, time: 38, zone: 2 },
     '77377': { city: 'Tomball', distance: 25, time: 42, zone: 2 },
-    
-    // Splendora
     '77372': { city: 'Splendora', distance: 22, time: 35, zone: 2 },
-    
-    // Porter
     '77365': { city: 'Porter', distance: 26, time: 40, zone: 2 },
-    
-    // New Caney
     '77357': { city: 'New Caney', distance: 28, time: 42, zone: 2 },
-    
-    // Plantersville
     '77363': { city: 'Plantersville', distance: 25, time: 40, zone: 2 },
-    
-    // New Waverly
     '77358': { city: 'New Waverly', distance: 20, time: 32, zone: 2 },
-    
-    // =========================================================
-    // ZONE 3: Huntsville, Humble, Cypress, Katy, Cleveland + NEW AREAS (30-60 miles)
-    // =========================================================
-    
-    // Huntsville (about 40 miles north)
     '77320': { city: 'Huntsville', distance: 40, time: 50, zone: 3 },
     '77340': { city: 'Huntsville', distance: 42, time: 52, zone: 3 },
     '77341': { city: 'Huntsville', distance: 42, time: 52, zone: 3 },
     '77344': { city: 'Huntsville', distance: 44, time: 55, zone: 3 },
     '77348': { city: 'Huntsville', distance: 44, time: 55, zone: 3 },
     '77349': { city: 'Huntsville', distance: 44, time: 55, zone: 3 },
-    
-    // Cleveland (about 35 miles east)
     '77327': { city: 'Cleveland', distance: 35, time: 45, zone: 3 },
     '77328': { city: 'Cleveland', distance: 37, time: 48, zone: 3 },
-    
-    // NEW: Romayor, Rye, Shepherd (east)
     '77368': { city: 'Romayor', distance: 45, time: 55, zone: 3 },
     '77369': { city: 'Rye', distance: 50, time: 60, zone: 3 },
     '77371': { city: 'Shepherd', distance: 42, time: 52, zone: 3 },
-    
-    // Humble / Kingwood
     '77338': { city: 'Humble', distance: 32, time: 50, zone: 3 },
     '77339': { city: 'Kingwood', distance: 30, time: 48, zone: 3 },
     '77345': { city: 'Kingwood', distance: 32, time: 52, zone: 3 },
     '77346': { city: 'Humble', distance: 35, time: 55, zone: 3 },
     '77347': { city: 'Humble', distance: 33, time: 52, zone: 3 },
     '77396': { city: 'Humble', distance: 34, time: 54, zone: 3 },
-    
-    // NEW: Crosby, Huffman, Highlands (east of Humble)
     '77532': { city: 'Crosby', distance: 42, time: 55, zone: 3 },
     '77336': { city: 'Huffman', distance: 38, time: 50, zone: 3 },
     '77562': { city: 'Highlands', distance: 45, time: 58, zone: 3 },
-    
-    // NEW: Channelview
     '77530': { city: 'Channelview', distance: 48, time: 60, zone: 3 },
-    
-    // NEW: Baytown
     '77520': { city: 'Baytown', distance: 52, time: 65, zone: 3 },
     '77521': { city: 'Baytown', distance: 50, time: 62, zone: 3 },
     '77522': { city: 'Baytown', distance: 51, time: 63, zone: 3 },
     '77523': { city: 'Baytown', distance: 48, time: 60, zone: 3 },
-    
-    // NEW: Dayton
     '77535': { city: 'Dayton', distance: 45, time: 55, zone: 3 },
-    
-    // NEW: Deer Park
     '77536': { city: 'Deer Park', distance: 52, time: 65, zone: 3 },
-    
-    // NEW: La Porte
     '77571': { city: 'La Porte', distance: 55, time: 68, zone: 3 },
-    
-    // NEW: Pasadena
     '77501': { city: 'Pasadena', distance: 50, time: 65, zone: 3 },
     '77502': { city: 'Pasadena', distance: 52, time: 67, zone: 3 },
     '77503': { city: 'Pasadena', distance: 53, time: 68, zone: 3 },
@@ -267,65 +203,33 @@ const ZIP_DATA = {
     '77506': { city: 'Pasadena', distance: 51, time: 66, zone: 3 },
     '77507': { city: 'Pasadena', distance: 56, time: 72, zone: 3 },
     '77508': { city: 'Pasadena', distance: 52, time: 67, zone: 3 },
-    
-    // NEW: Pearland
     '77581': { city: 'Pearland', distance: 55, time: 70, zone: 3 },
     '77584': { city: 'Pearland', distance: 58, time: 72, zone: 3 },
     '77588': { city: 'Pearland', distance: 56, time: 70, zone: 3 },
-    
-    // NEW: Friendswood
     '77546': { city: 'Friendswood', distance: 55, time: 70, zone: 3 },
-    
-    // NEW: League City
     '77573': { city: 'League City', distance: 58, time: 75, zone: 3 },
-    
-    // NEW: Seabrook
     '77586': { city: 'Seabrook', distance: 55, time: 70, zone: 3 },
-    
-    // NEW: Kemah
     '77565': { city: 'Kemah', distance: 58, time: 72, zone: 3 },
-    
-    // Cypress (about 35 miles southwest)
     '77410': { city: 'Cypress', distance: 35, time: 50, zone: 3 },
     '77429': { city: 'Cypress', distance: 35, time: 50, zone: 3 },
     '77433': { city: 'Cypress', distance: 38, time: 55, zone: 3 },
-    
-    // Katy (about 50 miles southwest)
     '77449': { city: 'Katy', distance: 50, time: 65, zone: 3 },
     '77450': { city: 'Katy', distance: 52, time: 68, zone: 3 },
     '77491': { city: 'Katy', distance: 50, time: 65, zone: 3 },
     '77492': { city: 'Katy', distance: 50, time: 65, zone: 3 },
     '77493': { city: 'Katy', distance: 48, time: 62, zone: 3 },
     '77494': { city: 'Katy', distance: 52, time: 68, zone: 3 },
-    
-    // NEW: Brookshire
     '77423': { city: 'Brookshire', distance: 55, time: 70, zone: 3 },
-    
-    // NEW: Fulshear
     '77441': { city: 'Fulshear', distance: 55, time: 70, zone: 3 },
-    
-    // NEW: Richmond
     '77406': { city: 'Richmond', distance: 58, time: 75, zone: 3 },
     '77407': { city: 'Richmond', distance: 55, time: 70, zone: 3 },
     '77469': { city: 'Richmond', distance: 58, time: 75, zone: 3 },
-    
-    // NEW: Rosenberg
     '77471': { city: 'Rosenberg', distance: 60, time: 78, zone: 3 },
-    
-    // NEW: Simonton
     '77476': { city: 'Simonton', distance: 58, time: 75, zone: 3 },
-    
-    // NEW: Sugar Land
     '77478': { city: 'Sugar Land', distance: 52, time: 68, zone: 3 },
     '77479': { city: 'Sugar Land', distance: 55, time: 70, zone: 3 },
     '77498': { city: 'Sugar Land', distance: 53, time: 68, zone: 3 },
-    
-    // NEW: Bellaire
     '77401': { city: 'Bellaire', distance: 48, time: 65, zone: 3 },
-    
-    // =========================================================
-    // HOUSTON - North & Northwest (closest to Conroe)
-    // =========================================================
     '77014': { city: 'Houston', distance: 35, time: 55, zone: 3 },
     '77018': { city: 'Houston', distance: 42, time: 64, zone: 3 },
     '77022': { city: 'Houston', distance: 40, time: 60, zone: 3 },
@@ -356,10 +260,6 @@ const ZIP_DATA = {
     '77091': { city: 'Houston', distance: 40, time: 62, zone: 3 },
     '77092': { city: 'Houston', distance: 42, time: 65, zone: 3 },
     '77093': { city: 'Houston', distance: 40, time: 62, zone: 3 },
-    
-    // =========================================================
-    // HOUSTON - Central, West, Southwest (farther from Conroe)
-    // =========================================================
     '77002': { city: 'Houston', distance: 45, time: 65, zone: 3 },
     '77003': { city: 'Houston', distance: 46, time: 66, zone: 3 },
     '77004': { city: 'Houston', distance: 48, time: 70, zone: 3 },
@@ -439,7 +339,6 @@ const TRUCK_CONFIG = {
     taxRate: 0.0825,
     serviceFeeRate: 0.035,
     maxTons: 48,
-    // NEW: Minimum Yard & Tiered Margin Configuration
     minimumYards: 2,
     smallOrderThreshold: 3,
     smallOrderMargin: 0.30,
@@ -531,7 +430,6 @@ function adjustQuoteQuantity(delta) {
 
 // =====================================================
 // CALCULATE FULL PRICE HELPER
-// Used for both current order and upsell comparison
 // =====================================================
 function calculateFullPrice(quantity, pricePerTon, weightPerYard, travelTime, margin) {
     const tons = quantity * weightPerYard;
@@ -556,7 +454,6 @@ function calculateFullPrice(quantity, pricePerTon, weightPerYard, travelTime, ma
 
 // =====================================================
 // RECALCULATE QUOTE - MAIN PRICING FORMULA
-// With 2-yard minimum, tiered margins, and value proposition upsell
 // =====================================================
 function recalculateQuote() {
     const productSelect = document.getElementById('quoteProduct');
@@ -565,11 +462,9 @@ function recalculateQuote() {
     const minimumWarning = document.getElementById('quoteMinimumWarning');
     const upsellSection = document.getElementById('quoteUpsellSection');
     
-    // Hide warnings/upsells by default
     if (minimumWarning) minimumWarning.classList.add('hidden');
     if (upsellSection) upsellSection.classList.add('hidden');
     
-    // Check if we have all required data
     if (!currentZipData || !productSelect.value || quantity <= 0) {
         document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
         document.getElementById('quoteTotalSection').classList.add('hidden');
@@ -587,9 +482,6 @@ function recalculateQuote() {
     const weightPerYard = parseFloat(selectedOption.dataset.weight);
     const materialName = selectedOption.text;
     
-    // =========================================================
-    // CHECK: 2-YARD MINIMUM PER MATERIAL
-    // =========================================================
     if (quantity < TRUCK_CONFIG.minimumYards) {
         if (minimumWarning) {
             document.getElementById('minWarningMaterialName').textContent = materialName;
@@ -605,7 +497,6 @@ function recalculateQuote() {
     
     const tons = quantity * weightPerYard;
     
-    // CHECK: 48-TON CAP
     if (tons > TRUCK_CONFIG.maxTons) {
         document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
         document.getElementById('quoteTotalSection').classList.add('hidden');
@@ -620,24 +511,14 @@ function recalculateQuote() {
         return;
     }
     
-    // Reset onclick for normal orders
     ctaButton.onclick = function() { addToCartWithCaptcha(); };
     
-    // =========================================================
-    // DETERMINE MARGIN BASED ON QUANTITY
-    // 30% for 2-2.99 yards, 20% for 3+ yards
-    // =========================================================
     const margin = (quantity < TRUCK_CONFIG.smallOrderThreshold) 
         ? TRUCK_CONFIG.smallOrderMargin 
         : TRUCK_CONFIG.standardMargin;
     
-    // Calculate current order pricing
     const currentPricing = calculateFullPrice(quantity, pricePerTon, weightPerYard, currentZipData.time, margin);
     
-    // =========================================================
-    // VALUE PROPOSITION UPSELL (for 2-2.99 yard orders)
-    // Shows customer they pay MORE total but get BETTER per-yard rate
-    // =========================================================
     if (quantity >= TRUCK_CONFIG.minimumYards && quantity < TRUCK_CONFIG.smallOrderThreshold) {
         const upsellPricing = calculateFullPrice(3, pricePerTon, weightPerYard, currentZipData.time, TRUCK_CONFIG.standardMargin);
         const savingsPerYard = currentPricing.pricePerYard - upsellPricing.pricePerYard;
@@ -653,9 +534,6 @@ function recalculateQuote() {
         }
     }
     
-    // =========================================================
-    // UPDATE DISPLAY
-    // =========================================================
     document.getElementById('quoteYardsAmount').textContent = quantity;
     document.getElementById('quoteTonsAmount').textContent = currentPricing.tons.toFixed(1);
     document.getElementById('quoteMaterialName').textContent = materialName;
@@ -678,7 +556,6 @@ function recalculateQuote() {
         ctaButton.disabled = true;
     }
     
-    // Store quote data for cart
     currentQuote = {
         zip: document.getElementById('quoteZipCode').value,
         city: currentZipData.city,
@@ -701,18 +578,12 @@ function recalculateQuote() {
     };
 }
 
-// =====================================================
-// UPGRADE TO 3 YARDS FUNCTION (called from upsell button)
-// =====================================================
 function upgradeToThreeYards() {
     document.getElementById('quoteQuantity').value = 3;
     recalculateQuote();
     showToast('success', 'Upgraded!', 'Quantity updated to 3 yards for better pricing');
 }
 
-// =====================================================
-// ATTACH ZIP CODE CALCULATOR EVENT LISTENERS
-// =====================================================
 const quoteZipInput = document.getElementById('quoteZipCode');
 if (quoteZipInput) quoteZipInput.addEventListener('input', handleQuoteZipInput);
 
@@ -1435,100 +1306,22 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(howItWorks);
     }
 });
-
-// =====================================================
-// BEFORE/AFTER IMAGE SLIDER
-// =====================================================
-(function() {
-    const slider = document.getElementById('beforeAfterSlider');
-    const handle = document.getElementById('baSliderHandle');
-    const beforeWrapper = slider ? slider.querySelector('.ba-before-wrapper') : null;
-    
-    if (!slider || !handle || !beforeWrapper) return;
-    
-    let isDragging = false;
-    
-    function getPositionX(e) {
-        return e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-    }
-    
-    function updateSliderPosition(clientX) {
-        const rect = slider.getBoundingClientRect();
-        let position = ((clientX - rect.left) / rect.width) * 100;
-        position = Math.max(0, Math.min(100, position));
+ = scrollTop + clientHeight >= scrollHeight - 100;
         
-        handle.style.left = position + '%';
-        beforeWrapper.style.width = position + '%';
-    }
-    
-    function startDrag(e) {
-        e.preventDefault();
-        isDragging = true;
-        slider.classList.add('dragging');
-    }
-    
-    function endDrag() {
-        isDragging = false;
-        slider.classList.remove('dragging');
-    }
-    
-    function drag(e) {
-        if (!isDragging) return;
-        e.preventDefault();
-        updateSliderPosition(getPositionX(e));
-    }
-    
-    // Mouse events
-    handle.addEventListener('mousedown', startDrag);
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('mouseup', endDrag);
-    
-    // Touch events
-    handle.addEventListener('touchstart', startDrag, { passive: false });
-    document.addEventListener('touchmove', drag, { passive: false });
-    document.addEventListener('touchend', endDrag);
-    
-    // Click on slider to move handle
-    slider.addEventListener('click', function(e) {
-        if (e.target === handle || handle.contains(e.target)) return;
-        updateSliderPosition(getPositionX(e));
-    });
-    
-    // Initialize at 50%
-    updateSliderPosition(slider.getBoundingClientRect().left + slider.getBoundingClientRect().width / 2);
-})();
-
-// =====================================================
-// SCROLL NAVIGATION ARROWS
-// =====================================================
-(function() {
-    const scrollUpBtn = document.getElementById('scrollUpBtn');
-    const scrollDownBtn = document.getElementById('scrollDownBtn');
-    
-    if (!scrollUpBtn || !scrollDownBtn) return;
-    
-    // Show/hide arrows based on scroll position
-    function updateScrollArrows() {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const scrollHeight = document.documentElement.scrollHeight;
-        const clientHeight = document.documentElement.clientHeight;
-        const atTop = scrollTop < 100;
-        const atBottom = scrollTop + clientHeight >= scrollHeight - 100;
-        
-        // At top: hide up arrow, show down arrow
-        // Mid page: show both arrows
-        // At bottom: show up arrow, hide down arrow
+        // At top: hide up, show down
+        // Mid page: show both
+        // At bottom: show up, hide down
         
         if (atTop) {
-            scrollUpBtn.classList.remove('visible');
+            scrollUpBtn.style.display = 'none';
         } else {
-            scrollUpBtn.classList.add('visible');
+            scrollUpBtn.style.display = 'flex';
         }
         
         if (atBottom) {
-            scrollDownBtn.classList.remove('visible');
+            scrollDownBtn.style.display = 'none';
         } else {
-            scrollDownBtn.classList.add('visible');
+            scrollDownBtn.style.display = 'flex';
         }
     }
     
