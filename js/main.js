@@ -1,9 +1,10 @@
 // =====================================================
 // TEXAS GOT ROCKS - COMPLETE MAIN.JS
-// Last Updated: January 22, 2026
+// Last Updated: January 8, 2026
 // INCLUDES: Smart truck selection, delivery minimums, 48-ton cap
 // NEW: 2-yard minimum per material, tiered margins, value proposition upsell
 // NEW: 41 additional ZIP codes (189 total)
+// REPLACE YOUR ENTIRE main.js WITH THIS FILE
 // =====================================================
 
 // =====================================================
@@ -134,8 +135,13 @@ if (exitForm) {
 
 // =====================================================
 // ZIP CODE DATABASE - EXPANDED TO 189 ZIP CODES
+// Includes 41 new ZIP codes from gap analysis
+// Pre-calculated distances from Conroe yard
 // =====================================================
 const ZIP_DATA = {
+    // =========================================================
+    // ZONE 1: Conroe & Immediate Area (0-15 miles from yard)
+    // =========================================================
     '77301': { city: 'Conroe', distance: 3, time: 8, zone: 1 },
     '77302': { city: 'Conroe', distance: 7, time: 15, zone: 1 },
     '77303': { city: 'Conroe', distance: 5, time: 12, zone: 1 },
@@ -144,57 +150,115 @@ const ZIP_DATA = {
     '77306': { city: 'Conroe', distance: 8, time: 18, zone: 1 },
     '77384': { city: 'Conroe', distance: 10, time: 20, zone: 1 },
     '77385': { city: 'Conroe', distance: 2, time: 5, zone: 1 },
+    
+    // Montgomery
     '77316': { city: 'Montgomery', distance: 12, time: 22, zone: 1 },
     '77356': { city: 'Montgomery', distance: 14, time: 25, zone: 1 },
+    
+    // Willis
     '77318': { city: 'Willis', distance: 10, time: 18, zone: 1 },
     '77378': { city: 'Willis', distance: 12, time: 20, zone: 1 },
+    
+    // Oak Ridge North
     '77386': { city: 'Oak Ridge North', distance: 14, time: 24, zone: 1 },
+    
+    // Shenandoah
     '77381': { city: 'Shenandoah', distance: 12, time: 22, zone: 1 },
+    
+    // =========================================================
+    // ZONE 2: The Woodlands, Spring, Magnolia (15-30 miles)
+    // =========================================================
+    
+    // The Woodlands
     '77380': { city: 'The Woodlands', distance: 18, time: 30, zone: 2 },
     '77382': { city: 'The Woodlands', distance: 17, time: 29, zone: 2 },
     '77387': { city: 'The Woodlands', distance: 19, time: 32, zone: 2 },
     '77389': { city: 'The Woodlands', distance: 22, time: 38, zone: 2 },
+    
+    // Magnolia
     '77354': { city: 'Magnolia', distance: 15, time: 28, zone: 2 },
     '77355': { city: 'Magnolia', distance: 18, time: 32, zone: 2 },
+    
+    // NEW: Pinehurst
     '77362': { city: 'Pinehurst', distance: 20, time: 35, zone: 2 },
+    
+    // Spring
     '77373': { city: 'Spring', distance: 25, time: 40, zone: 2 },
     '77379': { city: 'Spring', distance: 24, time: 42, zone: 2 },
     '77388': { city: 'Spring', distance: 26, time: 45, zone: 2 },
+    
+    // Tomball
     '77375': { city: 'Tomball', distance: 22, time: 38, zone: 2 },
     '77377': { city: 'Tomball', distance: 25, time: 42, zone: 2 },
+    
+    // Splendora
     '77372': { city: 'Splendora', distance: 22, time: 35, zone: 2 },
+    
+    // Porter
     '77365': { city: 'Porter', distance: 26, time: 40, zone: 2 },
+    
+    // New Caney
     '77357': { city: 'New Caney', distance: 28, time: 42, zone: 2 },
+    
+    // Plantersville
     '77363': { city: 'Plantersville', distance: 25, time: 40, zone: 2 },
+    
+    // New Waverly
     '77358': { city: 'New Waverly', distance: 20, time: 32, zone: 2 },
+    
+    // =========================================================
+    // ZONE 3: Huntsville, Humble, Cypress, Katy, Cleveland + NEW AREAS (30-60 miles)
+    // =========================================================
+    
+    // Huntsville (about 40 miles north)
     '77320': { city: 'Huntsville', distance: 40, time: 50, zone: 3 },
     '77340': { city: 'Huntsville', distance: 42, time: 52, zone: 3 },
     '77341': { city: 'Huntsville', distance: 42, time: 52, zone: 3 },
     '77344': { city: 'Huntsville', distance: 44, time: 55, zone: 3 },
     '77348': { city: 'Huntsville', distance: 44, time: 55, zone: 3 },
     '77349': { city: 'Huntsville', distance: 44, time: 55, zone: 3 },
+    
+    // Cleveland (about 35 miles east)
     '77327': { city: 'Cleveland', distance: 35, time: 45, zone: 3 },
     '77328': { city: 'Cleveland', distance: 37, time: 48, zone: 3 },
+    
+    // NEW: Romayor, Rye, Shepherd (east)
     '77368': { city: 'Romayor', distance: 45, time: 55, zone: 3 },
     '77369': { city: 'Rye', distance: 50, time: 60, zone: 3 },
     '77371': { city: 'Shepherd', distance: 42, time: 52, zone: 3 },
+    
+    // Humble / Kingwood
     '77338': { city: 'Humble', distance: 32, time: 50, zone: 3 },
     '77339': { city: 'Kingwood', distance: 30, time: 48, zone: 3 },
     '77345': { city: 'Kingwood', distance: 32, time: 52, zone: 3 },
     '77346': { city: 'Humble', distance: 35, time: 55, zone: 3 },
     '77347': { city: 'Humble', distance: 33, time: 52, zone: 3 },
     '77396': { city: 'Humble', distance: 34, time: 54, zone: 3 },
+    
+    // NEW: Crosby, Huffman, Highlands (east of Humble)
     '77532': { city: 'Crosby', distance: 42, time: 55, zone: 3 },
     '77336': { city: 'Huffman', distance: 38, time: 50, zone: 3 },
     '77562': { city: 'Highlands', distance: 45, time: 58, zone: 3 },
+    
+    // NEW: Channelview
     '77530': { city: 'Channelview', distance: 48, time: 60, zone: 3 },
+    
+    // NEW: Baytown
     '77520': { city: 'Baytown', distance: 52, time: 65, zone: 3 },
     '77521': { city: 'Baytown', distance: 50, time: 62, zone: 3 },
     '77522': { city: 'Baytown', distance: 51, time: 63, zone: 3 },
     '77523': { city: 'Baytown', distance: 48, time: 60, zone: 3 },
+    
+    // NEW: Dayton
     '77535': { city: 'Dayton', distance: 45, time: 55, zone: 3 },
+    
+    // NEW: Deer Park
     '77536': { city: 'Deer Park', distance: 52, time: 65, zone: 3 },
+    
+    // NEW: La Porte
     '77571': { city: 'La Porte', distance: 55, time: 68, zone: 3 },
+    
+    // NEW: Pasadena
     '77501': { city: 'Pasadena', distance: 50, time: 65, zone: 3 },
     '77502': { city: 'Pasadena', distance: 52, time: 67, zone: 3 },
     '77503': { city: 'Pasadena', distance: 53, time: 68, zone: 3 },
@@ -203,33 +267,65 @@ const ZIP_DATA = {
     '77506': { city: 'Pasadena', distance: 51, time: 66, zone: 3 },
     '77507': { city: 'Pasadena', distance: 56, time: 72, zone: 3 },
     '77508': { city: 'Pasadena', distance: 52, time: 67, zone: 3 },
+    
+    // NEW: Pearland
     '77581': { city: 'Pearland', distance: 55, time: 70, zone: 3 },
     '77584': { city: 'Pearland', distance: 58, time: 72, zone: 3 },
     '77588': { city: 'Pearland', distance: 56, time: 70, zone: 3 },
+    
+    // NEW: Friendswood
     '77546': { city: 'Friendswood', distance: 55, time: 70, zone: 3 },
+    
+    // NEW: League City
     '77573': { city: 'League City', distance: 58, time: 75, zone: 3 },
+    
+    // NEW: Seabrook
     '77586': { city: 'Seabrook', distance: 55, time: 70, zone: 3 },
+    
+    // NEW: Kemah
     '77565': { city: 'Kemah', distance: 58, time: 72, zone: 3 },
+    
+    // Cypress (about 35 miles southwest)
     '77410': { city: 'Cypress', distance: 35, time: 50, zone: 3 },
     '77429': { city: 'Cypress', distance: 35, time: 50, zone: 3 },
     '77433': { city: 'Cypress', distance: 38, time: 55, zone: 3 },
+    
+    // Katy (about 50 miles southwest)
     '77449': { city: 'Katy', distance: 50, time: 65, zone: 3 },
     '77450': { city: 'Katy', distance: 52, time: 68, zone: 3 },
     '77491': { city: 'Katy', distance: 50, time: 65, zone: 3 },
     '77492': { city: 'Katy', distance: 50, time: 65, zone: 3 },
     '77493': { city: 'Katy', distance: 48, time: 62, zone: 3 },
     '77494': { city: 'Katy', distance: 52, time: 68, zone: 3 },
+    
+    // NEW: Brookshire
     '77423': { city: 'Brookshire', distance: 55, time: 70, zone: 3 },
+    
+    // NEW: Fulshear
     '77441': { city: 'Fulshear', distance: 55, time: 70, zone: 3 },
+    
+    // NEW: Richmond
     '77406': { city: 'Richmond', distance: 58, time: 75, zone: 3 },
     '77407': { city: 'Richmond', distance: 55, time: 70, zone: 3 },
     '77469': { city: 'Richmond', distance: 58, time: 75, zone: 3 },
+    
+    // NEW: Rosenberg
     '77471': { city: 'Rosenberg', distance: 60, time: 78, zone: 3 },
+    
+    // NEW: Simonton
     '77476': { city: 'Simonton', distance: 58, time: 75, zone: 3 },
+    
+    // NEW: Sugar Land
     '77478': { city: 'Sugar Land', distance: 52, time: 68, zone: 3 },
     '77479': { city: 'Sugar Land', distance: 55, time: 70, zone: 3 },
     '77498': { city: 'Sugar Land', distance: 53, time: 68, zone: 3 },
+    
+    // NEW: Bellaire
     '77401': { city: 'Bellaire', distance: 48, time: 65, zone: 3 },
+    
+    // =========================================================
+    // HOUSTON - North & Northwest (closest to Conroe)
+    // =========================================================
     '77014': { city: 'Houston', distance: 35, time: 55, zone: 3 },
     '77018': { city: 'Houston', distance: 42, time: 64, zone: 3 },
     '77022': { city: 'Houston', distance: 40, time: 60, zone: 3 },
@@ -260,6 +356,10 @@ const ZIP_DATA = {
     '77091': { city: 'Houston', distance: 40, time: 62, zone: 3 },
     '77092': { city: 'Houston', distance: 42, time: 65, zone: 3 },
     '77093': { city: 'Houston', distance: 40, time: 62, zone: 3 },
+    
+    // =========================================================
+    // HOUSTON - Central, West, Southwest (farther from Conroe)
+    // =========================================================
     '77002': { city: 'Houston', distance: 45, time: 65, zone: 3 },
     '77003': { city: 'Houston', distance: 46, time: 66, zone: 3 },
     '77004': { city: 'Houston', distance: 48, time: 70, zone: 3 },
@@ -339,6 +439,7 @@ const TRUCK_CONFIG = {
     taxRate: 0.0825,
     serviceFeeRate: 0.035,
     maxTons: 48,
+    // NEW: Minimum Yard & Tiered Margin Configuration
     minimumYards: 2,
     smallOrderThreshold: 3,
     smallOrderMargin: 0.30,
@@ -401,7 +502,7 @@ function handleQuoteZipInput(e) {
     
     if (data) {
         currentZipData = data;
-        statusEl.textContent = '✓ We deliver here!';
+        statusEl.textContent = 'âœ“ We deliver here!';
         statusEl.className = 'zip-status valid';
         document.getElementById('quoteCityName').textContent = data.city;
         document.getElementById('quoteDistanceMiles').textContent = data.distance;
@@ -430,6 +531,7 @@ function adjustQuoteQuantity(delta) {
 
 // =====================================================
 // CALCULATE FULL PRICE HELPER
+// Used for both current order and upsell comparison
 // =====================================================
 function calculateFullPrice(quantity, pricePerTon, weightPerYard, travelTime, margin) {
     const tons = quantity * weightPerYard;
@@ -454,6 +556,7 @@ function calculateFullPrice(quantity, pricePerTon, weightPerYard, travelTime, ma
 
 // =====================================================
 // RECALCULATE QUOTE - MAIN PRICING FORMULA
+// With 2-yard minimum, tiered margins, and value proposition upsell
 // =====================================================
 function recalculateQuote() {
     const productSelect = document.getElementById('quoteProduct');
@@ -462,9 +565,11 @@ function recalculateQuote() {
     const minimumWarning = document.getElementById('quoteMinimumWarning');
     const upsellSection = document.getElementById('quoteUpsellSection');
     
+    // Hide warnings/upsells by default
     if (minimumWarning) minimumWarning.classList.add('hidden');
     if (upsellSection) upsellSection.classList.add('hidden');
     
+    // Check if we have all required data
     if (!currentZipData || !productSelect.value || quantity <= 0) {
         document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
         document.getElementById('quoteTotalSection').classList.add('hidden');
@@ -482,6 +587,9 @@ function recalculateQuote() {
     const weightPerYard = parseFloat(selectedOption.dataset.weight);
     const materialName = selectedOption.text;
     
+    // =========================================================
+    // CHECK: 2-YARD MINIMUM PER MATERIAL
+    // =========================================================
     if (quantity < TRUCK_CONFIG.minimumYards) {
         if (minimumWarning) {
             document.getElementById('minWarningMaterialName').textContent = materialName;
@@ -490,18 +598,19 @@ function recalculateQuote() {
         document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
         document.getElementById('quoteTotalSection').classList.add('hidden');
         document.getElementById('needAProSection').classList.add('hidden');
-        ctaButton.textContent = '⚠️ 2 Yard Minimum Required';
+        ctaButton.textContent = 'âš ï¸ 2 Yard Minimum Required';
         ctaButton.disabled = true;
         return;
     }
     
     const tons = quantity * weightPerYard;
     
+    // CHECK: 48-TON CAP
     if (tons > TRUCK_CONFIG.maxTons) {
         document.getElementById('quoteFreeDeliveryBadge').classList.add('hidden');
         document.getElementById('quoteTotalSection').classList.add('hidden');
         document.getElementById('needAProSection').classList.add('hidden');
-        ctaButton.textContent = '📞 Order Over 48 Tons - Get Commercial Quote';
+        ctaButton.textContent = 'ðŸ“ž Order Over 48 Tons - Get Commercial Quote';
         ctaButton.disabled = false;
         ctaButton.onclick = function() {
             closeCalculatorModal();
@@ -511,14 +620,24 @@ function recalculateQuote() {
         return;
     }
     
+    // Reset onclick for normal orders
     ctaButton.onclick = function() { addToCartWithCaptcha(); };
     
+    // =========================================================
+    // DETERMINE MARGIN BASED ON QUANTITY
+    // 30% for 2-2.99 yards, 20% for 3+ yards
+    // =========================================================
     const margin = (quantity < TRUCK_CONFIG.smallOrderThreshold) 
         ? TRUCK_CONFIG.smallOrderMargin 
         : TRUCK_CONFIG.standardMargin;
     
+    // Calculate current order pricing
     const currentPricing = calculateFullPrice(quantity, pricePerTon, weightPerYard, currentZipData.time, margin);
     
+    // =========================================================
+    // VALUE PROPOSITION UPSELL (for 2-2.99 yard orders)
+    // Shows customer they pay MORE total but get BETTER per-yard rate
+    // =========================================================
     if (quantity >= TRUCK_CONFIG.minimumYards && quantity < TRUCK_CONFIG.smallOrderThreshold) {
         const upsellPricing = calculateFullPrice(3, pricePerTon, weightPerYard, currentZipData.time, TRUCK_CONFIG.standardMargin);
         const savingsPerYard = currentPricing.pricePerYard - upsellPricing.pricePerYard;
@@ -534,6 +653,9 @@ function recalculateQuote() {
         }
     }
     
+    // =========================================================
+    // UPDATE DISPLAY
+    // =========================================================
     document.getElementById('quoteYardsAmount').textContent = quantity;
     document.getElementById('quoteTonsAmount').textContent = currentPricing.tons.toFixed(1);
     document.getElementById('quoteMaterialName').textContent = materialName;
@@ -549,13 +671,14 @@ function recalculateQuote() {
     document.getElementById('needAProSection').classList.remove('hidden');
     
     if (typeof turnstileStatus !== 'undefined' && turnstileStatus.quote) {
-        ctaButton.textContent = '🛒 Add to Cart →';
+        ctaButton.textContent = 'ðŸ›’ Add to Cart â†’';
         ctaButton.disabled = false;
     } else {
         ctaButton.textContent = 'Complete Verification to Continue';
         ctaButton.disabled = true;
     }
     
+    // Store quote data for cart
     currentQuote = {
         zip: document.getElementById('quoteZipCode').value,
         city: currentZipData.city,
@@ -578,12 +701,18 @@ function recalculateQuote() {
     };
 }
 
+// =====================================================
+// UPGRADE TO 3 YARDS FUNCTION (called from upsell button)
+// =====================================================
 function upgradeToThreeYards() {
     document.getElementById('quoteQuantity').value = 3;
     recalculateQuote();
     showToast('success', 'Upgraded!', 'Quantity updated to 3 yards for better pricing');
 }
 
+// =====================================================
+// ATTACH ZIP CODE CALCULATOR EVENT LISTENERS
+// =====================================================
 const quoteZipInput = document.getElementById('quoteZipCode');
 if (quoteZipInput) quoteZipInput.addEventListener('input', handleQuoteZipInput);
 
@@ -603,7 +732,7 @@ function showToast(type, title, message) {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
     toast.className = 'toast ' + type;
-    const icons = { success: '✓', error: '✕', info: 'ℹ' };
+    const icons = { success: 'âœ“', error: 'âœ•', info: 'â„¹' };
     toast.innerHTML = '<span class="toast-icon">' + icons[type] + '</span><div class="toast-message"><strong>' + title + '</strong><span>' + message + '</span></div>';
     container.appendChild(toast);
     setTimeout(() => { toast.style.animation = 'toastSlideIn 0.3s ease reverse'; setTimeout(() => toast.remove(), 300); }, 5000);
@@ -628,7 +757,7 @@ function toggleFaq(button) {
     });
     
     faqItem.classList.toggle('active');
-    if (faqItem.classList.contains('active')) { answer.style.maxHeight = answer.scrollHeight + 'px'; icon.textContent = '−'; }
+    if (faqItem.classList.contains('active')) { answer.style.maxHeight = answer.scrollHeight + 'px'; icon.textContent = 'âˆ’'; }
     else { answer.style.maxHeight = null; icon.textContent = '+'; }
 }
 
@@ -668,7 +797,7 @@ function addToCart() {
     cart.push(cartItem);
     updateCartCount();
     updateCartDrawer();
-    showToast('success', 'Added to Cart!', cartItem.quantity + ' yd³ ' + cartItem.product + ' - $' + cartItem.total.toFixed(2));
+    showToast('success', 'Added to Cart!', cartItem.quantity + ' ydÂ³ ' + cartItem.product + ' - $' + cartItem.total.toFixed(2));
     const cartCount = document.getElementById('navCartCount');
     cartCount.classList.add('pulse');
     setTimeout(() => cartCount.classList.remove('pulse'), 300);
@@ -709,7 +838,7 @@ function updateCartDrawer() {
     let subtotal = 0;
     cart.forEach(item => {
         subtotal += item.total;
-        itemsHtml += '<div class="cart-item"><div class="cart-item-header"><div><div class="cart-item-name">' + item.product + '</div><div class="cart-item-location">📍 ' + item.city + ' (' + item.zip + ')</div></div><button class="cart-item-remove" onclick="removeFromCart(' + item.id + ')">✕</button></div><div class="cart-item-details"><span class="cart-item-qty">' + item.quantity + ' yd³ (' + item.tons.toFixed(1) + ' tons)</span><span class="cart-item-price">$' + item.total.toFixed(2) + '</span></div><div class="cart-item-per-unit">$' + item.pricePerYard.toFixed(2) + '/yard delivered</div></div>';
+        itemsHtml += '<div class="cart-item"><div class="cart-item-header"><div><div class="cart-item-name">' + item.product + '</div><div class="cart-item-location">ðŸ“ ' + item.city + ' (' + item.zip + ')</div></div><button class="cart-item-remove" onclick="removeFromCart(' + item.id + ')">âœ•</button></div><div class="cart-item-details"><span class="cart-item-qty">' + item.quantity + ' ydÂ³ (' + item.tons.toFixed(1) + ' tons)</span><span class="cart-item-price">$' + item.total.toFixed(2) + '</span></div><div class="cart-item-per-unit">$' + item.pricePerYard.toFixed(2) + '/yard delivered</div></div>';
     });
     
     itemsContainer.innerHTML = itemsHtml;
@@ -757,18 +886,18 @@ function showCheckoutStep(step) {
     if (step === 1) {
         document.getElementById('checkoutStep1').style.display = 'block';
         document.getElementById('step1indicator').classList.add('active');
-        document.getElementById('checkoutModalTitle').textContent = '📋 Contact Information';
+        document.getElementById('checkoutModalTitle').textContent = 'ðŸ“‹ Contact Information';
     } else if (step === 2) {
         document.getElementById('checkoutStep2').style.display = 'block';
         document.getElementById('step1indicator').classList.add('completed');
         document.getElementById('step2indicator').classList.add('active');
-        document.getElementById('checkoutModalTitle').textContent = '📅 Select Delivery Date';
+        document.getElementById('checkoutModalTitle').textContent = 'ðŸ“… Select Delivery Date';
     } else if (step === 3) {
         document.getElementById('checkoutStep3').style.display = 'block';
         document.getElementById('step1indicator').classList.add('completed');
         document.getElementById('step2indicator').classList.add('completed');
         document.getElementById('step3indicator').classList.add('active');
-        document.getElementById('checkoutModalTitle').textContent = '💳 Review & Pay';
+        document.getElementById('checkoutModalTitle').textContent = 'ðŸ’³ Review & Pay';
     }
 }
 
@@ -795,7 +924,7 @@ function goToDeliveryStep() {
     
     var deliveryHtml = '';
     cart.forEach(function(item, index) {
-        deliveryHtml += '<div class="checkout-delivery-item"><div class="checkout-delivery-item-header"><div><div class="checkout-delivery-item-name">' + item.product + '</div><div class="checkout-delivery-item-details">' + item.quantity + ' yd³ (' + item.tons.toFixed(1) + ' tons) → ' + item.city + '</div></div><div class="checkout-delivery-item-price">$' + item.total.toFixed(2) + '</div></div><label>📅 Preferred Delivery Date</label><input type="date" id="deliveryDate' + index + '" value="' + item.deliveryDate + '" min="' + getMinDeliveryDate() + '"></div>';
+        deliveryHtml += '<div class="checkout-delivery-item"><div class="checkout-delivery-item-header"><div><div class="checkout-delivery-item-name">' + item.product + '</div><div class="checkout-delivery-item-details">' + item.quantity + ' ydÂ³ (' + item.tons.toFixed(1) + ' tons) â†’ ' + item.city + '</div></div><div class="checkout-delivery-item-price">$' + item.total.toFixed(2) + '</div></div><label>ðŸ“… Preferred Delivery Date</label><input type="date" id="deliveryDate' + index + '" value="' + item.deliveryDate + '" min="' + getMinDeliveryDate() + '"></div>';
     });
     document.getElementById('checkoutDeliveryItems').innerHTML = deliveryHtml;
     showCheckoutStep(2);
@@ -807,12 +936,12 @@ function goToPaymentStep() {
         if (dateInput) item.deliveryDate = dateInput.value;
     });
     
-    var summaryHtml = '<div class="checkout-customer-summary"><h4>📍 Delivery To:</h4><p><strong>' + customerInfo.name + '</strong><br>' + customerInfo.address + '<br>' + customerInfo.city + ', TX ' + customerInfo.zip + '<br>📞 ' + customerInfo.phone + '<br>✉️ ' + customerInfo.email + '</p></div>';
+    var summaryHtml = '<div class="checkout-customer-summary"><h4>ðŸ“ Delivery To:</h4><p><strong>' + customerInfo.name + '</strong><br>' + customerInfo.address + '<br>' + customerInfo.city + ', TX ' + customerInfo.zip + '<br>ðŸ“ž ' + customerInfo.phone + '<br>âœ‰ï¸ ' + customerInfo.email + '</p></div>';
     var total = 0;
     cart.forEach(function(item) {
         total += item.total;
         var deliveryDate = new Date(item.deliveryDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-        summaryHtml += '<div class="checkout-order-item"><div><strong>' + item.product + '</strong><br><small>' + item.quantity + ' yd³ (' + item.tons.toFixed(1) + ' tons)</small><br><small>📅 ' + deliveryDate + '</small></div><strong>$' + item.total.toFixed(2) + '</strong></div>';
+        summaryHtml += '<div class="checkout-order-item"><div><strong>' + item.product + '</strong><br><small>' + item.quantity + ' ydÂ³ (' + item.tons.toFixed(1) + ' tons)</small><br><small>ðŸ“… ' + deliveryDate + '</small></div><strong>$' + item.total.toFixed(2) + '</strong></div>';
     });
     summaryHtml += '<div class="checkout-order-total"><span>Total (FREE Delivery)</span><span>$' + total.toFixed(2) + '</span></div>';
     document.getElementById('checkoutOrderSummary').innerHTML = summaryHtml;
@@ -830,11 +959,11 @@ function processPayment() {
     let orderDetails = 'ORDER CONFIRMED!\n\n';
     cart.forEach((item, index) => {
         const deliveryDate = new Date(item.deliveryDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-        orderDetails += 'Item ' + (index + 1) + ': ' + item.quantity + ' yd³ (' + item.tons.toFixed(1) + ' tons) ' + item.product + '\n';
-        orderDetails += '  → Delivery to ' + item.city + ' (' + item.zip + ')\n';
-        orderDetails += '  → Scheduled: ' + deliveryDate + '\n';
-        orderDetails += '  → Truck: ' + item.truckConfig + '\n';
-        orderDetails += '  → Price: $' + item.total.toFixed(2) + '\n\n';
+        orderDetails += 'Item ' + (index + 1) + ': ' + item.quantity + ' ydÂ³ (' + item.tons.toFixed(1) + ' tons) ' + item.product + '\n';
+        orderDetails += '  â†’ Delivery to ' + item.city + ' (' + item.zip + ')\n';
+        orderDetails += '  â†’ Scheduled: ' + deliveryDate + '\n';
+        orderDetails += '  â†’ Truck: ' + item.truckConfig + '\n';
+        orderDetails += '  â†’ Price: $' + item.total.toFixed(2) + '\n\n';
     });
     orderDetails += 'TOTAL: $' + total.toFixed(2) + ' (FREE DELIVERY)\n\n';
     orderDetails += "We'll send a confirmation email and text with tracking info!";
@@ -893,7 +1022,7 @@ function calculateInlineMaterial() {
     document.getElementById('inline-result-tons').textContent = tons.toFixed(1);
     
     const noteEl = document.getElementById('result-material-note');
-    noteEl.innerHTML = 'Based on <strong>' + materialName + '</strong> (' + weightPerYard + ' tons/yd³)';
+    noteEl.innerHTML = 'Based on <strong>' + materialName + '</strong> (' + weightPerYard + ' tons/ydÂ³)';
     noteEl.style.display = 'block';
     
     calculatedMaterial = { materialValue: materialSelect.value, materialName, cubicYards, tons, weightPerYard };
@@ -908,7 +1037,7 @@ function getDeliveryPrice() {
     let quantity = Math.ceil(calculatedMaterial.cubicYards * 2) / 2;
     if (quantity < TRUCK_CONFIG.minimumYards) quantity = TRUCK_CONFIG.minimumYards;
     document.getElementById('quoteQuantity').value = quantity;
-    showToast('info', 'Material Pre-filled', quantity + ' yd³ of ' + calculatedMaterial.materialName + ' - enter your ZIP for pricing!');
+    showToast('info', 'Material Pre-filled', quantity + ' ydÂ³ of ' + calculatedMaterial.materialName + ' - enter your ZIP for pricing!');
     recalculateQuote();
 }
 
@@ -1125,9 +1254,9 @@ function updateVisualizerUI() {
         document.getElementById('vizCalcMaterial').innerHTML = 'Calculating for: <strong>' + vizState.selectedMaterial.name + '</strong>';
     } else {
         step3Title.textContent = '3. Outline Area';
-        instructionsDiv.innerHTML = '<p class="viz-instruction">Tap to add points. Tap the <span class="green">green point</span> to close the shape.</p>' + (vizState.points.length > 0 ? '<button class="viz-reset-btn" onclick="resetVisualizerPoints()">↺ Reset Points</button>' : '');
+        instructionsDiv.innerHTML = '<p class="viz-instruction">Tap to add points. Tap the <span class="green">green point</span> to close the shape.</p>' + (vizState.points.length > 0 ? '<button class="viz-reset-btn" onclick="resetVisualizerPoints()">â†º Reset Points</button>' : '');
         instructionsDiv.style.display = 'block'; controlsDiv.style.display = 'none'; materialBadge.style.display = 'none'; calcSection.style.display = 'none';
-        if (vizState.points.length > 0) { pointCounter.style.display = 'block'; pointCounter.innerHTML = vizState.points.length + ' point' + (vizState.points.length !== 1 ? 's' : '') + (vizState.points.length >= 3 ? ' • tap green to close' : ''); }
+        if (vizState.points.length > 0) { pointCounter.style.display = 'block'; pointCounter.innerHTML = vizState.points.length + ' point' + (vizState.points.length !== 1 ? 's' : '') + (vizState.points.length >= 3 ? ' â€¢ tap green to close' : ''); }
         else pointCounter.style.display = 'none';
     }
 }
@@ -1154,7 +1283,7 @@ function getVisualizerQuoteWithQuantity() {
     if (mappedMaterial) document.getElementById('quoteProduct').value = mappedMaterial;
     if (vizCalculatedQuantity) document.getElementById('quoteQuantity').value = vizCalculatedQuantity;
     recalculateQuote();
-    showToast('info', 'Ready for Quote', vizCalculatedQuantity + ' yd³ of ' + vizState.selectedMaterial.name + ' - enter your ZIP!');
+    showToast('info', 'Ready for Quote', vizCalculatedQuantity + ' ydÂ³ of ' + vizState.selectedMaterial.name + ' - enter your ZIP!');
 }
 
 function getVisualizerQuote() {
@@ -1268,7 +1397,7 @@ function toggleMute() {
     if (!promoVideo) return;
     promoVideo.muted = !promoVideo.muted;
     const muteIcon = document.getElementById('muteIcon');
-    if (muteIcon) muteIcon.textContent = promoVideo.muted ? '🔇' : '🔊';
+    if (muteIcon) muteIcon.textContent = promoVideo.muted ? 'ðŸ”‡' : 'ðŸ”Š';
 }
 
 function toggleFullscreen() {
@@ -1298,12 +1427,79 @@ function trackVideoComplete() { trackEvent('video_complete', { event_category: '
 document.addEventListener('DOMContentLoaded', function() {
     const howItWorks = document.getElementById('how-it-works');
     if (howItWorks) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) { trackEvent('section_view', { section_name: 'How It Works' }); observer.unobserve(entry.target); }
+            });
+        }, { threshold: 0.5 });
+        observer.observe(howItWorks);
+    }
+});
 
 // =====================================================
-// SCROLL NAVIGATION ARROWS - FIXED
-// At top: only down arrow
-// Mid page: both arrows  
-// At bottom: only up arrow
+// BEFORE/AFTER IMAGE SLIDER
+// =====================================================
+(function() {
+    const slider = document.getElementById('beforeAfterSlider');
+    const handle = document.getElementById('baSliderHandle');
+    const beforeWrapper = slider ? slider.querySelector('.ba-before-wrapper') : null;
+    
+    if (!slider || !handle || !beforeWrapper) return;
+    
+    let isDragging = false;
+    
+    function getPositionX(e) {
+        return e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+    }
+    
+    function updateSliderPosition(clientX) {
+        const rect = slider.getBoundingClientRect();
+        let position = ((clientX - rect.left) / rect.width) * 100;
+        position = Math.max(0, Math.min(100, position));
+        
+        handle.style.left = position + '%';
+        beforeWrapper.style.width = position + '%';
+    }
+    
+    function startDrag(e) {
+        e.preventDefault();
+        isDragging = true;
+        slider.classList.add('dragging');
+    }
+    
+    function endDrag() {
+        isDragging = false;
+        slider.classList.remove('dragging');
+    }
+    
+    function drag(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        updateSliderPosition(getPositionX(e));
+    }
+    
+    // Mouse events
+    handle.addEventListener('mousedown', startDrag);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', endDrag);
+    
+    // Touch events
+    handle.addEventListener('touchstart', startDrag, { passive: false });
+    document.addEventListener('touchmove', drag, { passive: false });
+    document.addEventListener('touchend', endDrag);
+    
+    // Click on slider to move handle
+    slider.addEventListener('click', function(e) {
+        if (e.target === handle || handle.contains(e.target)) return;
+        updateSliderPosition(getPositionX(e));
+    });
+    
+    // Initialize at 50%
+    updateSliderPosition(slider.getBoundingClientRect().left + slider.getBoundingClientRect().width / 2);
+})();
+
+// =====================================================
+// SCROLL NAVIGATION ARROWS
 // =====================================================
 (function() {
     const scrollUpBtn = document.getElementById('scrollUpBtn');
@@ -1311,6 +1507,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (!scrollUpBtn || !scrollDownBtn) return;
     
+    // Show/hide arrows based on scroll position
     function updateScrollArrows() {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         const scrollHeight = document.documentElement.scrollHeight;
@@ -1318,31 +1515,38 @@ document.addEventListener('DOMContentLoaded', function() {
         const atTop = scrollTop < 100;
         const atBottom = scrollTop + clientHeight >= scrollHeight - 100;
         
-        // At top: hide up, show down
+        // At top: hide up arrow, show down arrow
+        // Mid page: show both arrows
+        // At bottom: show up arrow, hide down arrow
+        
+        // Up arrow uses 'visible' class to show (hidden by default)
         if (atTop) {
-            scrollUpBtn.style.cssText = 'display: none !important;';
-            scrollDownBtn.style.cssText = 'display: flex !important;';
+            scrollUpBtn.classList.remove('visible');
+        } else {
+            scrollUpBtn.classList.add('visible');
         }
-        // At bottom: show up, hide down
-        else if (atBottom) {
-            scrollUpBtn.style.cssText = 'display: flex !important;';
-            scrollDownBtn.style.cssText = 'display: none !important;';
-        }
-        // Middle: show both
-        else {
-            scrollUpBtn.style.cssText = 'display: flex !important;';
-            scrollDownBtn.style.cssText = 'display: flex !important;';
+        
+        // Down arrow uses 'hidden' class to hide (visible by default)
+        if (atBottom) {
+            scrollDownBtn.classList.add('hidden');
+        } else {
+            scrollDownBtn.classList.remove('hidden');
         }
     }
     
+    // Scroll to top
     scrollUpBtn.addEventListener('click', function() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
     
+    // Scroll down one viewport height
     scrollDownBtn.addEventListener('click', function() {
         window.scrollBy({ top: window.innerHeight * 0.8, behavior: 'smooth' });
     });
     
+    // Update on scroll
     window.addEventListener('scroll', updateScrollArrows, { passive: true });
+    
+    // Initial check
     updateScrollArrows();
 })();
