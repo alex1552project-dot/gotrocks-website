@@ -20,6 +20,113 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
+    <!-- Square Web Payments SDK -->
+    <script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
+    <style>
+        /* Square Payment Styles */
+        .payment-method-selection {
+            margin: 20px 0;
+        }
+        .payment-method-selection h4 {
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .payment-option {
+            display: block;
+            cursor: pointer;
+        }
+        .payment-option input {
+            display: none;
+        }
+        .payment-option-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+        .payment-option input:checked + .payment-option-content {
+            border-color: var(--warm-orange, #FF6F00);
+            background: rgba(255, 111, 0, 0.05);
+        }
+        .payment-icon {
+            font-size: 24px;
+        }
+        .payment-label {
+            font-weight: 700;
+            color: var(--earth-dark, #2C1810);
+        }
+        .payment-desc {
+            font-size: 12px;
+            color: var(--earth-brown, #5D4037);
+            margin-left: auto;
+        }
+        .ach-notice {
+            background: #FFF3CD;
+            border: 1px solid #FFCC00;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 16px 0;
+        }
+        .ach-notice p {
+            margin: 0;
+            font-size: 14px;
+            color: #856404;
+        }
+        .square-card-container {
+            min-height: 56px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+        }
+        .square-card-container:focus-within {
+            border-color: var(--warm-orange, #FF6F00);
+        }
+        .ach-instructions {
+            text-align: center;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            color: var(--earth-brown, #5D4037);
+        }
+        .payment-security-note {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--earth-brown, #5D4037);
+        }
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @media (max-width: 480px) {
+            .payment-option-content {
+                flex-wrap: wrap;
+            }
+            .payment-desc {
+                width: 100%;
+                margin-left: 36px;
+                margin-top: 4px;
+            }
+        }
+    </style>
     <style>
         /* Fix product card price alignment */
         .products-grid .product-card {
@@ -409,7 +516,7 @@
     <div class="section-container">
         <div class="commercial-box">
             <div class="commercial-content"><h3>Commercial Project Needing 48+ Tons?</h3><p>For large-scale commercial projects, we offer bulk pricing and dedicated project support. Contact us for a custom quote.</p></div>
-            <a href="https://www.tcmaterialsllc.com" target="_blank" class="btn btn-yellow">Get Bulk Commercial Pricing &rarr;</a>
+            <a href="tel:9362592887" class="btn btn-yellow">Get Bulk Commercial Pricing &rarr;</a>
         </div>
     </div>
 </section>
@@ -418,9 +525,9 @@
 <section class="contractor-section">
     <div class="section-container">
         <div class="contractor-box">
-            <div class="contractor-icon"><img src="/images/contractor-mascot.png" alt="Faust Landscaping" class="contractor-mascot-small"></div>
-            <div class="contractor-content"><h3>Got the Materials? Faust Has the Muscle!</h3><p>Not everyone wants to spend their Saturday spreading gravel&mdash;and that's okay! We've partnered with <strong>Faust Landscaping</strong>, Montgomery County's premier landscaping company. From design to installation, they'll transform your yard while you kick back and enjoy the results.</p></div>
-            <a href="/faust-landscaping.html" class="btn btn-contractor"><span class="btn-icon">&#127793;</span>Meet Faust Landscaping &rarr;</a>
+            <div class="contractor-icon"><img src="/images/contractor-mascot.png" alt="Find a Pro" class="contractor-mascot-small"></div>
+            <div class="contractor-content"><h3>Got the Materials, But Need the Muscle?</h3><p>Not everyone wants to spend their Saturday spreading gravel&mdash;and that's okay! We've partnered with trusted local landscapers and contractors who know their stuff. They'll handle the hard work while you kick back and watch your yard transform.</p></div>
+            <a href="/contractors/" class="btn btn-contractor"><span class="btn-icon">&#128119;</span>Find a Pro Near You &rarr;</a>
         </div>
     </div>
 </section>
@@ -564,7 +671,7 @@
                     <a href="sms:9362592887">&#128172; Text (936) 259-2887</a>
                 </div>
             </div>
-            <div class="footer-contact-item"><span>&#128205;</span><a href="/cdn-cgi/l/email-protection#85ecebe3eac5f1e0fde4f6e2eaf1f7eae6eef6abe6eae8"><span class="__cf_email__" data-cfemail="dfb6b1b9b09fabbaa7beacb8b0abadb0bcb4acf1bcb0b2">[email&#160;protected]</span></a></div>
+            <div class="footer-contact-item"><span>&#128205;</span><a href="mailto:info@texasgotrocks.com">info@texasgotrocks.com</a></div>
             <div class="footer-contact-item"><span>&#128205;/span><span>Conroe, TX 77301</span></div>
         </div>
         <div class="footer-column">
@@ -750,7 +857,7 @@
             
             <!-- Need a Pro Link -->
             <div id="needAProSection" class="need-a-pro-section hidden">
-                <a href="/faust-landscaping.html?from=quote" class="need-a-pro-link"><span class="need-pro-icon">&#128119;</span><span class="need-pro-text">Need a Pro to install it?</span><span class="need-pro-arrow">&rarr;</span></a>
+                <a href="/contractors/?from=quote" class="need-a-pro-link"><span class="need-pro-icon">&#128119;</span><span class="need-pro-text">Need a Pro to install it?</span><span class="need-pro-arrow">&rarr;</span></a>
             </div>
             
             <!-- Cloudflare Turnstile -->
@@ -782,7 +889,7 @@
             <div class="cart-summary-row"><span>Delivery</span><span style="color: var(--success-green); font-weight: 700;">FREE</span></div>
             <div class="cart-summary-row total"><span>Total</span><span id="cartTotal">$0</span></div>
         </div>
-        <a href="/faust-landscaping.html?from=quote" class="need-a-pro-link cart-pro-link"><span class="need-pro-icon">&#128119;</span><span class="need-pro-text">Need a Pro to install it?</span><span class="need-pro-arrow">&rarr;</span></a>
+        <a href="/contractors/?from=quote" class="need-a-pro-link cart-pro-link"><span class="need-pro-icon">&#128119;</span><span class="need-pro-text">Need a Pro to install it?</span><span class="need-pro-arrow">&rarr;</span></a>
         <button class="cart-checkout-btn" onclick="proceedToCheckout()">Proceed to Checkout &rarr;</button>
         <p class="free-delivery-reminder">&#128666; FREE delivery on all orders!</p>
         <p class="cart-add-more-link">Need more materials? <a href="#" onclick="closeCartDrawer(); openCalculatorModal(); return false;">+ Add Another Item</a></p>
@@ -815,11 +922,64 @@
                 <div class="checkout-order-items" id="checkoutDeliveryItems"></div>
                 <div class="checkout-nav-buttons"><button class="btn btn-secondary" onclick="goToContactStep()">&larr; Back</button><button class="btn btn-primary" onclick="goToPaymentStep()">Continue to Payment &rarr;</button></div>
             </div>
+            <!-- Step 3: Payment - SQUARE INTEGRATION -->
             <div class="checkout-step-content" id="checkoutStep3" style="display: none;">
+                <!-- Order Summary -->
                 <div class="checkout-order-summary" id="checkoutOrderSummary"></div>
-                <button class="btn btn-primary" style="width: 100%;" onclick="processPayment()">&#128179; Pay Now</button>
-                <div class="checkout-nav-buttons" style="margin-top: 12px;"><button class="btn btn-secondary" style="width: 100%;" onclick="goToDeliveryStep()">&larr; Back to Delivery</button></div>
-                <p style="text-align: center; margin-top: 12px; font-size: 13px; color: var(--earth-brown);">&#128274; Secure payment powered by Square</p>
+                
+                <!-- Payment Method Selection -->
+                <div class="payment-method-selection">
+                    <h4>&#128179; Select Payment Method</h4>
+                    <div class="payment-options">
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" value="card" checked onchange="onPaymentMethodChange('card')">
+                            <span class="payment-option-content">
+                                <span class="payment-icon">&#128179;</span>
+                                <span class="payment-label">Credit/Debit Card</span>
+                                <span class="payment-desc">Instant payment</span>
+                            </span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" value="ach" onchange="onPaymentMethodChange('ach')">
+                            <span class="payment-option-content">
+                                <span class="payment-icon">&#127970;</span>
+                                <span class="payment-label">Bank Account (ACH)</span>
+                                <span class="payment-desc">Lower fees &bull; 2-3 days to clear</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- ACH Notice -->
+                <div class="ach-notice" id="achNotice" style="display: none;">
+                    <p>&#9888;&#65039; <strong>Bank payments take 2-3 business days to clear.</strong> Your delivery will be scheduled after payment clears.</p>
+                </div>
+                
+                <!-- Card Payment Form -->
+                <div id="cardPaymentForm">
+                    <div class="form-group">
+                        <label>Card Details</label>
+                        <div id="square-card-container" class="square-card-container">
+                            <!-- Square Card Form renders here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ACH Payment Form (hidden by default) -->
+                <div id="achPaymentForm" style="display: none;">
+                    <p class="ach-instructions">Click "Pay Now" to securely connect your bank account through Square.</p>
+                </div>
+                
+                <!-- Pay Button -->
+                <button id="squarePayButton" class="btn btn-primary" style="width: 100%; margin-top: 16px;" onclick="handleSquarePayment()">
+                    &#128274; Pay Now
+                </button>
+                
+                <div class="checkout-nav-buttons" style="margin-top: 12px;">
+                    <button class="btn btn-secondary" style="width: 100%;" onclick="goToDeliveryStep()">&larr; Back to Delivery</button>
+                </div>
+                
+                <p class="payment-security-note">&#128274; Secure payment powered by Square</p>
             </div>
         </div>
     </div>
@@ -1115,7 +1275,8 @@
     <button class="scroll-arrow scroll-down" id="scrollDownBtn" aria-label="Scroll down"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="/js/main.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/square-checkout.js"></script>
 <script>
 // More Products Modal Functions
 function openMoreProductsModal() {
@@ -1135,4 +1296,83 @@ function selectMoreProduct(productValue) {
         const productSelect = document.getElementById('quoteProduct');
         if (productSelect) {
             productSelect.value = productValue;
-            productSelect.dispatchEvent(new Event('change'))
+            productSelect.dispatchEvent(new Event('change'));
+        }
+    }, 100);
+}
+
+// Close modal on overlay click
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('more-products-modal-overlay')) {
+        closeMoreProductsModal();
+    }
+});
+
+// Handle Square payment submission
+async function handleSquarePayment() {
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+    
+    // Gather order data
+    const orderData = {
+        customer: {
+            name: customerInfo.name,
+            email: customerInfo.email,
+            phone: customerInfo.phone,
+            address: customerInfo.address,
+            city: customerInfo.city,
+            zip: customerInfo.zip
+        },
+        items: cart.map(item => ({
+            product: item.product,
+            productId: item.productId,
+            quantity: item.quantity,
+            tons: item.tons,
+            pricePerTon: item.pricePerTon,
+            total: item.total
+        })),
+        totals: {
+            subtotal: cart.reduce((sum, item) => sum + item.total, 0),
+            salesTax: cart.reduce((sum, item) => sum + (item.salesTax || 0), 0),
+            serviceFee: cart.reduce((sum, item) => sum + (item.serviceFee || 0), 0),
+            total: cart.reduce((sum, item) => sum + item.total, 0)
+        },
+        delivery: {
+            scheduledDate: cart[0]?.deliveryDate || getDefaultDeliveryDate(),
+            zone: cart[0]?.zone || 1,
+            distance: cart[0]?.distance || 0
+        }
+    };
+
+    try {
+        await window.SquareCheckout.processPayment(paymentMethod, orderData);
+    } catch (error) {
+        console.error('Payment failed:', error);
+        // Error is already shown by processSquarePayment
+    }
+}
+
+// Handle payment method change
+function onPaymentMethodChange(method) {
+    // Call Square's handler
+    if (window.SquareCheckout && window.SquareCheckout.onPaymentMethodChange) {
+        window.SquareCheckout.onPaymentMethodChange(method);
+    }
+    
+    // Show/hide appropriate forms
+    const cardForm = document.getElementById('cardPaymentForm');
+    const achForm = document.getElementById('achPaymentForm');
+    const achNotice = document.getElementById('achNotice');
+    
+    if (method === 'card') {
+        if (cardForm) cardForm.style.display = 'block';
+        if (achForm) achForm.style.display = 'none';
+        if (achNotice) achNotice.style.display = 'none';
+    } else {
+        if (cardForm) cardForm.style.display = 'none';
+        if (achForm) achForm.style.display = 'block';
+        if (achNotice) achNotice.style.display = 'block';
+    }
+}
+</script>
+</body>
+</html>
