@@ -672,7 +672,7 @@
                 </div>
             </div>
             <div class="footer-contact-item"><span>&#128205;</span><a href="mailto:info@texasgotrocks.com">info@texasgotrocks.com</a></div>
-            <div class="footer-contact-item"><span>&#128205;/span><span>Conroe, TX 77301</span></div>
+            <div class="footer-contact-item"><span>&#128205;</span><span>Conroe, TX 77301</span></div>
         </div>
         <div class="footer-column">
             <h4>Products</h4>
@@ -1079,160 +1079,7 @@
         </div>
     </div>
 </div>
-
-<!-- More Products Modal Styles (inline for reliability) -->
-<style>
-.more-products-modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 9999;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-.more-products-modal-overlay.active {
-    display: flex !important;
-}
-.more-products-modal {
-    background: white;
-    border-radius: 20px;
-    max-width: 700px;
-    width: 100%;
-    max-height: 85vh;
-    overflow-y: auto;
-    position: relative;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-}
-.more-products-modal .modal-close {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    background: rgba(255,255,255,0.2);
-    border: none;
-    font-size: 28px;
-    cursor: pointer;
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-}
-.more-products-modal .modal-close:hover {
-    background: rgba(255,255,255,0.3);
-}
-.more-products-header {
-    background: linear-gradient(135deg, #3E2723, #FF6F00);
-    color: white;
-    padding: 30px;
-    border-radius: 20px 20px 0 0;
-    text-align: center;
-}
-.more-products-header h3 {
-    font-size: 1.5rem;
-    margin: 0 0 8px 0;
-}
-.more-products-header p {
-    opacity: 0.9;
-    margin: 0;
-}
-.more-products-body {
-    padding: 25px 30px;
-}
-.more-products-modal .product-category {
-    margin-bottom: 25px;
-}
-.more-products-modal .product-category:last-child {
-    margin-bottom: 0;
-}
-.more-products-modal .product-category h4 {
-    color: #3E2723;
-    font-size: 1.1rem;
-    margin: 0 0 12px 0;
-    padding-bottom: 8px;
-    border-bottom: 2px solid #eee;
-}
-.more-products-modal .product-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 10px;
-}
-.more-products-modal .product-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 15px;
-    background: #f8f8f8;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: 2px solid transparent;
-}
-.more-products-modal .product-item:hover {
-    background: #fff;
-    border-color: #FF6F00;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-.more-products-modal .product-name {
-    font-weight: 500;
-    color: #3E2723;
-    font-size: 0.9rem;
-}
-.more-products-modal .product-price {
-    font-weight: 600;
-    color: #FF6F00;
-    white-space: nowrap;
-    font-size: 0.85rem;
-}
-.more-products-footer {
-    padding: 20px 30px;
-    background: #f5f5f5;
-    border-radius: 0 0 20px 20px;
-    text-align: center;
-}
-.more-products-footer p {
-    margin: 0;
-    color: #666;
-    font-size: 0.9rem;
-}
-.more-products-footer a {
-    color: #FF6F00;
-    font-weight: 600;
-}
-@media (max-width: 600px) {
-    .more-products-modal .product-list {
-        grid-template-columns: 1fr;
-    }
-    .more-products-header, .more-products-body, .more-products-footer {
-        padding: 20px;
-    }
-}
-</style>
-
-<!-- More Products Modal -->
-<div class="more-products-modal-overlay" id="moreProductsModal">
-    <div class="more-products-modal">
-        <button class="modal-close" onclick="closeMoreProductsModal()">&times;</button>
-        <div class="more-products-header">
-            <h3>&#129704; All Available Materials</h3>
-            <p>We deliver all these materials with FREE delivery</p>
-        </div>
-        <div class="more-products-body">
-            <div class="product-category">
-                <h4>Rock & Gravel</h4>
-                <div class="product-list">
-                    <div class="product-item" onclick="selectMoreProduct('decomposed-granite')"><span class="product-name">1/4" Minus Decomposed Granite</span><span class="product-price">Starting at $85.00/cy</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('granite-base')"><span class="product-name">Granite Base</span><span class="product-price">Starting at $91.00/cy</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('limestone-1')"><span class="product-name">1" Limestone</span><span class="product-price">Starting at $80.00/cy</span></div>
-                    <div class="product-item" onclick="selectMoreProduct('limestone-3/4')"><span class="product-name">3/4" Limestone</span><span class="product-price">Starting at $80.00/cy</span></div>
+ at $80.00/cy</span></div>
                     <div class="product-item" onclick="selectMoreProduct('limestone-3/8')"><span class="product-name">3/8" Limestone</span><span class="product-price">Starting at $85.00/cy</span></div>
                     <div class="product-item" onclick="selectMoreProduct('limestone-base')"><span class="product-name">Limestone Base</span><span class="product-price">Starting at $85.00/cy</span></div>
                     <div class="product-item" onclick="selectMoreProduct('bull-rock-3x5')"><span class="product-name">3x5 Bull Rock Gravel</span><span class="product-price">Starting at $80.00/cy</span></div>
@@ -1308,69 +1155,49 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Handle Square payment submission
-async function handleSquarePayment() {
-    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+// Payment method toggle handler
+function onPaymentMethodChange(method) {
+    const achNotice = document.getElementById('achNotice');
+    const cardForm = document.getElementById('cardPaymentForm');
+    const achForm = document.getElementById('achPaymentForm');
     
-    // Gather order data
-    const orderData = {
-        customer: {
-            name: customerInfo.name,
-            email: customerInfo.email,
-            phone: customerInfo.phone,
-            address: customerInfo.address,
-            city: customerInfo.city,
-            zip: customerInfo.zip
-        },
-        items: cart.map(item => ({
-            product: item.product,
-            productId: item.productId,
-            quantity: item.quantity,
-            tons: item.tons,
-            pricePerTon: item.pricePerTon,
-            total: item.total
-        })),
-        totals: {
-            subtotal: cart.reduce((sum, item) => sum + item.total, 0),
-            salesTax: cart.reduce((sum, item) => sum + (item.salesTax || 0), 0),
-            serviceFee: cart.reduce((sum, item) => sum + (item.serviceFee || 0), 0),
-            total: cart.reduce((sum, item) => sum + item.total, 0)
-        },
-        delivery: {
-            scheduledDate: cart[0]?.deliveryDate || getDefaultDeliveryDate(),
-            zone: cart[0]?.zone || 1,
-            distance: cart[0]?.distance || 0
-        }
-    };
-
-    try {
-        await window.SquareCheckout.processPayment(paymentMethod, orderData);
-    } catch (error) {
-        console.error('Payment failed:', error);
-        // Error is already shown by processSquarePayment
+    if (method === 'ach') {
+        achNotice.style.display = 'block';
+        cardForm.style.display = 'none';
+        achForm.style.display = 'block';
+    } else {
+        achNotice.style.display = 'none';
+        cardForm.style.display = 'block';
+        achForm.style.display = 'none';
     }
 }
 
-// Handle payment method change
-function onPaymentMethodChange(method) {
-    // Call Square's handler
-    if (window.SquareCheckout && window.SquareCheckout.onPaymentMethodChange) {
-        window.SquareCheckout.onPaymentMethodChange(method);
-    }
+// Square payment handler - calls square-checkout.js
+async function handleSquarePayment() {
+    const payButton = document.getElementById('squarePayButton');
+    const originalText = payButton.innerHTML;
     
-    // Show/hide appropriate forms
-    const cardForm = document.getElementById('cardPaymentForm');
-    const achForm = document.getElementById('achPaymentForm');
-    const achNotice = document.getElementById('achNotice');
-    
-    if (method === 'card') {
-        if (cardForm) cardForm.style.display = 'block';
-        if (achForm) achForm.style.display = 'none';
-        if (achNotice) achNotice.style.display = 'none';
-    } else {
-        if (cardForm) cardForm.style.display = 'none';
-        if (achForm) achForm.style.display = 'block';
-        if (achNotice) achNotice.style.display = 'block';
+    try {
+        payButton.disabled = true;
+        payButton.innerHTML = '<span class="spinner"></span> Processing...';
+        
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+        
+        if (window.SquareCheckout) {
+            await window.SquareCheckout.processPayment(paymentMethod);
+        } else {
+            throw new Error('Square checkout not initialized');
+        }
+    } catch (error) {
+        console.error('Payment error:', error);
+        payButton.disabled = false;
+        payButton.innerHTML = originalText;
+        
+        if (typeof showToast === 'function') {
+            showToast('error', 'Payment Failed', error.message || 'Please try again or contact support.');
+        } else {
+            alert('Payment failed: ' + (error.message || 'Please try again.'));
+        }
     }
 }
 </script>
