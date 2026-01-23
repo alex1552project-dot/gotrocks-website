@@ -23,6 +23,25 @@
     <!-- Square Web Payments SDK -->
     <script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
     <style>
+        /* Fix product card price alignment */
+        .products-grid .product-card {
+            display: flex;
+            flex-direction: column;
+        }
+        .products-grid .product-card .product-info {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .products-grid .product-card .product-description {
+            flex-grow: 1;
+        }
+        /* Align top of hero mascot with top of text */
+        .hero-top-row {
+            align-items: flex-start !important;
+        }
+    </style>
+    <style>
         /* Square Payment Styles */
         .payment-method-selection {
             margin: 20px 0;
@@ -125,25 +144,6 @@
                 margin-left: 36px;
                 margin-top: 4px;
             }
-        }
-    </style>
-    <style>
-        /* Fix product card price alignment */
-        .products-grid .product-card {
-            display: flex;
-            flex-direction: column;
-        }
-        .products-grid .product-card .product-info {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-        .products-grid .product-card .product-description {
-            flex-grow: 1;
-        }
-        /* Align top of hero mascot with top of text */
-        .hero-top-row {
-            align-items: flex-start !important;
         }
     </style>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
@@ -527,7 +527,7 @@
         <div class="contractor-box">
             <div class="contractor-icon"><img src="/images/contractor-mascot.png" alt="Find a Pro" class="contractor-mascot-small"></div>
             <div class="contractor-content"><h3>Got the Materials, But Need the Muscle?</h3><p>Not everyone wants to spend their Saturday spreading gravel&mdash;and that's okay! We've partnered with trusted local landscapers and contractors who know their stuff. They'll handle the hard work while you kick back and watch your yard transform.</p></div>
-            <a href="/contractors/" class="btn btn-contractor"><span class="btn-icon">&#128119;</span>Find a Pro Near You &rarr;</a>
+            <a href="/faust-landscaping.html" class="btn btn-contractor"><span class="btn-icon">&#128119;</span>Find a Pro Near You &rarr;</a>
         </div>
     </div>
 </section>
@@ -857,7 +857,7 @@
             
             <!-- Need a Pro Link -->
             <div id="needAProSection" class="need-a-pro-section hidden">
-                <a href="/contractors/?from=quote" class="need-a-pro-link"><span class="need-pro-icon">&#128119;</span><span class="need-pro-text">Need a Pro to install it?</span><span class="need-pro-arrow">&rarr;</span></a>
+                <a href="/faust-landscaping.html?from=quote" class="need-a-pro-link"><span class="need-pro-icon">&#128119;</span><span class="need-pro-text">Need a Pro to install it?</span><span class="need-pro-arrow">&rarr;</span></a>
             </div>
             
             <!-- Cloudflare Turnstile -->
@@ -889,7 +889,7 @@
             <div class="cart-summary-row"><span>Delivery</span><span style="color: var(--success-green); font-weight: 700;">FREE</span></div>
             <div class="cart-summary-row total"><span>Total</span><span id="cartTotal">$0</span></div>
         </div>
-        <a href="/contractors/?from=quote" class="need-a-pro-link cart-pro-link"><span class="need-pro-icon">&#128119;</span><span class="need-pro-text">Need a Pro to install it?</span><span class="need-pro-arrow">&rarr;</span></a>
+        <a href="/faust-landscaping.html?from=quote" class="need-a-pro-link cart-pro-link"><span class="need-pro-icon">&#128119;</span><span class="need-pro-text">Need a Pro to install it?</span><span class="need-pro-arrow">&rarr;</span></a>
         <button class="cart-checkout-btn" onclick="proceedToCheckout()">Proceed to Checkout &rarr;</button>
         <p class="free-delivery-reminder">&#128666; FREE delivery on all orders!</p>
         <p class="cart-add-more-link">Need more materials? <a href="#" onclick="closeCartDrawer(); openCalculatorModal(); return false;">+ Add Another Item</a></p>
@@ -944,7 +944,7 @@
                             <span class="payment-option-content">
                                 <span class="payment-icon">&#127970;</span>
                                 <span class="payment-label">Bank Account (ACH)</span>
-                                <span class="payment-desc">Lower fees &bull; 2-3 days to clear</span>
+                                <span class="payment-desc">Lower fees • 2-3 days to clear</span>
                             </span>
                         </label>
                     </div>
@@ -981,6 +981,7 @@
                 
                 <p class="payment-security-note">&#128274; Secure payment powered by Square</p>
             </div>
+
         </div>
     </div>
 </div>
@@ -1079,7 +1080,160 @@
         </div>
     </div>
 </div>
- at $80.00/cy</span></div>
+
+<!-- More Products Modal Styles (inline for reliability) -->
+<style>
+.more-products-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.more-products-modal-overlay.active {
+    display: flex !important;
+}
+.more-products-modal {
+    background: white;
+    border-radius: 20px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.more-products-modal .modal-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: rgba(255,255,255,0.2);
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+.more-products-modal .modal-close:hover {
+    background: rgba(255,255,255,0.3);
+}
+.more-products-header {
+    background: linear-gradient(135deg, #3E2723, #FF6F00);
+    color: white;
+    padding: 30px;
+    border-radius: 20px 20px 0 0;
+    text-align: center;
+}
+.more-products-header h3 {
+    font-size: 1.5rem;
+    margin: 0 0 8px 0;
+}
+.more-products-header p {
+    opacity: 0.9;
+    margin: 0;
+}
+.more-products-body {
+    padding: 25px 30px;
+}
+.more-products-modal .product-category {
+    margin-bottom: 25px;
+}
+.more-products-modal .product-category:last-child {
+    margin-bottom: 0;
+}
+.more-products-modal .product-category h4 {
+    color: #3E2723;
+    font-size: 1.1rem;
+    margin: 0 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #eee;
+}
+.more-products-modal .product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 10px;
+}
+.more-products-modal .product-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: #f8f8f8;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+.more-products-modal .product-item:hover {
+    background: #fff;
+    border-color: #FF6F00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.more-products-modal .product-name {
+    font-weight: 500;
+    color: #3E2723;
+    font-size: 0.9rem;
+}
+.more-products-modal .product-price {
+    font-weight: 600;
+    color: #FF6F00;
+    white-space: nowrap;
+    font-size: 0.85rem;
+}
+.more-products-footer {
+    padding: 20px 30px;
+    background: #f5f5f5;
+    border-radius: 0 0 20px 20px;
+    text-align: center;
+}
+.more-products-footer p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+.more-products-footer a {
+    color: #FF6F00;
+    font-weight: 600;
+}
+@media (max-width: 600px) {
+    .more-products-modal .product-list {
+        grid-template-columns: 1fr;
+    }
+    .more-products-header, .more-products-body, .more-products-footer {
+        padding: 20px;
+    }
+}
+</style>
+
+<!-- More Products Modal -->
+<div class="more-products-modal-overlay" id="moreProductsModal">
+    <div class="more-products-modal">
+        <button class="modal-close" onclick="closeMoreProductsModal()">&times;</button>
+        <div class="more-products-header">
+            <h3>&#129704; All Available Materials</h3>
+            <p>We deliver all these materials with FREE delivery</p>
+        </div>
+        <div class="more-products-body">
+            <div class="product-category">
+                <h4>Rock & Gravel</h4>
+                <div class="product-list">
+                    <div class="product-item" onclick="selectMoreProduct('decomposed-granite')"><span class="product-name">1/4" Minus Decomposed Granite</span><span class="product-price">Starting at $85.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('granite-base')"><span class="product-name">Granite Base</span><span class="product-price">Starting at $91.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('limestone-1')"><span class="product-name">1" Limestone</span><span class="product-price">Starting at $80.00/cy</span></div>
+                    <div class="product-item" onclick="selectMoreProduct('limestone-3/4')"><span class="product-name">3/4" Limestone</span><span class="product-price">Starting at $80.00/cy</span></div>
                     <div class="product-item" onclick="selectMoreProduct('limestone-3/8')"><span class="product-name">3/8" Limestone</span><span class="product-price">Starting at $85.00/cy</span></div>
                     <div class="product-item" onclick="selectMoreProduct('limestone-base')"><span class="product-name">Limestone Base</span><span class="product-price">Starting at $85.00/cy</span></div>
                     <div class="product-item" onclick="selectMoreProduct('bull-rock-3x5')"><span class="product-name">3x5 Bull Rock Gravel</span><span class="product-price">Starting at $80.00/cy</span></div>
