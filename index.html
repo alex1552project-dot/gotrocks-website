@@ -145,6 +145,13 @@
                 margin-top: 4px;
             }
         }
+        /* Fix CTA dropdown being cut off */
+        .cta-section {
+            overflow: visible !important;
+        }
+        .cta-section .call-dropdown-menu.show {
+            z-index: 9999 !important;
+        }
     </style>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script>
