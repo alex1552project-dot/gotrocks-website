@@ -1,232 +1,346 @@
-const { MongoClient } = require('mongodb');
-const crypto = require('crypto');
+// netlify/functions/square-webhook.js
+// Texas Got Rocks - Square Webhook Handler
+// Processes payment.completed events for ACH payments
 
-const uri = process.env.MONGODB_URI;
-const SQUARE_WEBHOOK_SIGNATURE_KEY = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY;
+const crypto = require('crypto');
+const { MongoClient, ObjectId } = require('mongodb');
+
+// MongoDB connection
+let cachedDb = null;
+async function connectToDatabase() {
+  if (cachedDb) return cachedDb;
+  const client = await MongoClient.connect(process.env.MONGODB_URI);
+  cachedDb = client.db('gotrocks');
+  return cachedDb;
+}
 
 // Verify Square webhook signature
-function verifySquareSignature(body, signature, webhookSignatureKey) {
-  if (!webhookSignatureKey || !signature) {
-    return false;
+function verifyWebhookSignature(body, signature, signatureKey) {
+  if (!signatureKey) {
+    console.log('No webhook signature key configured, skipping verification');
+    return true; // Skip verification if no key (development)
   }
-  
-  const hmac = crypto.createHmac('sha256', webhookSignatureKey);
+
+  const hmac = crypto.createHmac('sha256', signatureKey);
   hmac.update(body);
   const expectedSignature = hmac.digest('base64');
   
   return signature === expectedSignature;
 }
 
-exports.handler = async (event) => {
+// Send notification via Brevo
+async function sendNotification(type, data) {
+  const brevoApiKey = process.env.BREVO_API_KEY;
+  if (!brevoApiKey) return;
+
+  try {
+    if (type === 'ach_completed') {
+      // Customer notification - payment cleared
+      await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'api-key': brevoApiKey,
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          sender: { name: 'Texas Got Rocks', email: 'orders@texasgotrocks.com' },
+          to: [{ email: data.customer.email, name: data.customer.name }],
+          subject: `Order ${data.orderNumber} - Payment Confirmed! ✓`,
+          htmlContent: `
+            <h2>Great news, ${data.customer.name}!</h2>
+            <p>Your bank payment has cleared and your order is now confirmed.</p>
+            <p><strong>Order Number:</strong> ${data.orderNumber}</p>
+            <p><strong>Total:</strong> $${data.totals.total.toFixed(2)}</p>
+            <p><strong>Delivery Date:</strong> ${new Date(data.delivery.scheduledDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+            <p>We'll send you tracking information when your delivery is on its way!</p>
+            <hr>
+            <p>Questions? Call or text us at (936) 259-2887</p>
+            <p>- The Texas Got Rocks Team</p>
+          `
+        })
+      });
+
+      // SMS if phone available
+      if (data.customer.phone) {
+        await fetch('https://api.brevo.com/v3/transactionalSMS/sms', {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json',
+            'api-key': brevoApiKey,
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify({
+            sender: 'TXGotRocks',
+            recipient: data.customer.phone.replace(/\D/g, ''),
+            content: `Texas Got Rocks: Payment confirmed for order ${data.orderNumber}! Your delivery is scheduled for ${new Date(data.delivery.scheduledDate).toLocaleDateString()}. We'll text tracking info soon!`
+          })
+        });
+      }
+
+      // Internal notification
+      await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'api-key': brevoApiKey,
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          sender: { name: 'TGR Website', email: 'orders@texasgotrocks.com' },
+          to: [
+            { email: 'tina@tcmaterialsllc.com', name: 'Tina Pelletier' },
+            { email: 'marisa@tcmaterialsllc.com', name: 'Marisa' }
+          ],
+          subject: `✓ ACH Cleared - Order ${data.orderNumber}`,
+          htmlContent: `
+            <h2>ACH Payment Cleared!</h2>
+            <p><strong>Order Number:</strong> ${data.orderNumber}</p>
+            <p><strong>Customer:</strong> ${data.customer.name}</p>
+            <p><strong>Amount:</strong> $${data.totals.total.toFixed(2)}</p>
+            <p><strong>Delivery Date:</strong> ${new Date(data.delivery.scheduledDate).toLocaleDateString()}</p>
+            <p>Order is now ready to be scheduled for delivery.</p>
+          `
+        })
+      });
+    }
+
+    if (type === 'payment_failed') {
+      // Customer notification - payment failed
+      await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'api-key': brevoApiKey,
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          sender: { name: 'Texas Got Rocks', email: 'orders@texasgotrocks.com' },
+          to: [{ email: data.customer.email, name: data.customer.name }],
+          subject: `Order ${data.orderNumber} - Payment Issue`,
+          htmlContent: `
+            <h2>Payment Issue with Your Order</h2>
+            <p>Hi ${data.customer.name},</p>
+            <p>Unfortunately, there was an issue processing your payment for order ${data.orderNumber}.</p>
+            <p>Please contact us at (936) 259-2887 to complete your order or try again on our website.</p>
+            <p>We apologize for any inconvenience.</p>
+            <p>- The Texas Got Rocks Team</p>
+          `
+        })
+      });
+
+      // URGENT internal notification
+      await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'api-key': brevoApiKey,
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          sender: { name: 'TGR Website', email: 'orders@texasgotrocks.com' },
+          to: [
+            { email: 'tina@tcmaterialsllc.com', name: 'Tina Pelletier' },
+            { email: 'marisa@tcmaterialsllc.com', name: 'Marisa' }
+          ],
+          subject: `⚠️ PAYMENT FAILED - Order ${data.orderNumber}`,
+          htmlContent: `
+            <h2 style="color: red;">Payment Failed!</h2>
+            <p><strong>Order Number:</strong> ${data.orderNumber}</p>
+            <p><strong>Customer:</strong> ${data.customer.name}</p>
+            <p><strong>Phone:</strong> ${data.customer.phone || 'Not provided'}</p>
+            <p><strong>Email:</strong> ${data.customer.email}</p>
+            <p><strong>Amount:</strong> $${data.totals.total.toFixed(2)}</p>
+            <p><strong>Reason:</strong> ${data.failureReason || 'Unknown'}</p>
+            <p style="color: red;"><strong>ACTION REQUIRED:</strong> Contact customer to resolve payment.</p>
+          `
+        })
+      });
+    }
+
+    console.log(`Notification sent for ${type}`);
+  } catch (error) {
+    console.error('Error sending notification:', error);
+  }
+}
+
+exports.handler = async (event, context) => {
   const headers = {
+    'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json'
   };
 
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
+    return { 
+      statusCode: 405, 
+      headers,
+      body: JSON.stringify({ error: 'Method not allowed' }) 
+    };
   }
-
-  const signature = event.headers['x-square-hmacsha256-signature'];
-  if (SQUARE_WEBHOOK_SIGNATURE_KEY && signature) {
-    const isValid = verifySquareSignature(event.body, signature, SQUARE_WEBHOOK_SIGNATURE_KEY);
-    if (!isValid) {
-      console.error('Invalid Square webhook signature');
-      return { statusCode: 401, headers, body: JSON.stringify({ error: 'Invalid signature' }) };
-    }
-  }
-
-  const client = new MongoClient(uri);
 
   try {
+    // Verify webhook signature
+    const signature = event.headers['x-square-signature'] || event.headers['X-Square-Signature'];
+    const signatureKey = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY;
+
+    if (signatureKey && !verifyWebhookSignature(event.body, signature, signatureKey)) {
+      console.error('Invalid webhook signature');
+      return {
+        statusCode: 401,
+        headers,
+        body: JSON.stringify({ error: 'Invalid signature' })
+      };
+    }
+
     const webhookEvent = JSON.parse(event.body);
-    
-    console.log('Square webhook received:', webhookEvent.type);
+    const eventType = webhookEvent.type;
+    const eventId = webhookEvent.event_id;
 
-    if (webhookEvent.type !== 'payment.completed') {
-      return { 
-        statusCode: 200, 
-        headers, 
-        body: JSON.stringify({ received: true, processed: false, reason: 'Not a payment completion event' }) 
+    console.log('Received Square webhook:', { eventType, eventId });
+
+    const db = await connectToDatabase();
+
+    // Check for duplicate event (idempotency)
+    const existingEvent = await db.collection('webhook_events').findOne({ eventId });
+    if (existingEvent) {
+      console.log('Duplicate webhook event, skipping:', eventId);
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ message: 'Event already processed' })
       };
     }
 
-    const payment = webhookEvent.data.object.payment;
-    
-    if (payment.status !== 'COMPLETED') {
-      return { 
-        statusCode: 200, 
-        headers, 
-        body: JSON.stringify({ received: true, processed: false, reason: 'Payment not completed' }) 
-      };
-    }
+    // Process based on event type
+    if (eventType === 'payment.completed' || eventType === 'payment.updated') {
+      const payment = webhookEvent.data.object.payment;
+      const paymentId = payment.id;
+      const paymentStatus = payment.status;
 
-    await client.connect();
-    const db = client.db('gotrocks');
-    
-    const orderRef = payment.reference_id || payment.note;
-    
-    if (!orderRef) {
-      console.log('No order reference found in payment');
-      return { 
-        statusCode: 200, 
-        headers, 
-        body: JSON.stringify({ received: true, processed: false, reason: 'No order reference' }) 
-      };
-    }
+      console.log('Processing payment event:', { paymentId, paymentStatus });
 
-    const pendingOrdersCollection = db.collection('pending_orders');
-    const pendingOrder = await pendingOrdersCollection.findOne({ 
-      $or: [
-        { squareReferenceId: orderRef },
-        { squarePaymentId: payment.id }
-      ]
-    });
-
-    let orderDetails;
-
-    if (pendingOrder) {
-      orderDetails = pendingOrder;
-    } else {
-      console.log('No pending order found, cannot process inventory depletion');
-      
-      const ordersCollection = db.collection('tgr_orders');
-      await ordersCollection.insertOne({
-        squarePaymentId: payment.id,
-        paymentStatus: 'approved',
-        total: payment.amount_money.amount / 100,
-        createdAt: new Date().toISOString(),
-        note: 'Order details not found - manual review needed',
-        rawPayment: payment
+      // Find the order by Square payment ID
+      const order = await db.collection('orders').findOne({
+        'payment.squarePaymentId': paymentId
       });
-      
-      return { 
-        statusCode: 200, 
-        headers, 
-        body: JSON.stringify({ received: true, processed: 'partial', reason: 'Order logged but inventory not updated' }) 
-      };
-    }
 
-    // CORE LOGIC: Deplete inventory on approved payment
-    
-    const productsCollection = db.collection('products');
-    const inventoryCollection = db.collection('inventory');
-    const ordersCollection = db.collection('tgr_orders');
-    const auditCollection = db.collection('inventory_audit');
+      if (!order) {
+        console.log('Order not found for payment:', paymentId);
+        // Still log the event
+        await db.collection('webhook_events').insertOne({
+          eventId,
+          eventType,
+          orderId: null,
+          payload: webhookEvent,
+          processedAt: new Date(),
+          result: 'order_not_found'
+        });
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({ message: 'Order not found, event logged' })
+        };
+      }
 
-    const product = await productsCollection.findOne({ id: orderDetails.productId });
-    
-    if (!product) {
-      console.error('Product not found:', orderDetails.productId);
-      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Product not found' }) };
-    }
-
-    // Customer orders in YARDS, we deduct in TONS
-    const quantityYards = orderDetails.quantity;
-    const tonsPerYard = product.weight;
-    const tonsToDeduct = quantityYards * tonsPerYard;
-
-    console.log(`Deducting inventory: ${quantityYards} yards × ${tonsPerYard} tons/yd = ${tonsToDeduct} tons`);
-
-    const currentInventory = await inventoryCollection.findOne({ productId: product.id });
-    
-    if (!currentInventory) {
-      console.error('No inventory record for product:', product.id);
-    }
-
-    // Use 'quantity' field (your existing field name)
-    const previousStock = currentInventory?.quantity || 0;
-    const newStock = previousStock - tonsToDeduct;
-
-    if (currentInventory) {
-      await inventoryCollection.updateOne(
-        { productId: product.id },
-        { 
-          $set: { 
-            quantity: newStock,
-            updatedAt: new Date().toISOString()
+      // Update order based on payment status
+      if (paymentStatus === 'COMPLETED') {
+        // Payment successful - update order to paid
+        await db.collection('orders').updateOne(
+          { _id: order._id },
+          {
+            $set: {
+              'payment.status': 'completed',
+              'payment.completedAt': new Date(),
+              'payment.receiptUrl': payment.receipt_url || order.payment.receiptUrl,
+              'status': 'paid',
+              'updatedAt': new Date()
+            }
           }
+        );
+
+        // Update inventory
+        try {
+          for (const item of order.items) {
+            await db.collection('inventory').updateOne(
+              { productId: item.productId },
+              { 
+                $inc: { currentStock: -item.tons },
+                $set: { updatedAt: new Date() }
+              }
+            );
+          }
+          console.log('Inventory updated for order:', order.orderNumber);
+        } catch (invError) {
+          console.error('Error updating inventory:', invError);
         }
-      );
 
-      await auditCollection.insertOne({
-        productId: product.id,
-        productName: product.name,
-        previousTons: previousStock,
-        newTons: newStock,
-        adjustment: -tonsToDeduct,
-        reason: `TGR Order - ${quantityYards} yards sold`,
-        squarePaymentId: payment.id,
-        updatedBy: 'square-webhook',
-        timestamp: new Date().toISOString()
+        // Send confirmation notification
+        await sendNotification('ach_completed', order);
+        console.log('Order updated to paid:', order.orderNumber);
+
+      } else if (paymentStatus === 'FAILED' || paymentStatus === 'CANCELED') {
+        // Payment failed
+        const failureReason = payment.failure_reason || 'Payment was declined or canceled';
+        
+        await db.collection('orders').updateOne(
+          { _id: order._id },
+          {
+            $set: {
+              'payment.status': 'failed',
+              'payment.failureReason': failureReason,
+              'status': 'payment_failed',
+              'updatedAt': new Date()
+            }
+          }
+        );
+
+        // Send failure notification
+        await sendNotification('payment_failed', { ...order, failureReason });
+        console.log('Order marked as payment failed:', order.orderNumber);
+      }
+
+      // Log the webhook event
+      await db.collection('webhook_events').insertOne({
+        eventId,
+        eventType,
+        orderId: order._id,
+        orderNumber: order.orderNumber,
+        paymentId,
+        paymentStatus,
+        payload: webhookEvent,
+        processedAt: new Date(),
+        result: 'success'
       });
-
-      console.log(`Inventory updated: ${product.name} ${previousStock} → ${newStock} tons`);
-
-      // Use 'reorderPoint' field (your existing field name)
-      if (currentInventory.reorderPoint && newStock < currentInventory.reorderPoint) {
-        console.log(`LOW STOCK ALERT: ${product.name} is below threshold (${newStock} < ${currentInventory.reorderPoint})`);
-      }
-    }
-
-    const tgrOrder = {
-      squarePaymentId: payment.id,
-      paymentStatus: 'approved',
-      total: payment.amount_money.amount / 100,
-      quantity: quantityYards,
-      quantityTons: tonsToDeduct,
-      product: product.name,
-      productId: product.id,
-      deliveryDate: orderDetails.deliveryDate,
-      customer: {
-        name: orderDetails.customerName,
-        email: orderDetails.customerEmail,
-        phone: orderDetails.customerPhone,
-        address: orderDetails.deliveryAddress
-      },
-      deliveryZip: orderDetails.deliveryZip,
-      createdAt: new Date().toISOString(),
-      status: 'pending_delivery',
-      inventoryDeducted: true,
-      inventoryDeduction: {
-        previousTons: previousStock,
-        deductedTons: tonsToDeduct,
-        newTons: newStock
-      }
-    };
-
-    await ordersCollection.insertOne(tgrOrder);
-    console.log('TGR order created:', tgrOrder);
-
-    if (pendingOrder) {
-      await pendingOrdersCollection.updateOne(
-        { _id: pendingOrder._id },
-        { $set: { status: 'completed', processedAt: new Date().toISOString() } }
-      );
     }
 
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({
-        received: true,
-        processed: true,
-        order: {
-          product: product.name,
-          quantityYards,
-          tonsDeducted: tonsToDeduct,
-          newInventory: newStock
-        }
-      })
+      body: JSON.stringify({ message: 'Webhook processed successfully' })
     };
 
   } catch (error) {
-    console.error('Square webhook error:', error);
+    console.error('Webhook processing error:', error);
+
+    // Try to log the error
+    try {
+      const db = await connectToDatabase();
+      await db.collection('webhook_events').insertOne({
+        eventId: 'error-' + Date.now(),
+        eventType: 'processing_error',
+        payload: event.body,
+        processedAt: new Date(),
+        result: 'error',
+        errorMessage: error.message
+      });
+    } catch (logError) {
+      console.error('Failed to log error:', logError);
+    }
+
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: 'Internal server error', details: error.message })
+      body: JSON.stringify({ error: 'Internal server error' })
     };
-  } finally {
-    await client.close();
   }
 };
