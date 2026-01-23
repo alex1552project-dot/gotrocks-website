@@ -1548,3 +1548,35 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initial check
     updateScrollArrows();
 })();
+
+// =====================================================
+// MORE PRODUCTS MODAL FUNCTIONS
+// =====================================================
+function openMoreProductsModal() {
+    document.getElementById('moreProductsModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeMoreProductsModal() {
+    document.getElementById('moreProductsModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+function selectMoreProduct(productValue) {
+    closeMoreProductsModal();
+    openCalculatorModal();
+    setTimeout(() => {
+        const productSelect = document.getElementById('quoteProduct');
+        if (productSelect) {
+            productSelect.value = productValue;
+            productSelect.dispatchEvent(new Event('change'));
+        }
+    }, 100);
+}
+
+// Close modal on overlay click
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('more-products-modal-overlay')) {
+        closeMoreProductsModal();
+    }
+});
