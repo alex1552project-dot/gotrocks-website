@@ -1,0 +1,9 @@
+{
+  "name": "texas-got-rocks-functions",
+  "version": "1.0.0",
+  "description": "Netlify Functions for Texas Got Rocks payments",
+  "dependencies": {
+    "square": "^35.1.0",
+    "mongodb": "^6.3.0"
+  }
+}
