@@ -1,0 +1,49 @@
+/* =====================================================
+   GEO-PRICING STYLES
+   Add to end of styles.css
+   ===================================================== */
+
+/* Geo-price CTA link (fallback when location unknown) */
+.geo-price-cta {
+    color: var(--warm-orange);
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+.geo-price-cta:hover {
+    color: var(--warm-orange-dark);
+    text-decoration: underline;
+}
+
+/* Subtle indicator that price was updated */
+.geo-price-updated {
+    position: relative;
+}
+
+/* Fallback state styling */
+.product-price.geo-fallback .amount {
+    font-size: 16px;
+}
+
+.product-price.geo-fallback .unit {
+    display: none;
+}
+
+/* Animation for price update */
+@keyframes priceUpdate {
+    0% {
+        opacity: 0.5;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.geo-price-updated {
+    animation: priceUpdate 0.3s ease-out;
+}
