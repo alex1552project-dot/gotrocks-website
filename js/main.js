@@ -1526,9 +1526,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         if (atBottom) {
-            scrollDownBtn.classList.remove('visible');
+            scrollDownBtn.classList.add('hidden');
         } else {
-            scrollDownBtn.classList.add('visible');
+            scrollDownBtn.classList.remove('hidden');
         }
     }
     
