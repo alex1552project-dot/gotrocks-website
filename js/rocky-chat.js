@@ -1,6 +1,6 @@
 // =====================================================
 // ROCKY CHAT - Texas Got Rocks AI Assistant
-// v2 - Fixed redundant buttons & product recognition
+// v3 - No static prices, uses main.js pricing logic
 // =====================================================
 
 const RockyChat = (function() {
@@ -13,58 +13,82 @@ const RockyChat = (function() {
     };
     
     // =====================================================
-    // PRODUCT KNOWLEDGE
+    // PRODUCT KNOWLEDGE (NO PRICES - prices come from calculator)
     // =====================================================
     const PRODUCT_KNOWLEDGE = {
         // Direct product lookups (for when user asks about specific product)
         productKeywords: {
             'topsoil': {
                 productId: 'topsoil',
-                response: "**Topsoil** is $35/cy—great for gardens, lawns, and raised beds. It's nutrient-rich and screened for easy spreading. How much area are you covering?"
+                response: "**Topsoil** is great for gardens, lawns, and raised beds. It's nutrient-rich and screened for easy spreading. Want me to get you an exact delivered price?"
             },
             'black mulch': {
                 productId: 'mulch-black',
-                response: "**Black Mulch** is $35/cy and creates a dramatic contrast against your plants. It helps retain moisture and suppress weeds. How many yards do you need?"
+                response: "**Black Mulch** creates a dramatic contrast against your plants and helps retain moisture. How many yards are you thinking?"
             },
             'brown mulch': {
                 productId: 'mulch-brown',
-                response: "**Brown Hardwood Mulch** is $32/cy—gives you that natural forest floor look. Great for a more traditional appearance. How much do you need?"
+                response: "**Brown Hardwood Mulch** gives you that natural forest floor look—great for a traditional appearance. How much area are you covering?"
             },
             'decomposed granite': {
                 productId: 'decomposed-granite',
-                response: "**Decomposed Granite** is $85/cy—perfect for patios, walkways, and xeriscaping. It compacts into a firm, stable surface with a rustic look."
+                response: "**Decomposed Granite** is perfect for patios, walkways, and xeriscaping. It compacts into a firm, stable surface with a rustic Texas look."
             },
             'granite base': {
                 productId: 'granite-base',
-                response: "**Granite Base** is $91/cy—ideal for driveway bases. It compacts really well and provides excellent stability for vehicle traffic."
+                response: "**Granite Base** is ideal for driveway foundations—compacts really well and provides excellent stability for vehicle traffic."
             },
             'limestone base': {
                 productId: 'limestone-base',
-                response: "**Limestone Base** is $85/cy—another great option for driveway bases. Compacts well and creates a solid foundation."
+                response: "**Limestone Base** is another great option for driveway bases. Compacts well and creates a solid foundation."
+            },
+            'limestone': {
+                productId: 'limestone-1',
+                response: "We've got several **Limestone** options—1\", 3/4\", and 3/8\" sizes plus base material. What's your project? I can recommend the right one."
             },
             'bull rock': {
                 productId: 'bull-rock-3x5',
-                response: "**3x5 Bull Rock** is $80/cy—perfect for drainage projects, borders, and accent areas. The larger stones let water flow through easily."
+                response: "**3x5 Bull Rock** is perfect for drainage projects, borders, and accent areas. The larger stones let water flow through easily."
             },
             'pea gravel': {
                 productId: 'pea-gravel',
-                response: "**Pea Gravel** is $80/cy—great for xeriscaping, decorative areas, and walkways. Low maintenance and drains well."
+                response: "**Pea Gravel** is great for xeriscaping, decorative areas, and walkways. Low maintenance and drains well."
             },
             'black star': {
                 productId: 'blackstar',
-                response: "**5/8\" Black Star** is our premium option at $190/cy—it's volcanic basalt with a stunning dark, elegant look. Really makes a statement!"
+                response: "**5/8\" Black Star** is our premium option—it's volcanic basalt with a stunning dark, elegant look. Really makes a statement!"
+            },
+            'blackstar': {
+                productId: 'blackstar',
+                response: "**5/8\" Black Star** is our premium option—volcanic basalt with a stunning dark look. Really makes a statement!"
             },
             'mason sand': {
                 productId: 'mason-sand',
-                response: "**Mason Sand** is $30/cy—clean, fine texture that's perfect for sandboxes and masonry work. Safe for kids!"
+                response: "**Mason Sand** is clean and fine—perfect for sandboxes and masonry work. Safe for kids!"
             },
             'select fill': {
                 productId: 'select-fill',
-                response: "**Select Fill** is $40/cy—great for filling low spots and grading. Compacts well and is easy to work with."
+                response: "**Select Fill** is great for filling low spots and grading. Compacts well and easy to work with."
+            },
+            'fill dirt': {
+                productId: 'select-fill',
+                response: "For fill, **Select Fill** is what you want—great for leveling and grading projects."
             },
             'bank sand': {
                 productId: 'bank-sand',
-                response: "**Bank Sand** is $40/cy—useful for various fill and leveling projects."
+                response: "**Bank Sand** is useful for various fill and leveling projects."
+            },
+            'gravel': {
+                productId: 'pea-gravel',
+                response: "We've got several gravel options! **Pea Gravel** for decorative use, **Bull Rock** for drainage, or **Decomposed Granite** for paths. What's the project?"
+            },
+            'sand': {
+                productId: 'mason-sand',
+                response: "We carry **Mason Sand** (fine, great for sandboxes), **Bank Sand**, and **Torpedo Sand**. What do you need it for?"
+            },
+            'mulch': {
+                productId: 'mulch-black',
+                response: "We've got **Black Mulch** for a bold look or **Brown Hardwood Mulch** for a natural appearance. Which color do you prefer?"
             }
         },
         
@@ -72,80 +96,93 @@ const RockyChat = (function() {
         projectMappings: {
             'driveway': {
                 products: ['granite-base', 'limestone-base'],
-                response: "For a solid driveway base, I'd recommend **Granite Base** ($91/cy) or **Limestone Base** ($85/cy). Both compact really well and create a solid foundation. Are you building a new driveway base, or looking to top/resurface an existing one?"
+                response: "For a solid driveway, I'd recommend **Granite Base** or **Limestone Base**—both compact really well. Are you building a new base or topping an existing one?"
             },
             'french drain': {
                 products: ['bull-rock-3x5'],
-                response: "For French drains, **3x5 Bull Rock** is your best bet at $80/cy. The larger stones allow water to flow through easily."
+                response: "For French drains, **3x5 Bull Rock** is your best bet—the larger stones allow water to flow through easily."
             },
             'drainage': {
                 products: ['bull-rock-3x5', 'gravel-1.5-minus'],
-                response: "For drainage projects, I'd go with **3x5 Bull Rock** ($80/cy)—it lets water flow through nicely."
+                response: "For drainage, I'd go with **3x5 Bull Rock**—lets water flow through nicely. How big is the drainage area?"
             },
             'patio': {
                 products: ['decomposed-granite'],
-                response: "**Decomposed Granite** ($85/cy) is perfect for patios. It compacts into a firm, stable surface with a natural rustic look."
+                response: "**Decomposed Granite** is perfect for patios—compacts into a firm, stable surface with that natural rustic look."
             },
             'walkway': {
                 products: ['decomposed-granite', 'pea-gravel'],
-                response: "For walkways, **Decomposed Granite** ($85/cy) gives you a firm, natural path. **Pea Gravel** ($80/cy) is also popular for a more decorative look."
+                response: "For walkways, **Decomposed Granite** gives you a firm, natural path. **Pea Gravel** is also popular for a more decorative look. Which style do you prefer?"
+            },
+            'path': {
+                products: ['decomposed-granite', 'pea-gravel'],
+                response: "For paths, **Decomposed Granite** compacts firm, or **Pea Gravel** for a looser decorative look. What's your preference?"
             },
             'garden': {
                 products: ['mulch-black', 'mulch-brown', 'topsoil'],
-                response: "For garden beds, you'll want **Mulch** on top (black $35/cy or brown $32/cy) and **Topsoil** ($35/cy) underneath if you're building up the beds."
+                response: "For garden beds, you'll want **Mulch** on top (black or brown, your choice) and **Topsoil** underneath if you're building up the beds. Mulch helps retain moisture and suppress weeds."
             },
             'flower bed': {
                 products: ['mulch-black', 'mulch-brown', 'topsoil'],
-                response: "Flower beds look great with **Black Mulch** ($35/cy) or **Brown Mulch** ($32/cy). Need topsoil underneath too?"
+                response: "Flower beds look great with **Black** or **Brown Mulch**. Need topsoil underneath too, or just refreshing the mulch?"
             },
-            'mulch': {
-                products: ['mulch-black', 'mulch-brown'],
-                response: "We've got **Black Mulch** ($35/cy) for a bold look, or **Brown Hardwood Mulch** ($32/cy) for a natural appearance. Which color appeals to you?"
+            'raised bed': {
+                products: ['topsoil'],
+                response: "For raised beds, **Topsoil** is what you need—nutrient-rich and perfect for planting. How many beds are you filling?"
             },
             'fill': {
                 products: ['select-fill'],
-                response: "For filling in low spots, **Select Fill** ($40/cy) is what you need. Works great for leveling."
+                response: "For filling in low spots, **Select Fill** is what you need—works great for leveling."
             },
             'grading': {
                 products: ['select-fill'],
-                response: "**Select Fill** ($40/cy) is perfect for grading projects. Compacts well and easy to work with."
+                response: "**Select Fill** is perfect for grading projects—compacts well and easy to work with."
+            },
+            'level': {
+                products: ['select-fill'],
+                response: "To level out an area, **Select Fill** is your go-to. How big is the area you're working with?"
             },
             'sandbox': {
                 products: ['mason-sand'],
-                response: "For a sandbox, **Mason Sand** ($30/cy) is perfect—clean, fine, and safe for kids."
+                response: "For a sandbox, **Mason Sand** is perfect—clean, fine, and safe for kids!"
             },
             'xeriscaping': {
-                products: ['pea-gravel'],
-                response: "For xeriscaping, **Pea Gravel** ($80/cy) is a great choice. Looks clean, drains well, zero maintenance."
+                products: ['pea-gravel', 'decomposed-granite'],
+                response: "For xeriscaping, **Pea Gravel** or **Decomposed Granite** are great choices—look clean, drain well, zero maintenance."
             },
             'landscaping': {
                 products: ['decomposed-granite', 'pea-gravel', 'mulch-black'],
-                response: "For landscaping, it depends on the area. **Decomposed Granite** for paths, **Pea Gravel** for accents, or **Mulch** around plants. What specifically are you working on?"
+                response: "For landscaping, it depends on the area—**Decomposed Granite** for paths, **Pea Gravel** for accents, or **Mulch** around plants. What specifically are you working on?"
+            },
+            'yard': {
+                products: ['topsoil', 'mulch-black'],
+                response: "What are you doing in the yard? Planting (topsoil), mulching beds, building a path, or something else?"
             }
         },
         
+        // Product database (for lookups only, not prices)
         products: {
-            'decomposed-granite': { name: '1/4" Minus Decomposed Granite', price: 85, unit: 'cy' },
-            'granite-base': { name: 'Granite Base', price: 91, unit: 'cy' },
-            'limestone-1': { name: '1" Limestone', price: 80, unit: 'cy' },
-            'limestone-3/4': { name: '3/4" Limestone', price: 80, unit: 'cy' },
-            'limestone-3/8': { name: '3/8" Limestone', price: 85, unit: 'cy' },
-            'limestone-base': { name: 'Limestone Base', price: 85, unit: 'cy' },
-            'bull-rock-3x5': { name: '3x5 Bull Rock', price: 80, unit: 'cy' },
-            'gravel-2x3': { name: '2x3 Gravel', price: 80, unit: 'cy' },
-            'gravel-1.5-minus': { name: '1.5" Minus Gravel', price: 80, unit: 'cy' },
-            'pea-gravel': { name: '3/8" Pea Gravel', price: 80, unit: 'cy' },
-            'rainbow-gravel': { name: 'Rainbow Gravel', price: 90, unit: 'cy' },
-            'blackstar': { name: '5/8" Black Star', price: 190, unit: 'cy' },
-            'colorado-bull-rock': { name: '1x3 Colorado Bull Rock', price: 120, unit: 'cy' },
-            'fairland-pink': { name: '1x2 Fairland Pink', price: 80, unit: 'cy' },
-            'bank-sand': { name: 'Bank Sand', price: 40, unit: 'cy' },
-            'select-fill': { name: 'Select Fill', price: 40, unit: 'cy' },
-            'topsoil': { name: 'Topsoil', price: 35, unit: 'cy' },
-            'torpedo-sand': { name: 'Torpedo Sand', price: 30, unit: 'cy' },
-            'mason-sand': { name: 'Mason Sand', price: 30, unit: 'cy' },
-            'mulch-black': { name: 'Black Mulch', price: 35, unit: 'cy' },
-            'mulch-brown': { name: 'Brown Hardwood Mulch', price: 32, unit: 'cy' }
+            'decomposed-granite': { name: '1/4" Minus Decomposed Granite', weight: 1.4 },
+            'granite-base': { name: 'Granite Base', weight: 1.4 },
+            'limestone-1': { name: '1" Limestone', weight: 1.4 },
+            'limestone-3/4': { name: '3/4" Limestone', weight: 1.4 },
+            'limestone-3/8': { name: '3/8" Limestone', weight: 1.4 },
+            'limestone-base': { name: 'Limestone Base', weight: 1.4 },
+            'bull-rock-3x5': { name: '3x5 Bull Rock', weight: 1.4 },
+            'gravel-2x3': { name: '2x3 Gravel', weight: 1.4 },
+            'gravel-1.5-minus': { name: '1.5" Minus Gravel', weight: 1.4 },
+            'pea-gravel': { name: '3/8" Pea Gravel', weight: 1.4 },
+            'rainbow-gravel': { name: 'Rainbow Gravel', weight: 1.4 },
+            'blackstar': { name: '5/8" Black Star', weight: 1.4 },
+            'colorado-bull-rock': { name: '1x3 Colorado Bull Rock', weight: 1.4 },
+            'fairland-pink': { name: '1x2 Fairland Pink', weight: 1.4 },
+            'bank-sand': { name: 'Bank Sand', weight: 1.4 },
+            'select-fill': { name: 'Select Fill', weight: 1.4 },
+            'topsoil': { name: 'Topsoil', weight: 1.4 },
+            'torpedo-sand': { name: 'Torpedo Sand', weight: 1.4 },
+            'mason-sand': { name: 'Mason Sand', weight: 1.4 },
+            'mulch-black': { name: 'Black Mulch', weight: 0.5 },
+            'mulch-brown': { name: 'Brown Hardwood Mulch', weight: 0.5 }
         }
     };
     
@@ -178,9 +215,9 @@ const RockyChat = (function() {
     function showInitialGreeting() {
         setTimeout(() => {
             addRockyMessage(
-                "Hey! I'm Rocky. I can help you pick the right material and get you a delivered price in about 60 seconds. What's your project?",
+                "Hey! I'm Rocky. I can help you pick the right material and get you an exact delivered price in about 60 seconds. What's your project?",
                 getInitialQuickActions(),
-                null  // No product card
+                null
             );
         }, 500);
     }
@@ -223,6 +260,8 @@ const RockyChat = (function() {
                 }
                 break;
             case 'differentProject':
+                state.conversationContext.product = null;
+                state.conversationContext.project = null;
                 simulateUserMessage("I have a different project");
                 break;
             case 'call':
@@ -427,19 +466,19 @@ const RockyChat = (function() {
                     quickActions: [
                         { text: "Different product", action: "differentProject" }
                     ],
-                    productCard: data.productId  // Show product card with quote button
+                    productCard: data.productId
                 };
             }
         }
         
-        // SECOND: Check for pricing questions about current product
+        // SECOND: Check for pricing questions
         if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('how much')) {
             // If they mention a product name in the price question, find it
             for (const [keyword, data] of Object.entries(PRODUCT_KNOWLEDGE.productKeywords)) {
                 if (lowerMessage.includes(keyword)) {
                     state.conversationContext.product = data.productId;
                     return {
-                        text: data.response,
+                        text: `Great choice! The exact price for **${PRODUCT_KNOWLEDGE.products[data.productId].name}** depends on quantity and your delivery location. Let me get you an exact quote—it only takes a sec.`,
                         quickActions: [
                             { text: "Different product", action: "differentProject" }
                         ],
@@ -451,16 +490,16 @@ const RockyChat = (function() {
             // Generic price question without product
             if (!state.conversationContext.product) {
                 return {
-                    text: "Pricing depends on the material. What are you working on? I can recommend the right product and give you an exact delivered price.",
+                    text: "Pricing depends on the material, quantity, and your location. What are you working on? I can recommend the right product and get you an exact delivered price.",
                     quickActions: getInitialQuickActions(),
                     productCard: null
                 };
             }
             
-            // Price question with product in context
+            // Price question with product already in context
             const product = PRODUCT_KNOWLEDGE.products[state.conversationContext.product];
             return {
-                text: `${product.name} starts at $${product.price} per cubic yard with free delivery. Want me to get you an exact quote?`,
+                text: `The exact price for **${product.name}** depends on quantity and delivery distance. Let me get you a real quote with your ZIP code.`,
                 quickActions: [
                     { text: "Different product", action: "differentProject" }
                 ],
@@ -490,7 +529,7 @@ const RockyChat = (function() {
             state.conversationContext.quantity = parseInt(quantityMatch[1]);
             const productName = PRODUCT_KNOWLEDGE.products[state.conversationContext.product]?.name || 'that';
             return {
-                text: `Got it—${quantityMatch[1]} ${quantityMatch[2]}s of ${productName}. What's your ZIP code so I can confirm we deliver to your area?`,
+                text: `Got it—${quantityMatch[1]} ${quantityMatch[2]}s of ${productName}. What's your ZIP code so I can get you an exact delivered price?`,
                 quickActions: [],
                 productCard: null
             };
@@ -500,11 +539,12 @@ const RockyChat = (function() {
         const zipMatch = message.match(/\b(\d{5})\b/);
         if (zipMatch) {
             state.conversationContext.zip = zipMatch[1];
+            // Use the main.js ZIP_DATA if available
             if (typeof ZIP_DATA !== 'undefined' && ZIP_DATA[zipMatch[1]]) {
                 return {
-                    text: `Great, we deliver to ${ZIP_DATA[zipMatch[1]].city}! Click below to get your exact delivered price.`,
+                    text: `Great, we deliver to ${ZIP_DATA[zipMatch[1]].city}! Click below to get your exact delivered price with all costs included.`,
                     quickActions: [
-                        { text: "Get my quote", action: "getQuote" }
+                        { text: "Get exact price", action: "getQuote" }
                     ],
                     productCard: null
                 };
@@ -642,9 +682,8 @@ const RockyChat = (function() {
                 <div class="rocky-product-card">
                     <div class="rocky-product-card-header">
                         <span class="rocky-product-card-name">${product.name}</span>
-                        <span class="rocky-product-card-price">$${product.price}/${product.unit}</span>
                     </div>
-                    <div class="rocky-product-card-desc">Free delivery included</div>
+                    <div class="rocky-product-card-desc">Free delivery included • 2 yard minimum</div>
                     <button class="rocky-product-card-btn" onclick="RockyChat.executeAction('quote_${productId}')">
                         Get Exact Quote →
                     </button>
