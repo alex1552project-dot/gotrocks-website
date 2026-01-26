@@ -873,6 +873,9 @@ function proceedToCheckout() {
     }
     showCheckoutStep(1);
     document.getElementById('checkoutModal').classList.add('active');
+    // Hide scroll arrows during checkout
+    var scrollArrows = document.querySelector('.scroll-arrows');
+    if (scrollArrows) scrollArrows.style.display = 'none';
 }
 
 function showCheckoutStep(step) {
@@ -948,7 +951,12 @@ function goToPaymentStep() {
     showCheckoutStep(3);
 }
 
-function closeCheckoutModal() { document.getElementById('checkoutModal').classList.remove('active'); }
+function closeCheckoutModal() {
+    document.getElementById('checkoutModal').classList.remove('active');
+    // Show scroll arrows again
+    var scrollArrows = document.querySelector('.scroll-arrows');
+    if (scrollArrows) scrollArrows.style.display = 'flex';
+}
 
 function processPayment() {
     if (cart.length === 0) return;
