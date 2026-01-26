@@ -146,6 +146,18 @@ const RockyChat = (function() {
                 products: ['select-fill', 'topsoil'],
                 response: "For filling low spots, **Select Fill** is your best bet—compacts well and levels out perfectly. **Topsoil** works too if you're planning to plant or seed over it."
             },
+            'low lying': {
+                products: ['select-fill', 'topsoil'],
+                response: "For those low-lying areas, **Select Fill** is your best bet—compacts well and levels out perfectly. **Topsoil** works too if you're planning to plant or seed over it."
+            },
+            'low area': {
+                products: ['select-fill', 'topsoil'],
+                response: "For filling in low areas, **Select Fill** is what you need—compacts well for a solid base. Add **Topsoil** on top if you want to plant grass or flowers."
+            },
+            'dip': {
+                products: ['select-fill', 'topsoil'],
+                response: "For filling in dips and low spots, **Select Fill** is your best bet—compacts well and levels out perfectly. Add **Topsoil** on top if you want to grow grass over it."
+            },
             'sandbox': {
                 products: ['mason-sand'],
                 response: "For a sandbox, **Mason Sand** is perfect—clean, fine, and safe for kids!"
@@ -625,14 +637,30 @@ const RockyChat = (function() {
             
             const data = await response.json();
             hideTyping();
-            addRockyMessage(
-                data.response || "I'm not quite sure about that one. What project are you working on?",
-                [
-                    { text: "Start over", action: "differentProject" },
-                    { text: "📞 Call us", action: "call" }
-                ],
-                null
-            );
+            
+            // Check if Rocky's response mentions a product we can link to
+            const responseText = data.response || "I'm not quite sure about that one. What project are you working on?";
+            const detectedProduct = detectProductInResponse(responseText);
+            
+            if (detectedProduct) {
+                // Rocky mentioned a product - show product card with quote button
+                state.conversationContext.product = detectedProduct;
+                addRockyMessage(
+                    responseText,
+                    [{ text: "Different product", action: "differentProject" }],
+                    detectedProduct
+                );
+            } else {
+                // No product detected - show helpful actions
+                addRockyMessage(
+                    responseText,
+                    [
+                        { text: "Get a quote", action: "getQuote" },
+                        { text: "Start over", action: "differentProject" }
+                    ],
+                    null
+                );
+            }
             
         } catch (error) {
             console.error('Rocky API error:', error);
@@ -643,6 +671,34 @@ const RockyChat = (function() {
                 null
             );
         }
+    }
+    
+    // Detect if Rocky mentioned a product in his response
+    function detectProductInResponse(text) {
+        const lowerText = text.toLowerCase();
+        
+        const productPatterns = [
+            { pattern: /select fill/i, productId: 'select-fill' },
+            { pattern: /topsoil/i, productId: 'topsoil' },
+            { pattern: /black mulch/i, productId: 'mulch-black' },
+            { pattern: /brown mulch|brown hardwood/i, productId: 'mulch-brown' },
+            { pattern: /decomposed granite/i, productId: 'decomposed-granite' },
+            { pattern: /granite base/i, productId: 'granite-base' },
+            { pattern: /limestone base/i, productId: 'limestone-base' },
+            { pattern: /bull rock|3x5/i, productId: 'bull-rock-3x5' },
+            { pattern: /pea gravel/i, productId: 'pea-gravel' },
+            { pattern: /black star/i, productId: 'blackstar' },
+            { pattern: /mason sand/i, productId: 'mason-sand' },
+            { pattern: /bank sand/i, productId: 'bank-sand' }
+        ];
+        
+        for (const { pattern, productId } of productPatterns) {
+            if (pattern.test(text)) {
+                return productId;
+            }
+        }
+        
+        return null;
     }
     
     // =====================================================
