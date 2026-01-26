@@ -1,0 +1,116 @@
+// =====================================================
+// TEXAS GOT ROCKS - Geo-Pricing Edge Function
+// Detects visitor location from IP and determines pricing zone
+// =====================================================
+
+// Conroe yard coordinates (center point for distance calculation)
+const YARD_LAT = 30.3119;
+const YARD_LON = -95.4561;
+
+// Zone definitions (miles from yard)
+const ZONES = {
+  1: { maxDistance: 15, name: 'Conroe Area' },
+  2: { maxDistance: 30, name: 'The Woodlands Area' },
+  3: { maxDistance: 60, name: 'Greater Houston' }
+};
+
+// Price multipliers per zone (delivery cost factor baked in)
+// Base prices will be multiplied by these to get display prices
+const ZONE_PRICE_CONFIG = {
+  1: {
+    multiplier: 1.20,  // 20% above base for Zone 1
+    deliveryAdder: 8,   // $/cy delivery component
+    label: 'Conroe'
+  },
+  2: {
+    multiplier: 1.35,  // 35% above base for Zone 2
+    deliveryAdder: 15,  // $/cy delivery component
+    label: 'The Woodlands'
+  },
+  3: {
+    multiplier: 1.55,  // 55% above base for Zone 3
+    deliveryAdder: 25,  // $/cy delivery component
+    label: 'Houston'
+  }
+};
+
+/**
+ * Calculate distance between two coordinates using Haversine formula
+ */
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 3959; // Earth's radius in miles
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+/**
+ * Determine zone from distance
+ */
+function getZoneFromDistance(distance) {
+  if (distance <= ZONES[1].maxDistance) return 1;
+  if (distance <= ZONES[2].maxDistance) return 2;
+  if (distance <= ZONES[3].maxDistance) return 3;
+  return null; // Outside service area
+}
+
+export default async function handler(request, context) {
+  // Get geo data from Netlify's built-in geo object
+  const geo = context.geo;
+  
+  let zone = null;
+  let city = null;
+  let distance = null;
+  let priceConfig = null;
+  
+  if (geo && geo.latitude && geo.longitude) {
+    // Calculate distance from yard
+    distance = calculateDistance(
+      YARD_LAT, YARD_LON,
+      parseFloat(geo.latitude),
+      parseFloat(geo.longitude)
+    );
+    
+    zone = getZoneFromDistance(distance);
+    city = geo.city || null;
+    
+    if (zone) {
+      priceConfig = ZONE_PRICE_CONFIG[zone];
+    }
+  }
+  
+  // Build response object
+  const geoData = {
+    detected: zone !== null,
+    zone: zone,
+    city: city || (zone ? ZONE_PRICE_CONFIG[zone]?.label : null),
+    distance: distance ? Math.round(distance) : null,
+    priceConfig: priceConfig,
+    // Include raw geo for debugging (remove in production if needed)
+    raw: {
+      country: geo?.country,
+      region: geo?.subdivision?.code,
+      city: geo?.city,
+      latitude: geo?.latitude,
+      longitude: geo?.longitude
+    }
+  };
+  
+  // Return JSON response
+  return new Response(JSON.stringify(geoData), {
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'private, max-age=3600', // Cache for 1 hour per user
+      'Access-Control-Allow-Origin': '*'
+    }
+  });
+}
+
+export const config = {
+  path: '/api/geo-pricing'
+};
