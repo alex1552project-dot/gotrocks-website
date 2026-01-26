@@ -9,7 +9,8 @@
     "mongodb": "^6.3.0",
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
-    "square": "^39.0.0"
+    "square": "^39.0.0",
+    "@anthropic-ai/sdk": "^0.39.0"
   },
   "devDependencies": {
     "netlify-cli": "^17.0.0"
