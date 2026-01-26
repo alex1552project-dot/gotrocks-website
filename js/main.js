@@ -851,12 +851,18 @@ function openCartDrawer() {
     document.getElementById('cartDrawerOverlay').classList.add('active');
     document.getElementById('cartDrawer').classList.add('active');
     document.body.style.overflow = 'hidden';
+    // Hide scroll arrows
+    var scrollArrows = document.querySelector('.scroll-arrows');
+    if (scrollArrows) scrollArrows.style.display = 'none';
 }
 
 function closeCartDrawer() {
     document.getElementById('cartDrawerOverlay').classList.remove('active');
     document.getElementById('cartDrawer').classList.remove('active');
     document.body.style.overflow = '';
+    // Show scroll arrows again
+    var scrollArrows = document.querySelector('.scroll-arrows');
+    if (scrollArrows) scrollArrows.style.display = 'flex';
 }
 
 // =====================================================
