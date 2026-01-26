@@ -1,14 +1,10 @@
 // =====================================================
 // ROCKY CHAT - Texas Got Rocks AI Assistant
-// Integrates with existing quote modal and pricing logic
-// FIXED: Button actions and reset on close
+// v2 - Fixed redundant buttons & product recognition
 // =====================================================
 
 const RockyChat = (function() {
     
-    // =====================================================
-    // CONFIGURATION
-    // =====================================================
     const CONFIG = {
         rockyImage: '/images/rocky-logo-transparent.png',
         apiEndpoint: '/.netlify/functions/rocky-chat',
@@ -17,9 +13,62 @@ const RockyChat = (function() {
     };
     
     // =====================================================
-    // PRODUCT KNOWLEDGE - Rocky's brain
+    // PRODUCT KNOWLEDGE
     // =====================================================
     const PRODUCT_KNOWLEDGE = {
+        // Direct product lookups (for when user asks about specific product)
+        productKeywords: {
+            'topsoil': {
+                productId: 'topsoil',
+                response: "**Topsoil** is $35/cy—great for gardens, lawns, and raised beds. It's nutrient-rich and screened for easy spreading. How much area are you covering?"
+            },
+            'black mulch': {
+                productId: 'mulch-black',
+                response: "**Black Mulch** is $35/cy and creates a dramatic contrast against your plants. It helps retain moisture and suppress weeds. How many yards do you need?"
+            },
+            'brown mulch': {
+                productId: 'mulch-brown',
+                response: "**Brown Hardwood Mulch** is $32/cy—gives you that natural forest floor look. Great for a more traditional appearance. How much do you need?"
+            },
+            'decomposed granite': {
+                productId: 'decomposed-granite',
+                response: "**Decomposed Granite** is $85/cy—perfect for patios, walkways, and xeriscaping. It compacts into a firm, stable surface with a rustic look."
+            },
+            'granite base': {
+                productId: 'granite-base',
+                response: "**Granite Base** is $91/cy—ideal for driveway bases. It compacts really well and provides excellent stability for vehicle traffic."
+            },
+            'limestone base': {
+                productId: 'limestone-base',
+                response: "**Limestone Base** is $85/cy—another great option for driveway bases. Compacts well and creates a solid foundation."
+            },
+            'bull rock': {
+                productId: 'bull-rock-3x5',
+                response: "**3x5 Bull Rock** is $80/cy—perfect for drainage projects, borders, and accent areas. The larger stones let water flow through easily."
+            },
+            'pea gravel': {
+                productId: 'pea-gravel',
+                response: "**Pea Gravel** is $80/cy—great for xeriscaping, decorative areas, and walkways. Low maintenance and drains well."
+            },
+            'black star': {
+                productId: 'blackstar',
+                response: "**5/8\" Black Star** is our premium option at $190/cy—it's volcanic basalt with a stunning dark, elegant look. Really makes a statement!"
+            },
+            'mason sand': {
+                productId: 'mason-sand',
+                response: "**Mason Sand** is $30/cy—clean, fine texture that's perfect for sandboxes and masonry work. Safe for kids!"
+            },
+            'select fill': {
+                productId: 'select-fill',
+                response: "**Select Fill** is $40/cy—great for filling low spots and grading. Compacts well and is easy to work with."
+            },
+            'bank sand': {
+                productId: 'bank-sand',
+                response: "**Bank Sand** is $40/cy—useful for various fill and leveling projects."
+            }
+        },
+        
+        // Project-based recommendations
         projectMappings: {
             'driveway': {
                 products: ['granite-base', 'limestone-base'],
@@ -27,51 +76,51 @@ const RockyChat = (function() {
             },
             'french drain': {
                 products: ['bull-rock-3x5'],
-                response: "For French drains and drainage, **3x5 Bull Rock** is your best bet. The larger stones allow water to flow through easily. It's $80/cy with free delivery."
+                response: "For French drains, **3x5 Bull Rock** is your best bet at $80/cy. The larger stones allow water to flow through easily."
             },
             'drainage': {
                 products: ['bull-rock-3x5', 'gravel-1.5-minus'],
-                response: "For drainage projects, I'd go with **3x5 Bull Rock** for the main drainage area—it lets water flow through nicely. If you need something smaller, **1.5\" Minus Gravel** also works well."
+                response: "For drainage projects, I'd go with **3x5 Bull Rock** ($80/cy)—it lets water flow through nicely."
             },
             'patio': {
                 products: ['decomposed-granite'],
-                response: "**Decomposed Granite** is perfect for patios. It compacts into a firm, stable surface with a natural rustic look. Great for that Texas Hill Country vibe. $85/cy delivered free."
+                response: "**Decomposed Granite** ($85/cy) is perfect for patios. It compacts into a firm, stable surface with a natural rustic look."
             },
             'walkway': {
                 products: ['decomposed-granite', 'pea-gravel'],
-                response: "For walkways, **Decomposed Granite** gives you a firm, natural path that compacts well. If you want something a bit more decorative, **Pea Gravel** is also popular. Both look great!"
+                response: "For walkways, **Decomposed Granite** ($85/cy) gives you a firm, natural path. **Pea Gravel** ($80/cy) is also popular for a more decorative look."
             },
             'garden': {
                 products: ['mulch-black', 'mulch-brown', 'topsoil'],
-                response: "For garden beds, you'll want **Mulch** on top (black or brown, your choice) and **Topsoil** underneath if you're building up the beds. Mulch helps retain moisture and suppress weeds."
+                response: "For garden beds, you'll want **Mulch** on top (black $35/cy or brown $32/cy) and **Topsoil** ($35/cy) underneath if you're building up the beds."
             },
             'flower bed': {
                 products: ['mulch-black', 'mulch-brown', 'topsoil'],
-                response: "Flower beds look great with **Black Mulch** or **Brown Mulch**—the black creates a dramatic contrast, brown gives a more natural forest floor look. Both are $32-35/cy. Need topsoil underneath?"
+                response: "Flower beds look great with **Black Mulch** ($35/cy) or **Brown Mulch** ($32/cy). Need topsoil underneath too?"
             },
             'mulch': {
                 products: ['mulch-black', 'mulch-brown'],
-                response: "We've got **Black Mulch** ($35/cy) for a bold, dramatic look, or **Brown Hardwood Mulch** ($32/cy) for a natural forest floor appearance. Both help with moisture and weed control. Which color appeals to you?"
+                response: "We've got **Black Mulch** ($35/cy) for a bold look, or **Brown Hardwood Mulch** ($32/cy) for a natural appearance. Which color appeals to you?"
             },
             'fill': {
                 products: ['select-fill'],
-                response: "For filling in low spots or grading, **Select Fill** is what you need. It's $40/cy and works great for leveling out your yard before landscaping."
+                response: "For filling in low spots, **Select Fill** ($40/cy) is what you need. Works great for leveling."
             },
             'grading': {
                 products: ['select-fill'],
-                response: "**Select Fill** is perfect for grading projects. It compacts well and is easy to work with. $40/cy delivered free to your location."
+                response: "**Select Fill** ($40/cy) is perfect for grading projects. Compacts well and easy to work with."
             },
             'sandbox': {
                 products: ['mason-sand'],
-                response: "For a sandbox, you want **Mason Sand**—it's clean, fine, and safe for kids. $30/cy and we'll deliver it right to your driveway."
+                response: "For a sandbox, **Mason Sand** ($30/cy) is perfect—clean, fine, and safe for kids."
             },
             'xeriscaping': {
                 products: ['pea-gravel'],
-                response: "For xeriscaping and low-water landscaping, **Pea Gravel** is a great choice. It looks clean, drains well, and requires zero maintenance. $80/cy with free delivery."
+                response: "For xeriscaping, **Pea Gravel** ($80/cy) is a great choice. Looks clean, drains well, zero maintenance."
             },
             'landscaping': {
                 products: ['decomposed-granite', 'pea-gravel', 'mulch-black'],
-                response: "For general landscaping, it depends on the look you're going for. **Decomposed Granite** for paths and beds, **Pea Gravel** for accent areas, or **Mulch** around plants. What's the specific area you're working on?"
+                response: "For landscaping, it depends on the area. **Decomposed Granite** for paths, **Pea Gravel** for accents, or **Mulch** around plants. What specifically are you working on?"
             }
         },
         
@@ -113,9 +162,7 @@ const RockyChat = (function() {
             quantity: null,
             zip: null
         },
-        hintShown: false,
-        actionCounter: 0,
-        registeredActions: {}  // Store actions by unique ID
+        hintShown: false
     };
     
     // =====================================================
@@ -132,7 +179,8 @@ const RockyChat = (function() {
         setTimeout(() => {
             addRockyMessage(
                 "Hey! I'm Rocky. I can help you pick the right material and get you a delivered price in about 60 seconds. What's your project?",
-                getInitialQuickActions()
+                getInitialQuickActions(),
+                null  // No product card
             );
         }, 500);
     }
@@ -148,7 +196,7 @@ const RockyChat = (function() {
     }
     
     // =====================================================
-    // ACTION HANDLING - Fixed to use action strings
+    // ACTION HANDLING
     // =====================================================
     function executeAction(actionId) {
         switch(actionId) {
@@ -174,12 +222,6 @@ const RockyChat = (function() {
                     openQuoteModal();
                 }
                 break;
-            case 'tellMore':
-                if (state.conversationContext.product) {
-                    const productName = PRODUCT_KNOWLEDGE.products[state.conversationContext.product]?.name || 'this product';
-                    simulateUserMessage(`Tell me more about ${productName}`);
-                }
-                break;
             case 'differentProject':
                 simulateUserMessage("I have a different project");
                 break;
@@ -193,7 +235,6 @@ const RockyChat = (function() {
                 openQuoteModal();
                 break;
             default:
-                // Check if it's a product-specific quote action
                 if (actionId.startsWith('quote_')) {
                     const productId = actionId.replace('quote_', '');
                     openQuoteWithProduct(productId);
@@ -211,7 +252,6 @@ const RockyChat = (function() {
     // CREATE DOM ELEMENTS
     // =====================================================
     function createChatElements() {
-        // Create chat bubble
         const bubble = document.createElement('div');
         bubble.className = 'rocky-chat-bubble has-notification';
         bubble.id = 'rockyChatBubble';
@@ -219,14 +259,12 @@ const RockyChat = (function() {
         bubble.onclick = toggleChat;
         document.body.appendChild(bubble);
         
-        // Create hint tooltip
         const hint = document.createElement('div');
         hint.className = 'rocky-chat-hint';
         hint.id = 'rockyChatHint';
         hint.textContent = CONFIG.hintMessage;
         document.body.appendChild(hint);
         
-        // Create chat window
         const chatWindow = document.createElement('div');
         chatWindow.className = 'rocky-chat-window';
         chatWindow.id = 'rockyChatWindow';
@@ -249,7 +287,6 @@ const RockyChat = (function() {
         `;
         document.body.appendChild(chatWindow);
         
-        // Replace callback box with inline trigger
         replaceCallbackBox();
     }
     
@@ -265,9 +302,7 @@ const RockyChat = (function() {
                 </div>
                 <h4>Need help picking a material?</h4>
                 <p>Chat with Rocky—he knows his stuff</p>
-                <button class="rocky-inline-trigger-btn">
-                    💬 Chat with Rocky
-                </button>
+                <button class="rocky-inline-trigger-btn">💬 Chat with Rocky</button>
             `;
             callbackBox.replaceWith(inlineTrigger);
         }
@@ -301,11 +336,7 @@ const RockyChat = (function() {
     // CHAT WINDOW CONTROLS
     // =====================================================
     function toggleChat() {
-        if (state.isOpen) {
-            closeChat();
-        } else {
-            openChat();
-        }
+        state.isOpen ? closeChat() : openChat();
     }
     
     function openChat() {
@@ -313,7 +344,6 @@ const RockyChat = (function() {
         document.getElementById('rockyChatWindow').classList.add('open');
         document.getElementById('rockyChatBubble').classList.remove('has-notification');
         hideHint();
-        
         setTimeout(() => {
             document.getElementById('rockyChatInput').focus();
         }, 300);
@@ -322,30 +352,17 @@ const RockyChat = (function() {
     function closeChat() {
         state.isOpen = false;
         document.getElementById('rockyChatWindow').classList.remove('open');
-        
-        // RESET CONVERSATION on close
         resetConversation();
     }
     
     function resetConversation() {
-        // Clear state
         state.messages = [];
-        state.conversationContext = {
-            project: null,
-            product: null,
-            quantity: null,
-            zip: null
-        };
-        state.registeredActions = {};
-        state.actionCounter = 0;
+        state.conversationContext = { project: null, product: null, quantity: null, zip: null };
         
-        // Clear messages container
         const messagesContainer = document.getElementById('rockyChatMessages');
         if (messagesContainer) {
             messagesContainer.innerHTML = '';
         }
-        
-        // Show initial greeting again
         showInitialGreeting();
     }
     
@@ -377,9 +394,7 @@ const RockyChat = (function() {
     function sendMessage() {
         const input = document.getElementById('rockyChatInput');
         const message = input.value.trim();
-        
         if (!message) return;
-        
         input.value = '';
         addUserMessage(message);
         handleUserMessage(message);
@@ -387,7 +402,6 @@ const RockyChat = (function() {
     
     function handleUserMessage(message) {
         showTyping();
-        
         const localResponse = processLocally(message);
         
         if (localResponse) {
@@ -403,7 +417,58 @@ const RockyChat = (function() {
     function processLocally(message) {
         const lowerMessage = message.toLowerCase();
         
-        // Check for project keywords
+        // FIRST: Check for specific product mentions (highest priority)
+        for (const [keyword, data] of Object.entries(PRODUCT_KNOWLEDGE.productKeywords)) {
+            if (lowerMessage.includes(keyword)) {
+                state.conversationContext.product = data.productId;
+                
+                return {
+                    text: data.response,
+                    quickActions: [
+                        { text: "Different product", action: "differentProject" }
+                    ],
+                    productCard: data.productId  // Show product card with quote button
+                };
+            }
+        }
+        
+        // SECOND: Check for pricing questions about current product
+        if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('how much')) {
+            // If they mention a product name in the price question, find it
+            for (const [keyword, data] of Object.entries(PRODUCT_KNOWLEDGE.productKeywords)) {
+                if (lowerMessage.includes(keyword)) {
+                    state.conversationContext.product = data.productId;
+                    return {
+                        text: data.response,
+                        quickActions: [
+                            { text: "Different product", action: "differentProject" }
+                        ],
+                        productCard: data.productId
+                    };
+                }
+            }
+            
+            // Generic price question without product
+            if (!state.conversationContext.product) {
+                return {
+                    text: "Pricing depends on the material. What are you working on? I can recommend the right product and give you an exact delivered price.",
+                    quickActions: getInitialQuickActions(),
+                    productCard: null
+                };
+            }
+            
+            // Price question with product in context
+            const product = PRODUCT_KNOWLEDGE.products[state.conversationContext.product];
+            return {
+                text: `${product.name} starts at $${product.price} per cubic yard with free delivery. Want me to get you an exact quote?`,
+                quickActions: [
+                    { text: "Different product", action: "differentProject" }
+                ],
+                productCard: state.conversationContext.product
+            };
+        }
+        
+        // THIRD: Check for project keywords
         for (const [project, data] of Object.entries(PRODUCT_KNOWLEDGE.projectMappings)) {
             if (lowerMessage.includes(project)) {
                 state.conversationContext.project = project;
@@ -412,7 +477,6 @@ const RockyChat = (function() {
                 return {
                     text: data.response,
                     quickActions: [
-                        { text: "Get a quote", action: "getQuote" },
                         { text: "Different project", action: "differentProject" }
                     ],
                     productCard: data.products[0]
@@ -424,9 +488,11 @@ const RockyChat = (function() {
         const quantityMatch = message.match(/(\d+)\s*(yard|cubic yard|cy|ton)/i);
         if (quantityMatch && state.conversationContext.product) {
             state.conversationContext.quantity = parseInt(quantityMatch[1]);
+            const productName = PRODUCT_KNOWLEDGE.products[state.conversationContext.product]?.name || 'that';
             return {
-                text: `Got it—${quantityMatch[1]} ${quantityMatch[2]}s of ${PRODUCT_KNOWLEDGE.products[state.conversationContext.product].name}. What's your ZIP code so I can get you an exact delivered price?`,
-                quickActions: []
+                text: `Got it—${quantityMatch[1]} ${quantityMatch[2]}s of ${productName}. What's your ZIP code so I can confirm we deliver to your area?`,
+                quickActions: [],
+                productCard: null
             };
         }
         
@@ -436,77 +502,66 @@ const RockyChat = (function() {
             state.conversationContext.zip = zipMatch[1];
             if (typeof ZIP_DATA !== 'undefined' && ZIP_DATA[zipMatch[1]]) {
                 return {
-                    text: `Great, we deliver to ${ZIP_DATA[zipMatch[1]].city}! Let me pull up the quote calculator with your selections...`,
+                    text: `Great, we deliver to ${ZIP_DATA[zipMatch[1]].city}! Click below to get your exact delivered price.`,
                     quickActions: [
-                        { text: "Open quote", action: "getQuote" }
-                    ]
+                        { text: "Get my quote", action: "getQuote" }
+                    ],
+                    productCard: null
                 };
             } else if (typeof ZIP_DATA !== 'undefined') {
                 return {
-                    text: `Hmm, ${zipMatch[1]} might be outside our usual delivery area. Give us a call at (936) 259-2887 and we'll see what we can do for you.`,
+                    text: `Hmm, ${zipMatch[1]} might be outside our usual area. Give us a call at (936) 259-2887 and we'll see what we can do!`,
                     quickActions: [
                         { text: "📞 Call now", action: "call" },
-                        { text: "Try different ZIP", action: "differentProject" }
-                    ]
+                        { text: "Try different ZIP", action: "other" }
+                    ],
+                    productCard: null
                 };
             }
         }
         
-        // Check for pricing questions
-        if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('how much')) {
-            if (state.conversationContext.product) {
-                const product = PRODUCT_KNOWLEDGE.products[state.conversationContext.product];
-                return {
-                    text: `${product.name} starts at $${product.price} per cubic yard. The final delivered price depends on your location and quantity. Want me to get you an exact quote?`,
-                    quickActions: [
-                        { text: "Get exact quote", action: "getQuote" },
-                        { text: "See all products", action: "openQuoteModal" }
-                    ]
-                };
-            } else {
-                return {
-                    text: "Pricing depends on the material and your location. What project are you working on? I can recommend the right material and get you a delivered price.",
-                    quickActions: getInitialQuickActions()
-                };
-            }
-        }
-        
-        // Check for help/confused
+        // Help/confused
         if (lowerMessage.includes("don't know") || lowerMessage.includes("not sure") || lowerMessage.includes("help") || lowerMessage.includes("confused")) {
             return {
-                text: "No problem—that's what I'm here for! Tell me about your project and I'll recommend the right material. Are you working on a driveway, patio, garden beds, or something else?",
-                quickActions: getInitialQuickActions()
+                text: "No problem! Tell me about your project and I'll recommend the right material. Driveway, patio, garden beds, or something else?",
+                quickActions: getInitialQuickActions(),
+                productCard: null
             };
         }
         
-        // Check for "different project" or "something else"
+        // Different/other
         if (lowerMessage.includes("different") || lowerMessage.includes("something else") || lowerMessage.includes("other")) {
+            state.conversationContext.product = null;
+            state.conversationContext.project = null;
             return {
-                text: "No problem! Tell me what you're working on—driveway, landscaping, drainage, building a patio, filling in low spots? I've seen it all.",
-                quickActions: []
+                text: "No problem! What are you working on—driveway, landscaping, drainage, patio, filling in low spots? I've seen it all.",
+                quickActions: [],
+                productCard: null
             };
         }
         
-        // Check for human handoff
+        // Human handoff
         if (lowerMessage.includes("talk to") || lowerMessage.includes("real person") || lowerMessage.includes("call") || lowerMessage.includes("phone")) {
             return {
                 text: "Absolutely! Give us a call or text at (936) 259-2887. We're real people here in Conroe—not a call center.",
                 quickActions: [
                     { text: "📞 Call now", action: "call" },
                     { text: "💬 Text instead", action: "text" }
-                ]
+                ],
+                productCard: null
             };
         }
         
-        // Check for delivery questions
+        // Delivery questions
         if (lowerMessage.includes("deliver") || lowerMessage.includes("delivery")) {
             return {
-                text: "Delivery is **always FREE**—that's our promise. We cover Conroe, The Woodlands, Spring, Magnolia, and most of the Greater Houston area. Same-day delivery is often available for orders placed before noon. What's your ZIP code?",
-                quickActions: []
+                text: "Delivery is **always FREE**—that's our promise. We cover Conroe, The Woodlands, Spring, and most of the Greater Houston area. What's your ZIP code?",
+                quickActions: [],
+                productCard: null
             };
         }
         
-        // Default: didn't understand
+        // Default: didn't understand, use API
         return null;
     }
     
@@ -525,23 +580,23 @@ const RockyChat = (function() {
             if (!response.ok) throw new Error('API error');
             
             const data = await response.json();
-            
             hideTyping();
             addRockyMessage(
-                data.response || "I'm not quite sure about that one. Want to tell me more about your project, or give us a call at (936) 259-2887?",
+                data.response || "I'm not quite sure about that one. What project are you working on?",
                 [
                     { text: "Start over", action: "differentProject" },
                     { text: "📞 Call us", action: "call" }
-                ]
+                ],
+                null
             );
             
         } catch (error) {
             console.error('Rocky API error:', error);
             hideTyping();
-            
             addRockyMessage(
-                "Tell me a bit more about what you're working on—I want to make sure I recommend the right material for your project.",
-                getInitialQuickActions()
+                "Tell me more about what you're working on—I want to recommend the right material for you.",
+                getInitialQuickActions(),
+                null
             );
         }
     }
@@ -580,7 +635,7 @@ const RockyChat = (function() {
                 ${formattedText}
         `;
         
-        // Add product card if specified
+        // Add product card if specified (includes its own quote button)
         if (productId && PRODUCT_KNOWLEDGE.products[productId]) {
             const product = PRODUCT_KNOWLEDGE.products[productId];
             html += `
@@ -597,13 +652,27 @@ const RockyChat = (function() {
             `;
         }
         
-        // Add quick actions - using action strings instead of function references
-        if (quickActions && quickActions.length > 0) {
+        // Add quick actions ONLY if no product card (to avoid redundant quote buttons)
+        if (quickActions && quickActions.length > 0 && !productId) {
             html += `<div class="rocky-quick-actions">`;
             quickActions.forEach((qa) => {
                 html += `<button class="rocky-quick-btn" onclick="RockyChat.executeAction('${qa.action}')">${qa.text}</button>`;
             });
             html += `</div>`;
+        }
+        
+        // If product card exists, only show non-quote quick actions
+        if (quickActions && quickActions.length > 0 && productId) {
+            const nonQuoteActions = quickActions.filter(qa => 
+                !qa.action.includes('quote') && !qa.action.includes('Quote')
+            );
+            if (nonQuoteActions.length > 0) {
+                html += `<div class="rocky-quick-actions">`;
+                nonQuoteActions.forEach((qa) => {
+                    html += `<button class="rocky-quick-btn" onclick="RockyChat.executeAction('${qa.action}')">${qa.text}</button>`;
+                });
+                html += `</div>`;
+            }
         }
         
         html += `</div>`;
@@ -653,7 +722,7 @@ const RockyChat = (function() {
     }
     
     // =====================================================
-    // INTEGRATION WITH QUOTE MODAL
+    // QUOTE MODAL INTEGRATION
     // =====================================================
     function openQuoteModal() {
         closeChat();
@@ -713,7 +782,6 @@ const RockyChat = (function() {
     
 })();
 
-// Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     RockyChat.init();
 });
