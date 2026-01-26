@@ -142,6 +142,10 @@ const RockyChat = (function() {
                 products: ['select-fill'],
                 response: "To level out an area, **Select Fill** is your go-to. How big is the area you're working with?"
             },
+            'low spot': {
+                products: ['select-fill', 'topsoil'],
+                response: "For filling low spots, **Select Fill** is your best bet—compacts well and levels out perfectly. **Topsoil** works too if you're planning to plant or seed over it."
+            },
             'sandbox': {
                 products: ['mason-sand'],
                 response: "For a sandbox, **Mason Sand** is perfect—clean, fine, and safe for kids!"
