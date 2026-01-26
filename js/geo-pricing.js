@@ -183,6 +183,7 @@
      * Show fallback CTA when location cannot be determined
      */
     function showFallbackPricing() {
+        // Update main product cards
         const productCards = document.querySelectorAll('.product-card[data-product]');
         
         productCards.forEach(card => {
@@ -192,9 +193,39 @@
             const priceEl = card.querySelector('.product-price .amount');
             
             if (priceEl) {
-                // Keep existing price but add click prompt
-                const currentText = priceEl.textContent;
                 priceEl.innerHTML = `<span class="geo-price-cta" onclick="openCalculatorModal(); event.preventDefault(); event.stopPropagation();">Get your low price →</span>`;
+                priceEl.classList.add('geo-fallback');
+            }
+        });
+        
+        // Update "More Products" modal prices
+        updateMoreProductsModalFallback();
+        
+        // Also update when modal opens (in case it wasn't in DOM yet)
+        const moreProductsModal = document.getElementById('moreProductsModal');
+        if (moreProductsModal) {
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.target.classList.contains('active')) {
+                        updateMoreProductsModalFallback();
+                    }
+                });
+            });
+            observer.observe(moreProductsModal, { attributes: true, attributeFilter: ['class'] });
+        }
+    }
+    
+    /**
+     * Update More Products modal with fallback CTA
+     */
+    function updateMoreProductsModalFallback() {
+        const productItems = document.querySelectorAll('.more-products-modal .product-item');
+        
+        productItems.forEach(item => {
+            const priceEl = item.querySelector('.product-price');
+            
+            if (priceEl && !priceEl.classList.contains('geo-fallback')) {
+                priceEl.innerHTML = `<span class="geo-price-cta-small">Low Prices →</span>`;
                 priceEl.classList.add('geo-fallback');
             }
         });
