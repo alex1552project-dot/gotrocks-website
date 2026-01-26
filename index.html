@@ -20,6 +20,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/geo-pricing.css">
     <!-- Square Web Payments SDK -->
     <script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
     <style>
@@ -951,7 +952,7 @@
                             <span class="payment-option-content">
                                 <span class="payment-icon">&#127970;</span>
                                 <span class="payment-label">Bank Account (ACH)</span>
-                                <span class="payment-desc">Lower fees • 2-3 days to clear</span>
+                                <span class="payment-desc">Lower fees â€¢ 2-3 days to clear</span>
                             </span>
                         </label>
                     </div>
@@ -1355,3 +1356,11 @@ async function handleSquarePayment() {
         payButton.innerHTML = originalText;
         
         if (typeof showToast === 'function') {
+            showToast('error', 'Payment Failed', error.message || 'Please try again');
+        }
+    }
+}
+</script>
+<script src="/js/geo-pricing.js"></script>
+</body>
+</html>
