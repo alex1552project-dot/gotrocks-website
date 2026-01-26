@@ -1,6 +1,7 @@
 // =====================================================
 // ROCKY CHAT - Texas Got Rocks AI Assistant
 // Integrates with existing quote modal and pricing logic
+// FIXED: Button actions and reset on close
 // =====================================================
 
 const RockyChat = (function() {
@@ -10,8 +11,8 @@ const RockyChat = (function() {
     // =====================================================
     const CONFIG = {
         rockyImage: '/images/rocky-logo-transparent.png',
-        apiEndpoint: '/.netlify/functions/rocky-chat', // Your Netlify function
-        hintDelay: 30000, // Show hint after 30 seconds
+        apiEndpoint: '/.netlify/functions/rocky-chat',
+        hintDelay: 30000,
         hintMessage: "Need help picking a material?"
     };
     
@@ -19,11 +20,10 @@ const RockyChat = (function() {
     // PRODUCT KNOWLEDGE - Rocky's brain
     // =====================================================
     const PRODUCT_KNOWLEDGE = {
-        // Project to product mappings
         projectMappings: {
-            'driveway base': {
+            'driveway': {
                 products: ['granite-base', 'limestone-base'],
-                response: "For a solid driveway base, I'd recommend **Granite Base** or **Limestone Base**. Both compact well and provide excellent stability for vehicle traffic. Granite Base is $91/cy and Limestone Base is $85/cy."
+                response: "For a solid driveway base, I'd recommend **Granite Base** ($91/cy) or **Limestone Base** ($85/cy). Both compact really well and create a solid foundation. Are you building a new driveway base, or looking to top/resurface an existing one?"
             },
             'french drain': {
                 products: ['bull-rock-3x5'],
@@ -49,6 +49,10 @@ const RockyChat = (function() {
                 products: ['mulch-black', 'mulch-brown', 'topsoil'],
                 response: "Flower beds look great with **Black Mulch** or **Brown Mulch**—the black creates a dramatic contrast, brown gives a more natural forest floor look. Both are $32-35/cy. Need topsoil underneath?"
             },
+            'mulch': {
+                products: ['mulch-black', 'mulch-brown'],
+                response: "We've got **Black Mulch** ($35/cy) for a bold, dramatic look, or **Brown Hardwood Mulch** ($32/cy) for a natural forest floor appearance. Both help with moisture and weed control. Which color appeals to you?"
+            },
             'fill': {
                 products: ['select-fill'],
                 response: "For filling in low spots or grading, **Select Fill** is what you need. It's $40/cy and works great for leveling out your yard before landscaping."
@@ -71,7 +75,6 @@ const RockyChat = (function() {
             }
         },
         
-        // Product details
         products: {
             'decomposed-granite': { name: '1/4" Minus Decomposed Granite', price: 85, unit: 'cy' },
             'granite-base': { name: 'Granite Base', price: 91, unit: 'cy' },
@@ -110,7 +113,9 @@ const RockyChat = (function() {
             quantity: null,
             zip: null
         },
-        hintShown: false
+        hintShown: false,
+        actionCounter: 0,
+        registeredActions: {}  // Store actions by unique ID
     };
     
     // =====================================================
@@ -120,8 +125,10 @@ const RockyChat = (function() {
         createChatElements();
         attachEventListeners();
         scheduleHint();
-        
-        // Add initial Rocky greeting after a brief delay
+        showInitialGreeting();
+    }
+    
+    function showInitialGreeting() {
         setTimeout(() => {
             addRockyMessage(
                 "Hey! I'm Rocky. I can help you pick the right material and get you a delivered price in about 60 seconds. What's your project?",
@@ -132,12 +139,72 @@ const RockyChat = (function() {
     
     function getInitialQuickActions() {
         return [
-            { text: "Driveway", action: () => handleUserMessage("I need material for a driveway") },
-            { text: "Patio/Walkway", action: () => handleUserMessage("I'm working on a patio") },
-            { text: "Garden beds", action: () => handleUserMessage("I need mulch for garden beds") },
-            { text: "Drainage", action: () => handleUserMessage("I have a drainage project") },
-            { text: "Something else", action: () => handleUserMessage("I have a different project") }
+            { text: "Driveway", action: "driveway" },
+            { text: "Patio/Walkway", action: "patio" },
+            { text: "Garden beds", action: "garden" },
+            { text: "Drainage", action: "drainage" },
+            { text: "Something else", action: "other" }
         ];
+    }
+    
+    // =====================================================
+    // ACTION HANDLING - Fixed to use action strings
+    // =====================================================
+    function executeAction(actionId) {
+        switch(actionId) {
+            case 'driveway':
+                simulateUserMessage("I need material for a driveway");
+                break;
+            case 'patio':
+                simulateUserMessage("I'm working on a patio");
+                break;
+            case 'garden':
+                simulateUserMessage("I need mulch for garden beds");
+                break;
+            case 'drainage':
+                simulateUserMessage("I have a drainage project");
+                break;
+            case 'other':
+                simulateUserMessage("I have a different project");
+                break;
+            case 'getQuote':
+                if (state.conversationContext.product) {
+                    openQuoteWithProduct(state.conversationContext.product);
+                } else {
+                    openQuoteModal();
+                }
+                break;
+            case 'tellMore':
+                if (state.conversationContext.product) {
+                    const productName = PRODUCT_KNOWLEDGE.products[state.conversationContext.product]?.name || 'this product';
+                    simulateUserMessage(`Tell me more about ${productName}`);
+                }
+                break;
+            case 'differentProject':
+                simulateUserMessage("I have a different project");
+                break;
+            case 'call':
+                window.location.href = 'tel:9362592887';
+                break;
+            case 'text':
+                window.location.href = 'sms:9362592887';
+                break;
+            case 'openQuoteModal':
+                openQuoteModal();
+                break;
+            default:
+                // Check if it's a product-specific quote action
+                if (actionId.startsWith('quote_')) {
+                    const productId = actionId.replace('quote_', '');
+                    openQuoteWithProduct(productId);
+                }
+                break;
+        }
+    }
+    
+    function simulateUserMessage(message) {
+        addUserMessage(message);
+        handleUserMessage(message);
     }
     
     // =====================================================
@@ -210,7 +277,6 @@ const RockyChat = (function() {
     // EVENT LISTENERS
     // =====================================================
     function attachEventListeners() {
-        // Enter key to send
         document.getElementById('rockyChatInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -218,14 +284,12 @@ const RockyChat = (function() {
             }
         });
         
-        // Close on escape
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && state.isOpen) {
                 closeChat();
             }
         });
         
-        // Hide hint when clicking anywhere
         document.addEventListener('click', (e) => {
             if (!e.target.closest('#rockyChatHint') && !e.target.closest('#rockyChatBubble')) {
                 hideHint();
@@ -250,7 +314,6 @@ const RockyChat = (function() {
         document.getElementById('rockyChatBubble').classList.remove('has-notification');
         hideHint();
         
-        // Focus input
         setTimeout(() => {
             document.getElementById('rockyChatInput').focus();
         }, 300);
@@ -259,6 +322,31 @@ const RockyChat = (function() {
     function closeChat() {
         state.isOpen = false;
         document.getElementById('rockyChatWindow').classList.remove('open');
+        
+        // RESET CONVERSATION on close
+        resetConversation();
+    }
+    
+    function resetConversation() {
+        // Clear state
+        state.messages = [];
+        state.conversationContext = {
+            project: null,
+            product: null,
+            quantity: null,
+            zip: null
+        };
+        state.registeredActions = {};
+        state.actionCounter = 0;
+        
+        // Clear messages container
+        const messagesContainer = document.getElementById('rockyChatMessages');
+        if (messagesContainer) {
+            messagesContainer.innerHTML = '';
+        }
+        
+        // Show initial greeting again
+        showInitialGreeting();
     }
     
     // =====================================================
@@ -275,13 +363,12 @@ const RockyChat = (function() {
     function showHint() {
         state.hintShown = true;
         document.getElementById('rockyChatHint').classList.add('show');
-        
-        // Auto-hide after 8 seconds
         setTimeout(hideHint, 8000);
     }
     
     function hideHint() {
-        document.getElementById('rockyChatHint').classList.remove('show');
+        const hint = document.getElementById('rockyChatHint');
+        if (hint) hint.classList.remove('show');
     }
     
     // =====================================================
@@ -293,21 +380,14 @@ const RockyChat = (function() {
         
         if (!message) return;
         
-        // Clear input
         input.value = '';
-        
-        // Add user message
         addUserMessage(message);
-        
-        // Process and respond
         handleUserMessage(message);
     }
     
     function handleUserMessage(message) {
-        // Show typing indicator
         showTyping();
         
-        // Process locally first for speed
         const localResponse = processLocally(message);
         
         if (localResponse) {
@@ -316,7 +396,6 @@ const RockyChat = (function() {
                 addRockyMessage(localResponse.text, localResponse.quickActions, localResponse.productCard);
             }, 800 + Math.random() * 500);
         } else {
-            // Fall back to API for complex queries
             callRockyAPI(message);
         }
     }
@@ -333,9 +412,8 @@ const RockyChat = (function() {
                 return {
                     text: data.response,
                     quickActions: [
-                        { text: "Get a quote", action: () => openQuoteWithProduct(data.products[0]) },
-                        { text: "Tell me more", action: () => handleUserMessage(`Tell me more about ${PRODUCT_KNOWLEDGE.products[data.products[0]].name}`) },
-                        { text: "Different project", action: () => handleUserMessage("I have a different project") }
+                        { text: "Get a quote", action: "getQuote" },
+                        { text: "Different project", action: "differentProject" }
                     ],
                     productCard: data.products[0]
                 };
@@ -356,20 +434,19 @@ const RockyChat = (function() {
         const zipMatch = message.match(/\b(\d{5})\b/);
         if (zipMatch) {
             state.conversationContext.zip = zipMatch[1];
-            // Check if ZIP is in service area (using existing ZIP_DATA if available)
             if (typeof ZIP_DATA !== 'undefined' && ZIP_DATA[zipMatch[1]]) {
                 return {
                     text: `Great, we deliver to ${ZIP_DATA[zipMatch[1]].city}! Let me pull up the quote calculator with your selections...`,
                     quickActions: [
-                        { text: "Open quote", action: () => openQuoteWithContext() }
+                        { text: "Open quote", action: "getQuote" }
                     ]
                 };
             } else if (typeof ZIP_DATA !== 'undefined') {
                 return {
                     text: `Hmm, ${zipMatch[1]} might be outside our usual delivery area. Give us a call at (936) 259-2887 and we'll see what we can do for you.`,
                     quickActions: [
-                        { text: "📞 Call now", action: () => window.location.href = 'tel:9362592887' },
-                        { text: "Try different ZIP", action: () => handleUserMessage("Let me try a different ZIP code") }
+                        { text: "📞 Call now", action: "call" },
+                        { text: "Try different ZIP", action: "differentProject" }
                     ]
                 };
             }
@@ -382,8 +459,8 @@ const RockyChat = (function() {
                 return {
                     text: `${product.name} starts at $${product.price} per cubic yard. The final delivered price depends on your location and quantity. Want me to get you an exact quote?`,
                     quickActions: [
-                        { text: "Get exact quote", action: () => openQuoteWithProduct(state.conversationContext.product) },
-                        { text: "See all products", action: () => handleUserMessage("Show me all your products") }
+                        { text: "Get exact quote", action: "getQuote" },
+                        { text: "See all products", action: "openQuoteModal" }
                     ]
                 };
             } else {
@@ -415,8 +492,8 @@ const RockyChat = (function() {
             return {
                 text: "Absolutely! Give us a call or text at (936) 259-2887. We're real people here in Conroe—not a call center.",
                 quickActions: [
-                    { text: "📞 Call now", action: () => window.location.href = 'tel:9362592887' },
-                    { text: "💬 Text instead", action: () => window.location.href = 'sms:9362592887' }
+                    { text: "📞 Call now", action: "call" },
+                    { text: "💬 Text instead", action: "text" }
                 ]
             };
         }
@@ -429,7 +506,7 @@ const RockyChat = (function() {
             };
         }
         
-        // Default: didn't understand, be helpful
+        // Default: didn't understand
         return null;
     }
     
@@ -441,7 +518,7 @@ const RockyChat = (function() {
                 body: JSON.stringify({
                     message: message,
                     context: state.conversationContext,
-                    history: state.messages.slice(-6) // Last 6 messages for context
+                    history: state.messages.slice(-6)
                 })
             });
             
@@ -452,9 +529,9 @@ const RockyChat = (function() {
             hideTyping();
             addRockyMessage(
                 data.response || "I'm not quite sure about that one. Want to tell me more about your project, or give us a call at (936) 259-2887?",
-                data.quickActions || [
-                    { text: "Start over", action: () => handleUserMessage("I want to start over") },
-                    { text: "📞 Call us", action: () => window.location.href = 'tel:9362592887' }
+                [
+                    { text: "Start over", action: "differentProject" },
+                    { text: "📞 Call us", action: "call" }
                 ]
             );
             
@@ -462,7 +539,6 @@ const RockyChat = (function() {
             console.error('Rocky API error:', error);
             hideTyping();
             
-            // Graceful fallback
             addRockyMessage(
                 "Tell me a bit more about what you're working on—I want to make sure I recommend the right material for your project.",
                 getInitialQuickActions()
@@ -494,7 +570,6 @@ const RockyChat = (function() {
         const messageEl = document.createElement('div');
         messageEl.className = 'rocky-message from-rocky';
         
-        // Convert markdown-style bold to HTML
         const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         
         let html = `
@@ -515,23 +590,20 @@ const RockyChat = (function() {
                         <span class="rocky-product-card-price">$${product.price}/${product.unit}</span>
                     </div>
                     <div class="rocky-product-card-desc">Free delivery included</div>
-                    <button class="rocky-product-card-btn" onclick="RockyChat.openQuoteWithProduct('${productId}')">
+                    <button class="rocky-product-card-btn" onclick="RockyChat.executeAction('quote_${productId}')">
                         Get Exact Quote →
                     </button>
                 </div>
             `;
         }
         
-        // Add quick actions if specified
+        // Add quick actions - using action strings instead of function references
         if (quickActions && quickActions.length > 0) {
             html += `<div class="rocky-quick-actions">`;
-            quickActions.forEach((action, index) => {
-                html += `<button class="rocky-quick-btn" onclick="RockyChat.handleQuickAction(${index})">${action.text}</button>`;
+            quickActions.forEach((qa) => {
+                html += `<button class="rocky-quick-btn" onclick="RockyChat.executeAction('${qa.action}')">${qa.text}</button>`;
             });
             html += `</div>`;
-            
-            // Store quick actions for later reference
-            state.currentQuickActions = quickActions;
         }
         
         html += `</div>`;
@@ -544,7 +616,6 @@ const RockyChat = (function() {
         state.isTyping = true;
         const messagesContainer = document.getElementById('rockyChatMessages');
         
-        // Remove existing typing indicator if any
         const existingTyping = messagesContainer.querySelector('.rocky-typing-container');
         if (existingTyping) existingTyping.remove();
         
@@ -584,15 +655,20 @@ const RockyChat = (function() {
     // =====================================================
     // INTEGRATION WITH QUOTE MODAL
     // =====================================================
+    function openQuoteModal() {
+        closeChat();
+        if (typeof openCalculatorModal === 'function') {
+            openCalculatorModal();
+        }
+    }
+    
     function openQuoteWithProduct(productId) {
         closeChat();
         
-        // Open the calculator modal
         if (typeof openCalculatorModal === 'function') {
             openCalculatorModal();
         }
         
-        // Pre-fill the product after a brief delay
         setTimeout(() => {
             const productSelect = document.getElementById('quoteProduct');
             if (productSelect) {
@@ -600,7 +676,6 @@ const RockyChat = (function() {
                 productSelect.dispatchEvent(new Event('change'));
             }
             
-            // If we have quantity context, set that too
             if (state.conversationContext.quantity) {
                 const quantityInput = document.getElementById('quoteQuantity');
                 if (quantityInput) {
@@ -609,7 +684,6 @@ const RockyChat = (function() {
                 }
             }
             
-            // If we have ZIP context, set that too
             if (state.conversationContext.zip) {
                 const zipInput = document.getElementById('quoteZipCode');
                 if (zipInput) {
@@ -618,24 +692,10 @@ const RockyChat = (function() {
                 }
             }
             
-            // Trigger recalculation
             if (typeof recalculateQuote === 'function') {
                 recalculateQuote();
             }
         }, 300);
-    }
-    
-    function openQuoteWithContext() {
-        openQuoteWithProduct(state.conversationContext.product);
-    }
-    
-    // =====================================================
-    // QUICK ACTION HANDLER
-    // =====================================================
-    function handleQuickAction(index) {
-        if (state.currentQuickActions && state.currentQuickActions[index]) {
-            state.currentQuickActions[index].action();
-        }
     }
     
     // =====================================================
@@ -648,7 +708,7 @@ const RockyChat = (function() {
         toggle: toggleChat,
         sendMessage: sendMessage,
         openQuoteWithProduct: openQuoteWithProduct,
-        handleQuickAction: handleQuickAction
+        executeAction: executeAction
     };
     
 })();
