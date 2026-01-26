@@ -1,195 +1,130 @@
-// =====================================================
-// ROCKY CHAT - Netlify Function (Claude API Backend)
-// Location: /netlify/functions/rocky-chat.js
-// =====================================================
+// netlify/functions/rocky-chat.js
+// Rocky AI Backend - No hardcoded prices, directs to quote calculator
 
 const Anthropic = require('@anthropic-ai/sdk');
 
-const SYSTEM_PROMPT = `You are Rocky, the friendly AI assistant for Texas Got Rocks, a family-owned landscaping materials delivery company in Conroe, Texas.
+const client = new Anthropic();
 
-## Your Personality
-- Friendly, helpful, and efficient—not overly folksy
-- You know your stuff about landscaping materials
-- You're direct and get people to a quote quickly
-- You represent a local family business, not a corporation
+const ROCKY_SYSTEM_PROMPT = `You are Rocky, the friendly AI assistant for Texas Got Rocks, a family-owned landscaping materials delivery company in Conroe, Texas.
 
-## Your Knowledge
+CRITICAL RULES:
+1. NEVER quote specific prices - prices depend on quantity, delivery location, and current rates
+2. When asked about prices, say something like "The exact price depends on how much you need and where you're located. I can get you an exact quote in about 30 seconds if you'd like!"
+3. Always recommend getting an exact quote through our calculator
+4. Keep responses SHORT - 2-3 sentences max
+5. Be friendly, casual, and helpful - you're a local Texan, not a corporate bot
+6. Always mention FREE delivery when relevant
 
-### Products & Pricing (Starting prices per cubic yard, free delivery):
-ROCK & GRAVEL:
-- 1/4" Minus Decomposed Granite - $85/cy (great for patios, walkways, xeriscaping)
-- Granite Base - $91/cy (driveway base, compacts well)
-- 1" Limestone - $80/cy
-- 3/4" Limestone - $80/cy
-- 3/8" Limestone - $85/cy
-- Limestone Base - $85/cy (driveway base alternative)
-- 3x5 Bull Rock - $80/cy (drainage, borders, accents)
-- 2x3 Gravel - $80/cy
-- 1.5" Minus Gravel - $80/cy (drainage)
-- 3/8" Pea Gravel - $80/cy (xeriscaping, decorative, walkways)
-- Rainbow Gravel - $90/cy (decorative)
-- 5/8" Black Star - $190/cy (premium volcanic basalt, dramatic look)
-- 1x3 Colorado Bull Rock - $120/cy
-- 1x2 Fairland Pink - $80/cy
+PRODUCTS WE CARRY (never quote prices):
+- Rock & Gravel: Decomposed Granite, Granite Base, Limestone (various sizes), Bull Rock, Pea Gravel, Black Star, Rainbow Gravel
+- Soil & Sand: Topsoil, Select Fill, Bank Sand, Mason Sand, Torpedo Sand
+- Mulch: Black Mulch, Brown Hardwood Mulch
 
-SOIL & SAND:
-- Bank Sand - $40/cy
-- Select Fill - $40/cy (filling low spots, grading)
-- Topsoil - $35/cy (gardens, lawns, raised beds)
-- Torpedo Sand - $30/cy
-- Mason Sand - $30/cy (sandboxes, fine texture)
+PROJECT RECOMMENDATIONS:
+- Driveways: Granite Base or Limestone Base
+- Patios/Walkways: Decomposed Granite or Pea Gravel
+- Garden beds: Mulch (black or brown) + Topsoil if building up
+- Drainage/French drains: 3x5 Bull Rock
+- Filling low spots/grading: Select Fill
+- Sandboxes: Mason Sand
 
-MULCH:
-- Black Mulch - $35/cy (dramatic contrast)
-- Brown Hardwood Mulch - $32/cy (natural forest floor look)
+ABOUT US:
+- Family-owned in Conroe, TX - not brokers, not a call center
+- FREE delivery always - that's our promise
+- 2 yard minimum per material
+- Service area: Conroe, The Woodlands, Spring, Houston area
+- Phone: (936) 259-2887
 
-### Project Recommendations:
-- Driveway base → Granite Base or Limestone Base
-- French drain/drainage → 3x5 Bull Rock
-- Patio/walkway → Decomposed Granite
-- Garden beds → Mulch (black or brown) + Topsoil
-- Filling low spots/grading → Select Fill
-- Sandbox → Mason Sand
-- Xeriscaping/low-water landscaping → Pea Gravel
+If someone asks something you're unsure about, suggest they call or text us.`;
 
-### Business Info:
-- FREE delivery always—no delivery fees ever
-- Service area: Conroe, The Woodlands, Spring, Magnolia, Houston area (40-mile radius)
-- Same-day delivery often available for orders before noon
-- 2-yard minimum per material
-- Phone: (936) 259-2887 (call or text)
-- Family-owned since 2020, not brokers
+exports.handler = async (event) => {
+    // Handle CORS
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS'
+            },
+            body: ''
+        };
+    }
 
-## Rules:
-1. Keep responses SHORT—2-3 sentences max unless explaining products
-2. Always guide toward getting a quote
-3. Don't make up information you don't have
-4. If asked about products you don't know, say "let me have someone from the team help you with that"
-5. Don't discuss competitor pricing specifically
-6. Do NOT proactively recommend driveway toppers—only discuss if the customer asks
-7. For xeriscaping, recommend Pea Gravel (not decomposed granite)
-8. When they're ready, tell them to click the quote button or give them the product name to select
-9. If they want to talk to a human, give them the phone number cheerfully
-
-## Response Format:
-- Use **bold** for product names and key info
-- Be conversational, not robotic
-- End with a question or clear next step when appropriate`;
-
-exports.handler = async function(event, context) {
-    // Only allow POST
     if (event.httpMethod !== 'POST') {
         return {
             statusCode: 405,
             body: JSON.stringify({ error: 'Method not allowed' })
         };
     }
-    
+
     try {
-        const { message, conversationContext, history } = JSON.parse(event.body);
-        
-        if (!message) {
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: 'Message is required' })
-            };
-        }
-        
-        // Build messages array for Claude
+        const { message, context, history } = JSON.parse(event.body);
+
+        // Build conversation messages
         const messages = [];
         
         // Add history if provided
-        if (history && Array.isArray(history)) {
+        if (history && history.length > 0) {
             history.forEach(msg => {
                 messages.push({
-                    role: msg.role === 'assistant' ? 'assistant' : 'user',
+                    role: msg.role === 'user' ? 'user' : 'assistant',
                     content: msg.content
                 });
             });
         }
-        
+
         // Add current message
         messages.push({
             role: 'user',
             content: message
         });
-        
-        // Add context as system info if we have it
-        let contextInfo = '';
-        if (conversationContext) {
-            if (conversationContext.project) {
-                contextInfo += `Customer is working on: ${conversationContext.project}. `;
-            }
-            if (conversationContext.product) {
-                contextInfo += `Interested in product: ${conversationContext.product}. `;
-            }
-            if (conversationContext.quantity) {
-                contextInfo += `Needs quantity: ${conversationContext.quantity} cubic yards. `;
-            }
-            if (conversationContext.zip) {
-                contextInfo += `ZIP code: ${conversationContext.zip}. `;
-            }
+
+        // Add context to the user message if available
+        let contextNote = '';
+        if (context) {
+            if (context.product) contextNote += `\n[Context: User is interested in ${context.product}]`;
+            if (context.project) contextNote += `\n[Context: Project type is ${context.project}]`;
+            if (context.zip) contextNote += `\n[Context: ZIP code is ${context.zip}]`;
         }
-        
-        const systemPrompt = contextInfo 
-            ? `${SYSTEM_PROMPT}\n\n## Current Conversation Context:\n${contextInfo}`
-            : SYSTEM_PROMPT;
-        
-        // Call Claude API
-        const anthropic = new Anthropic();
-        
-        const response = await anthropic.messages.create({
+
+        if (contextNote) {
+            messages[messages.length - 1].content += contextNote;
+        }
+
+        const response = await client.messages.create({
             model: 'claude-sonnet-4-20250514',
             max_tokens: 300,
-            system: systemPrompt,
+            system: ROCKY_SYSTEM_PROMPT,
             messages: messages
         });
-        
-        const assistantMessage = response.content[0].text;
-        
-        // Determine quick actions based on response content
-        let quickActions = [];
-        
-        if (assistantMessage.toLowerCase().includes('quote') || assistantMessage.toLowerCase().includes('price')) {
-            quickActions.push({ text: "Get a quote", action: "openQuote" });
-        }
-        if (assistantMessage.toLowerCase().includes('call') || assistantMessage.toLowerCase().includes('936')) {
-            quickActions.push({ text: "📞 Call now", action: "call" });
-        }
-        if (quickActions.length === 0) {
-            quickActions = [
-                { text: "Get a quote", action: "openQuote" },
-                { text: "Different project", action: "restart" }
-            ];
-        }
-        
+
+        const rockyResponse = response.content[0].text;
+
         return {
             statusCode: 200,
             headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                response: assistantMessage,
-                quickActions: quickActions
+                response: rockyResponse,
+                context: context
             })
         };
-        
+
     } catch (error) {
-        console.error('Rocky Chat Error:', error);
+        console.error('Rocky API Error:', error);
         
         return {
             statusCode: 500,
             headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                error: 'Something went wrong',
-                response: "I'm having a little trouble right now. Give us a call at (936) 259-2887 and we'll get you sorted out!",
-                quickActions: [
-                    { text: "📞 Call now", action: "call" }
-                ]
+                response: "I'm having a little trouble right now. Give us a call at (936) 259-2887 and we'll help you out!",
+                error: error.message
             })
         };
     }
