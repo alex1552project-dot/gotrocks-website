@@ -47,3 +47,16 @@
 .geo-price-updated {
     animation: priceUpdate 0.3s ease-out;
 }
+
+/* Smaller CTA for More Products modal */
+.geo-price-cta-small {
+    color: var(--warm-orange, #FF6F00);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.product-item:hover .geo-price-cta-small {
+    text-decoration: underline;
+}
