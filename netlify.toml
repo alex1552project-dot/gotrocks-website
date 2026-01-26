@@ -1,8 +1,17 @@
-[functions]
-  directory = "netlify/functions"
-  node_bundler = "esbuild"
+# Netlify Configuration for Texas Got Rocks
+# https://docs.netlify.com/configure-builds/file-based-configuration/
 
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
+[build]
+  publish = "/"
+
+# Edge Function for geo-based pricing
+[[edge_functions]]
+  path = "/api/geo-pricing"
+  function = "geo-pricing"
+
+# Cache geo-pricing response for 1 hour (per visitor)
+[[headers]]
+  for = "/api/geo-pricing"
+  [headers.values]
+    Cache-Control = "private, max-age=3600"
+    Access-Control-Allow-Origin = "*"
