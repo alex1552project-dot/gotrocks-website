@@ -154,20 +154,44 @@
         .cta-section .call-dropdown-menu.show {
             z-index: 9999 !important;
         }
-        /* Hide scroll arrows behind Rocky chat */
-        .scroll-arrows {
-            z-index: 999 !important;
+        /* ACH Savings Styles */
+        .ach-savings-badge {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border: 1px solid #28a745;
+            color: #155724;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-left: 8px;
+            display: inline-block;
         }
-        .rocky-chat-container,
-        .rocky-chat-widget {
-            z-index: 10000 !important;
+        .ach-savings-detail {
+            background: #d4edda;
+            border: 1px solid #28a745;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            display: none;
+        }
+        .ach-savings-detail.show {
+            display: block;
+        }
+        .ach-savings-detail p {
+            margin: 0;
+            font-size: 14px;
+            color: #155724;
+        }
+        .ach-savings-detail .savings-amount {
+            font-weight: 700;
+            font-size: 16px;
         }
         /* Apple Pay Styles */
         .apple-pay-button-container {
             margin: 16px 0;
             display: none;
         }
-        .apple-pay-button-container.available {
+        .apple-pay-button-container.show {
             display: block;
         }
         #apple-pay-button {
@@ -733,7 +757,7 @@
                     <a href="sms:9362592887">&#128172; Text (936) 259-2887</a>
                 </div>
             </div>
-            <div class="footer-contact-item"><span>&#9993;</span><a href="mailto:info@texasgotrocks.com">info@texasgotrocks.com</a></div>
+            <div class="footer-contact-item"><span>âœ‰ï¸</span><a href="mailto:info@texasgotrocks.com">info@texasgotrocks.com</a></div>
             <div class="footer-contact-item"><span>&#128205;</span><span>Conroe, TX 77301</span></div>
         </div>
         <div class="footer-column">
@@ -875,7 +899,7 @@
                 <div class="form-group">
                     <label>Cubic Yards</label>
                     <div class="quantity-wrapper">
-                        <button type="button" class="qty-btn" onclick="adjustQuoteQuantity(-1)">&minus;</button>
+                        <button type="button" class="qty-btn" onclick="adjustQuoteQuantity(-1)">&rarr;</button>
                         <input type="number" id="quoteQuantity" value="5" min="1" max="100" step="0.5">
                         <button type="button" class="qty-btn" onclick="adjustQuoteQuantity(1)">+</button>
                     </div>
@@ -1014,11 +1038,16 @@
                             <input type="radio" name="paymentMethod" value="ach" onchange="onPaymentMethodChange('ach')">
                             <span class="payment-option-content">
                                 <span class="payment-icon">&#127970;</span>
-                                <span class="payment-label">Bank Account (ACH)</span>
+                                <span class="payment-label">Bank Account (ACH)<span class="ach-savings-badge" id="achSavingsBadge">Save $0.00</span></span>
                                 <span class="payment-desc">Lower fees &bull; 2-3 days to clear</span>
                             </span>
                         </label>
                     </div>
+                </div>
+                
+                <!-- ACH Savings Detail (shows when ACH selected) -->
+                <div class="ach-savings-detail" id="achSavingsDetail">
+                    <p>&#128176; <strong>You save <span class="savings-amount" id="achSavingsAmount">$0.00</span></strong> by paying with ACH instead of card (1% vs 2.9% + 30&cent;)</p>
                 </div>
                 
                 <!-- ACH Notice -->
@@ -1386,39 +1415,75 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Payment method toggle handler (includes Apple Pay)
+// Payment method toggle handler
 function onPaymentMethodChange(method) {
     const achNotice = document.getElementById('achNotice');
     const cardForm = document.getElementById('cardPaymentForm');
     const achForm = document.getElementById('achPaymentForm');
+    const achSavingsDetail = document.getElementById('achSavingsDetail');
     const applePayContainer = document.getElementById('applePayButtonContainer');
-    const payButton = document.getElementById('squarePayButton');
     
-    // Hide all forms first
-    if (achNotice) achNotice.style.display = 'none';
-    if (cardForm) cardForm.style.display = 'none';
-    if (achForm) achForm.style.display = 'none';
-    if (applePayContainer) applePayContainer.style.display = 'none';
-    if (payButton) payButton.style.display = 'block';
+    // Hide all payment forms first
+    achNotice.style.display = 'none';
+    cardForm.style.display = 'none';
+    achForm.style.display = 'none';
+    if (achSavingsDetail) achSavingsDetail.classList.remove('show');
+    if (applePayContainer) applePayContainer.classList.remove('show');
     
-    if (method === 'apple-pay') {
-        if (applePayContainer) applePayContainer.style.display = 'block';
-        if (payButton) payButton.style.display = 'none';
-        // Initialize Apple Pay button with cart total
-        if (window.SquareCheckout && typeof cart !== 'undefined') {
-            const total = cart.reduce((sum, item) => sum + item.total, 0);
-            if (total > 0) {
-                window.SquareCheckout.initializeApplePay(total);
-            }
-        }
-    } else if (method === 'ach') {
-        if (achNotice) achNotice.style.display = 'block';
-        if (achForm) achForm.style.display = 'block';
+    if (method === 'ach') {
+        achNotice.style.display = 'block';
+        achForm.style.display = 'block';
+        if (achSavingsDetail) achSavingsDetail.classList.add('show');
+    } else if (method === 'apple-pay') {
+        if (applePayContainer) applePayContainer.classList.add('show');
+        // Also show card form as fallback
+        cardForm.style.display = 'block';
     } else {
-        // card
-        if (cardForm) cardForm.style.display = 'block';
+        // Card payment
+        cardForm.style.display = 'block';
     }
 }
+
+// Calculate and update ACH savings display
+function updateAchSavings() {
+    const cartTotal = cart.reduce((sum, item) => sum + item.total, 0);
+    if (cartTotal <= 0) return;
+    
+    // Card fee: 2.9% + $0.30
+    const cardFee = (cartTotal * 0.029) + 0.30;
+    // ACH fee: 1% capped at $5
+    const achFee = Math.min(cartTotal * 0.01, 5.00);
+    // Savings
+    const savings = cardFee - achFee;
+    
+    const savingsBadge = document.getElementById('achSavingsBadge');
+    const savingsAmount = document.getElementById('achSavingsAmount');
+    
+    if (savingsBadge && savings > 0) {
+        savingsBadge.textContent = 'Save $' + savings.toFixed(2);
+    }
+    if (savingsAmount && savings > 0) {
+        savingsAmount.textContent = '$' + savings.toFixed(2);
+    }
+}
+
+// Call updateAchSavings when checkout step 3 is shown
+const originalGoToPaymentStep = typeof goToPaymentStep === 'function' ? goToPaymentStep : null;
+if (originalGoToPaymentStep) {
+    window._originalGoToPaymentStep = originalGoToPaymentStep;
+}
+
+// Hook into payment step to update ACH savings
+document.addEventListener('DOMContentLoaded', function() {
+    // Override goToPaymentStep if it exists
+    if (typeof window.goToPaymentStep === 'function') {
+        const orig = window.goToPaymentStep;
+        window.goToPaymentStep = function() {
+            orig.apply(this, arguments);
+            setTimeout(updateAchSavings, 100);
+        };
+    }
+});
 
 // Square payment handler - calls square-checkout.js
 async function handleSquarePayment() {
