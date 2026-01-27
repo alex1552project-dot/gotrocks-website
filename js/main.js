@@ -776,7 +776,7 @@ if (heroDropdownBtn && heroDropdownMenu) {
 // =====================================================
 // SHOPPING CART
 // =====================================================
-let cart = [];
+window.cart = [];
 let cartIdCounter = 1;
 
 function getMinDeliveryDate() { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().split('T')[0]; }
@@ -794,7 +794,7 @@ function addToCart() {
         serviceFee: currentQuote.serviceFee, total: parseFloat(currentQuote.total),
         deliveryDate: getDefaultDeliveryDate()
     };
-    cart.push(cartItem);
+    window.cart.push(cartItem);
     updateCartCount();
     updateCartDrawer();
     showToast('success', 'Added to Cart!', cartItem.quantity + ' yd&sup3; ' + cartItem.product + ' - $' + cartItem.total.toFixed(2));
@@ -807,7 +807,7 @@ function addToCart() {
 }
 
 function removeFromCart(itemId) {
-    cart = cart.filter(item => item.id !== itemId);
+    window.cart = window.cart.filter(item => item.id !== itemId);
     updateCartCount();
     updateCartDrawer();
     showToast('info', 'Item Removed', 'Item removed from your cart');
@@ -815,7 +815,7 @@ function removeFromCart(itemId) {
 
 function updateCartCount() {
     const countEl = document.getElementById('navCartCount');
-    if (cart.length > 0) { countEl.textContent = cart.length; countEl.classList.remove('hidden'); }
+    if (window.cart.length > 0) { countEl.textContent = window.cart.length; countEl.classList.remove('hidden'); }
     else countEl.classList.add('hidden');
 }
 
@@ -824,7 +824,7 @@ function updateCartDrawer() {
     const itemsContainer = document.getElementById('cartItemsContainer');
     const footerEl = document.getElementById('cartDrawerFooter');
     
-    if (cart.length === 0) {
+    if (window.cart.length === 0) {
         emptyEl.style.display = 'block';
         itemsContainer.innerHTML = '';
         footerEl.style.display = 'none';
@@ -836,13 +836,13 @@ function updateCartDrawer() {
     
     let itemsHtml = '';
     let subtotal = 0;
-    cart.forEach(item => {
+    window.cart.forEach(item => {
         subtotal += item.total;
         itemsHtml += '<div class="cart-item"><div class="cart-item-header"><div><div class="cart-item-name">' + item.product + '</div><div class="cart-item-location"> ' + item.city + ' (' + item.zip + ')</div></div><button class="cart-item-remove" onclick="removeFromCart(' + item.id + ')"></button></div><div class="cart-item-details"><span class="cart-item-qty">' + item.quantity + ' yd&sup3; (' + item.tons.toFixed(1) + ' tons)</span><span class="cart-item-price">$' + item.total.toFixed(2) + '</span></div><div class="cart-item-per-unit">$' + item.pricePerYard.toFixed(2) + '/yard delivered</div></div>';
     });
     
     itemsContainer.innerHTML = itemsHtml;
-    document.getElementById('cartItemCount').textContent = cart.length;
+    document.getElementById('cartItemCount').textContent = window.cart.length;
     document.getElementById('cartSubtotal').textContent = '$' + subtotal.toFixed(2);
     document.getElementById('cartTotal').textContent = '$' + subtotal.toFixed(2);
 }
@@ -851,18 +851,12 @@ function openCartDrawer() {
     document.getElementById('cartDrawerOverlay').classList.add('active');
     document.getElementById('cartDrawer').classList.add('active');
     document.body.style.overflow = 'hidden';
-    // Hide scroll arrows
-    var scrollArrows = document.querySelector('.scroll-arrows');
-    if (scrollArrows) scrollArrows.style.display = 'none';
 }
 
 function closeCartDrawer() {
     document.getElementById('cartDrawerOverlay').classList.remove('active');
     document.getElementById('cartDrawer').classList.remove('active');
     document.body.style.overflow = '';
-    // Show scroll arrows again
-    var scrollArrows = document.querySelector('.scroll-arrows');
-    if (scrollArrows) scrollArrows.style.display = 'flex';
 }
 
 // =====================================================
@@ -871,17 +865,14 @@ function closeCartDrawer() {
 var customerInfo = { name: '', email: '', phone: '', address: '', city: '', zip: '', marketingConsent: false };
 
 function proceedToCheckout() {
-    if (cart.length === 0) return;
+    if (window.cart.length === 0) return;
     closeCartDrawer();
-    if (cart.length > 0) {
+    if (window.cart.length > 0) {
         document.getElementById('checkoutCity').value = cart[0].city || '';
         document.getElementById('checkoutZipConfirm').value = cart[0].zip || '';
     }
     showCheckoutStep(1);
     document.getElementById('checkoutModal').classList.add('active');
-    // Hide scroll arrows during checkout
-    var scrollArrows = document.querySelector('.scroll-arrows');
-    if (scrollArrows) scrollArrows.style.display = 'none';
 }
 
 function showCheckoutStep(step) {
@@ -932,7 +923,7 @@ function goToDeliveryStep() {
     customerInfo = { name, email, phone, address, city, zip, marketingConsent: document.getElementById('checkoutMarketingConsent').checked };
     
     var deliveryHtml = '';
-    cart.forEach(function(item, index) {
+    window.cart.forEach(function(item, index) {
         deliveryHtml += '<div class="checkout-delivery-item"><div class="checkout-delivery-item-header"><div><div class="checkout-delivery-item-name">' + item.product + '</div><div class="checkout-delivery-item-details">' + item.quantity + ' yd&sup3; (' + item.tons.toFixed(1) + ' tons) &rarr; ' + item.city + '</div></div><div class="checkout-delivery-item-price">$' + item.total.toFixed(2) + '</div></div><label> Preferred Delivery Date</label><input type="date" id="deliveryDate' + index + '" value="' + item.deliveryDate + '" min="' + getMinDeliveryDate() + '"></div>';
     });
     document.getElementById('checkoutDeliveryItems').innerHTML = deliveryHtml;
@@ -940,14 +931,14 @@ function goToDeliveryStep() {
 }
 
 function goToPaymentStep() {
-    cart.forEach(function(item, index) {
+    window.cart.forEach(function(item, index) {
         var dateInput = document.getElementById('deliveryDate' + index);
         if (dateInput) item.deliveryDate = dateInput.value;
     });
     
     var summaryHtml = '<div class="checkout-customer-summary"><h4> Delivery To:</h4><p><strong>' + customerInfo.name + '</strong><br>' + customerInfo.address + '<br>' + customerInfo.city + ', TX ' + customerInfo.zip + '<br>&#128222; ' + customerInfo.phone + '<br> ' + customerInfo.email + '</p></div>';
     var total = 0;
-    cart.forEach(function(item) {
+    window.cart.forEach(function(item) {
         total += item.total;
         var deliveryDate = new Date(item.deliveryDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
         summaryHtml += '<div class="checkout-order-item"><div><strong>' + item.product + '</strong><br><small>' + item.quantity + ' yd&sup3; (' + item.tons.toFixed(1) + ' tons)</small><br><small> ' + deliveryDate + '</small></div><strong>$' + item.total.toFixed(2) + '</strong></div>';
@@ -957,21 +948,16 @@ function goToPaymentStep() {
     showCheckoutStep(3);
 }
 
-function closeCheckoutModal() {
-    document.getElementById('checkoutModal').classList.remove('active');
-    // Show scroll arrows again
-    var scrollArrows = document.querySelector('.scroll-arrows');
-    if (scrollArrows) scrollArrows.style.display = 'flex';
-}
+function closeCheckoutModal() { document.getElementById('checkoutModal').classList.remove('active'); }
 
 function processPayment() {
-    if (cart.length === 0) return;
-    const total = cart.reduce((sum, item) => sum + item.total, 0);
+    if (window.cart.length === 0) return;
+    const total = window.cart.reduce((sum, item) => sum + item.total, 0);
     document.getElementById('checkoutModal').classList.remove('active');
     showToast('success', 'Order Placed!', '$' + total.toFixed(2) + " - We'll contact you to confirm delivery details.");
     
     let orderDetails = 'ORDER CONFIRMED!\n\n';
-    cart.forEach((item, index) => {
+    window.cart.forEach((item, index) => {
         const deliveryDate = new Date(item.deliveryDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
         orderDetails += 'Item ' + (index + 1) + ': ' + item.quantity + ' yd&sup3; (' + item.tons.toFixed(1) + ' tons) ' + item.product + '\n';
         orderDetails += '  &rarr; Delivery to ' + item.city + ' (' + item.zip + ')\n';
@@ -982,7 +968,7 @@ function processPayment() {
     orderDetails += 'TOTAL: $' + total.toFixed(2) + ' (FREE DELIVERY)\n\n';
     orderDetails += "We'll send a confirmation email and text with tracking info!";
     alert(orderDetails);
-    cart = [];
+    window.cart = [];
     updateCartCount();
     updateCartDrawer();
 }
@@ -1540,9 +1526,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         if (atBottom) {
-            scrollDownBtn.classList.add('hidden');
+            scrollDownBtn.classList.remove('visible');
         } else {
-            scrollDownBtn.classList.remove('hidden');
+            scrollDownBtn.classList.add('visible');
         }
     }
     
