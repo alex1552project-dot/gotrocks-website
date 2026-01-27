@@ -6,7 +6,7 @@
     'use strict';
 
     // Square Configuration (Sandbox)
-    const SQUARE_APP_ID = 'sq0idb-QAzFEmXgssJhWXlroCT99Q';
+    const SQUARE_APP_ID = 'sandbox-sq0idb-QAzFEmXgssJhWXlroCT99Q';
     const SQUARE_LOCATION_ID = 'LPB7SAE3PG6A0';
 
     // State
