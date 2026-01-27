@@ -27,14 +27,7 @@
 
         try {
             // FIXED: Pass object instead of separate parameters (new SDK requirement)
-            payments = window.Square.payments({
-                applicationId: SQUARE_APP_ID,
-                locationId: SQUARE_LOCATION_ID
-            });
-            isInitialized = true;
-            console.log('Square Payments initialized successfully');
-            return true;
-        } catch (error) {
+            payments = window.Square.payments(SQUARE_APP_ID, SQUARE_LOCATION_ID);//
             console.error('Failed to initialize Square:', error);
             return false;
         }
