@@ -372,3 +372,4 @@
     console.log('Square Checkout module loaded');
 
 })();
+
