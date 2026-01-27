@@ -216,8 +216,8 @@
 
             console.log('Payment successful:', result);
 
-            // Show success
-            showPaymentSuccess(result, paymentMethod);
+            // Show success - FIXED: pass the total from payload
+            showPaymentSuccess(result, paymentMethod, payload.totals.total);
 
             return result;
 
@@ -235,8 +235,8 @@
         }
     }
 
-    // Show Payment Success
-    function showPaymentSuccess(result, paymentMethod) {
+    // Show Payment Success - FIXED: accepts orderTotal parameter
+    function showPaymentSuccess(result, paymentMethod, orderTotal) {
         // Close checkout modal
         const checkoutModal = document.getElementById('checkoutModal');
         if (checkoutModal) {
@@ -244,8 +244,8 @@
         }
 
         // Clear cart
-        if (typeof cart !== 'undefined') {
-            cart.length = 0;
+        if (typeof window.cart !== 'undefined') {
+            window.cart.length = 0;
         }
         if (typeof updateCartCount === 'function') {
             updateCartCount();
@@ -254,16 +254,20 @@
             updateCartDrawer();
         }
 
+        // FIXED: Get total from result or fallback to orderTotal
+        const total = result.totals?.total || result.total || orderTotal || 0;
+
         // Build success message
         let message = '';
         if (paymentMethod === 'ach') {
             message = `Order ${result.orderNumber} received!\n\n` +
+                `Total: $${total.toFixed(2)}\n\n` +
                 `Your bank payment will clear in 2-3 business days.\n` +
                 `We'll email you when it's confirmed and schedule your delivery.\n\n` +
                 `Questions? Call (936) 259-2887`;
         } else {
             message = `Order ${result.orderNumber} confirmed!\n\n` +
-                `Total: $${result.totals?.total?.toFixed(2) || 'N/A'}\n` +
+                `Total: $${total.toFixed(2)}\n` +
                 `Payment ID: ${result.paymentId}\n\n` +
                 `We'll send confirmation and tracking details via email/text.\n\n` +
                 `Questions? Call (936) 259-2887`;
@@ -283,7 +287,7 @@
         if (typeof gtag === 'function') {
             gtag('event', 'purchase', {
                 transaction_id: result.orderNumber,
-                value: result.totals?.total || 0,
+                value: total,
                 currency: 'USD',
                 payment_type: paymentMethod
             });
