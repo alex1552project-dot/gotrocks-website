@@ -10,7 +10,7 @@
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Texas Got Rocks? | The Woodlands & Conroe's Direct Rock, Gravel, Mulch & Topsoil Source</title>
+    <title>Bulk Rock, Gravel & Mulch Delivery | Texas Got Rocks - Conroe</title>
     <meta name="description" content="Texas Got Rocks delivers rock, gravel, mulch & topsoil direct to The Woodlands and Conroe. Always FREE delivery. Family-owned, not brokers. Get an instant quote!">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -41,6 +41,15 @@
         /* Align top of hero mascot with top of text */
         .hero-top-row {
             align-items: flex-start !important;
+        }
+        /* Keep scroll arrows behind Rocky chat widget */
+        .scroll-arrows {
+            z-index: 999 !important;
+        }
+        .rocky-chat-container,
+        .rocky-chat-widget,
+        #rocky-chat-widget {
+            z-index: 10000 !important;
         }
     </style>
     <style>
@@ -321,7 +330,7 @@
                 </div>
                 <div class="hero-text-content animate-fade-in delay-1">
                     <h1 class="hero-title">
-                        The Woodlands and Conroe's Direct Rock, Gravel, Mulch & Topsoil Source&mdash;<span class="highlight">We're Your Neighbors, Not Brokers</span>&mdash;Stop making 12 trips to the BIG BOX stores, we deliver right to you!
+                        Bulk Rock, Gravel, Mulch & Topsoil – Delivered to Your Site
                     </h1>
                     <p class="hero-description">
                         <strong>We are local and one of your neighbors</strong>, so we can reduce your prices by eliminating broker markups. Instant online quotes, same day delivery in most cases and honest service from a family that owns their own trucks and inventory.
@@ -899,7 +908,7 @@
                 <div class="form-group">
                     <label>Cubic Yards</label>
                     <div class="quantity-wrapper">
-                        <button type="button" class="qty-btn" onclick="adjustQuoteQuantity(-1)">&rarr;</button>
+                        <button type="button" class="qty-btn" onclick="adjustQuoteQuantity(-1)">&minus;</button>
                         <input type="number" id="quoteQuantity" value="5" min="1" max="100" step="0.5">
                         <button type="button" class="qty-btn" onclick="adjustQuoteQuantity(1)">+</button>
                     </div>
