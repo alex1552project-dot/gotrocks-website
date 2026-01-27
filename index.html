@@ -1488,6 +1488,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Square payment handler - calls square-checkout.js
+
 async function handleSquarePayment() {
     const payButton = document.getElementById('squarePayButton');
     const originalText = payButton.innerHTML;
@@ -1498,8 +1499,60 @@ async function handleSquarePayment() {
         
         const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
         
+        // Build customer info from form fields
+        const customerInfo = {
+            name: document.getElementById('checkoutName')?.value || '',
+            email: document.getElementById('checkoutEmail')?.value || '',
+            phone: document.getElementById('checkoutPhone')?.value || '',
+            address: document.getElementById('checkoutAddress')?.value || '',
+            city: document.getElementById('checkoutCity')?.value || '',
+            zip: document.getElementById('checkoutZipConfirm')?.value || ''
+        };
+        
+        // Validate customer info
+        if (!customerInfo.name || !customerInfo.email || !customerInfo.address) {
+            throw new Error('Please complete all required fields');
+        }
+        
+        // Build order data from cart
+        const cartItems = window.cart || [];
+        if (cartItems.length === 0) {
+            throw new Error('Your cart is empty');
+        }
+        
+        // Calculate totals
+        const subtotal = cartItems.reduce((sum, item) => sum + (item.total || 0), 0);
+        const salesTax = cartItems.reduce((sum, item) => sum + (item.salesTax || 0), 0);
+        const serviceFee = cartItems.reduce((sum, item) => sum + (item.serviceFee || 0), 0);
+        const precisionFee = window.selectedDelivery?.precisionFee || 0;
+        const total = subtotal + precisionFee;
+        
+        // Build the orderData object that processPayment expects
+        const orderData = {
+            customer: customerInfo,
+            items: cartItems.map(item => ({
+                product: item.product,
+                productId: item.productId,
+                quantity: item.quantity,
+                tons: item.tons,
+                pricePerTon: item.pricePerTon,
+                total: item.total
+            })),
+            totals: {
+                subtotal: subtotal,
+                salesTax: salesTax,
+                serviceFee: serviceFee,
+                total: total
+            },
+            delivery: {
+                scheduledDate: window.selectedDelivery?.date || null,
+                zone: cartItems[0]?.zone || 1,
+                distance: cartItems[0]?.distance || 0
+            }
+        };
+        
         if (window.SquareCheckout) {
-            await window.SquareCheckout.processPayment(paymentMethod);
+            await window.SquareCheckout.processPayment(paymentMethod, orderData);
         } else {
             throw new Error('Square checkout not initialized');
         }
