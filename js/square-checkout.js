@@ -26,8 +26,12 @@
         }
 
         try {
-            // FIXED: Pass object instead of separate parameters (new SDK requirement)
-            payments = window.Square.payments(SQUARE_APP_ID, SQUARE_LOCATION_ID);//
+            // FIXED: Pass two separate parameters (correct SDK format)
+            payments = window.Square.payments(SQUARE_APP_ID, SQUARE_LOCATION_ID);
+            isInitialized = true;
+            console.log('Square Payments initialized successfully');
+            return true;
+        } catch (error) {
             console.error('Failed to initialize Square:', error);
             return false;
         }
@@ -365,4 +369,3 @@
     console.log('Square Checkout module loaded');
 
 })();
-
