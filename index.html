@@ -235,6 +235,58 @@
         .payment-option.apple-pay-option .payment-icon {
             font-size: 20px;
         }
+        /* Cart Item Delete Button - NEW */
+        .cart-item {
+            position: relative !important;
+        }
+        .cart-item-delete {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 26px;
+            height: 26px;
+            border: none;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.8;
+            transition: opacity 0.2s, transform 0.2s, background 0.2s;
+            z-index: 10;
+        }
+        .cart-item-delete:hover {
+            opacity: 1;
+            transform: scale(1.1);
+            background: #c0392b;
+        }
+        /* Clear Cart Button - NEW */
+        .clear-cart-btn {
+            background: transparent;
+            border: 1.5px solid #e74c3c;
+            color: #e74c3c;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            width: 100%;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .clear-cart-btn:hover {
+            background: #e74c3c;
+            color: white;
+        }
     </style>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script>
@@ -450,7 +502,6 @@
         </div>
     </div>
 </section>
-
 <!-- Material Calculator Section -->
 <section class="material-calc-section" id="material-calculator">
     <div class="section-container">
@@ -840,7 +891,6 @@
             <p>See your exact price in seconds</p>
         </div>
         <div class="calculator-modal-body">
-            <!-- ZIP CODE -->
             <div class="quote-calc-section">
                 <div class="calc-section-title">&#128205;Delivery Location</div>
                 <div class="form-group">
@@ -858,7 +908,6 @@
                     <p>We may be able to deliver to your area.<br><a href="tel:9362592887">Call (936) 259-2887</a> for a custom quote.</p>
                 </div>
             </div>
-            <!-- PRODUCT -->
             <div class="quote-calc-section">
                 <div class="calc-section-title">&#129704; Select Material</div>
                 <div class="form-group">
@@ -895,7 +944,6 @@
                     </select>
                 </div>
             </div>
-            <!-- QUANTITY -->
             <div class="quote-calc-section">
                 <div class="calc-section-title">&#128205; Quantity</div>
                 <div class="form-group">
@@ -907,8 +955,6 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- 2-YARD MINIMUM WARNING -->
             <div id="quoteMinimumWarning" class="minimum-warning-box hidden">
                 <div class="warning-icon">&#9888;</div>
                 <div class="warning-content">
@@ -916,8 +962,6 @@
                     <p><span id="minWarningMaterialName">This material</span> requires a minimum order of 2 cubic yards. Please adjust your quantity to continue.</p>
                 </div>
             </div>
-            
-            <!-- VALUE PROPOSITION UPSELL -->
             <div id="quoteUpsellSection" class="upsell-section hidden">
                 <div class="upsell-header"><span class="upsell-icon">&#128172;</span><strong>Get More Value!</strong></div>
                 <div class="upsell-comparison">
@@ -928,11 +972,7 @@
                 <div class="upsell-savings">You save <strong>$<span id="upsellSavingsPerYard">0.00</span> per yard!</strong></div>
                 <button type="button" class="btn-upsell" onclick="upgradeToThreeYards()"> Upgrade to 3 Yards</button>
             </div>
-            
-            <!-- FREE DELIVERY BADGE -->
             <div id="quoteFreeDeliveryBadge" class="free-delivery-badge-calc hidden"> FREE DELIVERY TO <span id="quoteDeliveryCityBadge">YOUR AREA</span></div>
-            
-            <!-- QUOTE BREAKDOWN -->
             <div id="quoteTotalSection" class="quote-total-section hidden">
                 <div class="quote-conversion"><span id="quoteYardsAmount">0</span> cubic yards = <strong><span id="quoteTonsAmount">0</span> tons</strong></div>
                 <div class="quote-line-items">
@@ -942,18 +982,12 @@
                 </div>
                 <div class="quote-total-row"><span class="total-label">TOTAL</span><span class="total-amount">$<span id="quoteTotalAmount">0.00</span></span></div>
             </div>
-            
-            <!-- Need a Pro Link -->
             <div id="needAProSection" class="need-a-pro-section hidden">
                 <a href="/faust-landscaping.html?from=quote" class="need-a-pro-link"><span class="need-pro-icon">&#128119;</span><span class="need-pro-text">Need a Pro to install it?</span><span class="need-pro-arrow">&rarr;</span></a>
             </div>
-            
-            <!-- Cloudflare Turnstile -->
             <div class="turnstile-wrapper" id="quoteTurnstileWrapper">
                 <div class="cf-turnstile" data-sitekey="0x4AAAAAACLhbHDiLonhYq3P" data-callback="onTurnstileQuote"></div>
             </div>
-            
-            <!-- CTA -->
             <button id="quoteCtaButton" class="quote-cta-button" onclick="addToCartWithCaptcha()" disabled>Enter ZIP Code to Get Quote</button>
             <p class="service-area-note">Serving the Greater Houston & Conroe area<br><small>Full address collected at checkout</small></p>
         </div>
@@ -978,6 +1012,7 @@
             <div class="cart-summary-row total"><span>Total</span><span id="cartTotal">$0</span></div>
         </div>
         <a href="/faust-landscaping.html?from=quote" class="need-a-pro-link cart-pro-link"><span class="need-pro-icon">&#128119;</span><span class="need-pro-text">Need a Pro to install it?</span><span class="need-pro-arrow">&rarr;</span></a>
+        <button class="clear-cart-btn" onclick="clearCart()">&#128465; Clear Cart</button>
         <button class="cart-checkout-btn" onclick="proceedToCheckout()">Proceed to Checkout &rarr;</button>
         <p class="free-delivery-reminder">&#128666; FREE delivery on all orders!</p>
         <p class="cart-add-more-link">Need more materials? <a href="#" onclick="closeCartDrawer(); openCalculatorModal(); return false;">+ Add Another Item</a></p>
@@ -1010,16 +1045,11 @@
                 <div class="checkout-order-items" id="checkoutDeliveryItems"></div>
                 <div class="checkout-nav-buttons"><button class="btn btn-secondary" onclick="goToContactStep()">&larr; Back</button><button class="btn btn-primary" onclick="goToPaymentStep()">Continue to Payment &rarr;</button></div>
             </div>
-            <!-- Step 3: Payment - SQUARE INTEGRATION -->
             <div class="checkout-step-content" id="checkoutStep3" style="display: none;">
-                <!-- Order Summary -->
                 <div class="checkout-order-summary" id="checkoutOrderSummary"></div>
-                
-                <!-- Payment Method Selection -->
                 <div class="payment-method-selection">
                     <h4>&#128179; Select Payment Method</h4>
                     <div class="payment-options">
-                        <!-- Apple Pay Option (only shows on supported devices) -->
                         <label class="payment-option apple-pay-option" id="applePayOption" style="display: none;">
                             <input type="radio" name="paymentMethod" value="apple-pay" onchange="onPaymentMethodChange('apple-pay')">
                             <span class="payment-option-content">
@@ -1046,50 +1076,31 @@
                         </label>
                     </div>
                 </div>
-                
-                <!-- ACH Savings Detail (shows when ACH selected) -->
                 <div class="ach-savings-detail" id="achSavingsDetail">
                     <p>&#128176; <strong>You save <span class="savings-amount" id="achSavingsAmount">$0.00</span></strong> by paying with ACH instead of card (1% vs 2.9% + 30&cent;)</p>
                 </div>
-                
-                <!-- ACH Notice -->
                 <div class="ach-notice" id="achNotice" style="display: none;">
                     <p>&#9888;&#65039; <strong>Bank payments take 2-3 business days to clear.</strong> Your delivery will be scheduled after payment clears.</p>
                 </div>
-                
-                <!-- Card Payment Form -->
                 <div id="cardPaymentForm">
                     <div class="form-group">
                         <label>Card Details</label>
-                        <div id="square-card-container" class="square-card-container">
-                            <!-- Square Card Form renders here -->
-                        </div>
+                        <div id="square-card-container" class="square-card-container"></div>
                     </div>
                 </div>
-                
-                <!-- ACH Payment Form (hidden by default) -->
                 <div id="achPaymentForm" style="display: none;">
                     <p class="ach-instructions">Click "Pay Now" to securely connect your bank account through Square.</p>
                 </div>
-                
-                <!-- Apple Pay Button Container (hidden until Apple Pay selected) -->
                 <div id="applePayButtonContainer" class="apple-pay-button-container">
                     <div id="apple-pay-button"></div>
                     <div class="apple-pay-divider"><span>or pay with card below</span></div>
                 </div>
-                
-                <!-- Pay Button -->
-                <button id="squarePayButton" class="btn btn-primary" style="width: 100%; margin-top: 16px;" onclick="handleSquarePayment()">
-                    &#128274; Pay Now
-                </button>
-                
+                <button id="squarePayButton" class="btn btn-primary" style="width: 100%; margin-top: 16px;" onclick="handleSquarePayment()">&#128274; Pay Now</button>
                 <div class="checkout-nav-buttons" style="margin-top: 12px;">
                     <button class="btn btn-secondary" style="width: 100%;" onclick="goToDeliveryStep()">&larr; Back to Delivery</button>
                 </div>
-                
                 <p class="payment-security-note">&#128274; Secure payment powered by Square</p>
             </div>
-
         </div>
     </div>
 </div>
@@ -1189,141 +1200,29 @@
     </div>
 </div>
 
-<!-- More Products Modal Styles (inline for reliability) -->
+<!-- More Products Modal Styles -->
 <style>
-.more-products-modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 9999;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-.more-products-modal-overlay.active {
-    display: flex !important;
-}
-.more-products-modal {
-    background: white;
-    border-radius: 20px;
-    max-width: 700px;
-    width: 100%;
-    max-height: 85vh;
-    overflow-y: auto;
-    position: relative;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-}
-.more-products-modal .modal-close {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    background: rgba(255,255,255,0.2);
-    border: none;
-    font-size: 28px;
-    cursor: pointer;
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-}
-.more-products-modal .modal-close:hover {
-    background: rgba(255,255,255,0.3);
-}
-.more-products-header {
-    background: linear-gradient(135deg, #3E2723, #FF6F00);
-    color: white;
-    padding: 30px;
-    border-radius: 20px 20px 0 0;
-    text-align: center;
-}
-.more-products-header h3 {
-    font-size: 1.5rem;
-    margin: 0 0 8px 0;
-}
-.more-products-header p {
-    opacity: 0.9;
-    margin: 0;
-}
-.more-products-body {
-    padding: 25px 30px;
-}
-.more-products-modal .product-category {
-    margin-bottom: 25px;
-}
-.more-products-modal .product-category:last-child {
-    margin-bottom: 0;
-}
-.more-products-modal .product-category h4 {
-    color: #3E2723;
-    font-size: 1.1rem;
-    margin: 0 0 12px 0;
-    padding-bottom: 8px;
-    border-bottom: 2px solid #eee;
-}
-.more-products-modal .product-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 10px;
-}
-.more-products-modal .product-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 15px;
-    background: #f8f8f8;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: 2px solid transparent;
-}
-.more-products-modal .product-item:hover {
-    background: #fff;
-    border-color: #FF6F00;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-.more-products-modal .product-name {
-    font-weight: 500;
-    color: #3E2723;
-    font-size: 0.9rem;
-}
-.more-products-modal .product-price {
-    font-weight: 600;
-    color: #FF6F00;
-    white-space: nowrap;
-    font-size: 0.85rem;
-}
-.more-products-footer {
-    padding: 20px 30px;
-    background: #f5f5f5;
-    border-radius: 0 0 20px 20px;
-    text-align: center;
-}
-.more-products-footer p {
-    margin: 0;
-    color: #666;
-    font-size: 0.9rem;
-}
-.more-products-footer a {
-    color: #FF6F00;
-    font-weight: 600;
-}
-@media (max-width: 600px) {
-    .more-products-modal .product-list {
-        grid-template-columns: 1fr;
-    }
-    .more-products-header, .more-products-body, .more-products-footer {
-        padding: 20px;
-    }
-}
+.more-products-modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center; padding: 20px; }
+.more-products-modal-overlay.active { display: flex !important; }
+.more-products-modal { background: white; border-radius: 20px; max-width: 700px; width: 100%; max-height: 85vh; overflow-y: auto; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.more-products-modal .modal-close { position: absolute; top: 15px; right: 20px; background: rgba(255,255,255,0.2); border: none; font-size: 28px; cursor: pointer; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; }
+.more-products-modal .modal-close:hover { background: rgba(255,255,255,0.3); }
+.more-products-header { background: linear-gradient(135deg, #3E2723, #FF6F00); color: white; padding: 30px; border-radius: 20px 20px 0 0; text-align: center; }
+.more-products-header h3 { font-size: 1.5rem; margin: 0 0 8px 0; }
+.more-products-header p { opacity: 0.9; margin: 0; }
+.more-products-body { padding: 25px 30px; }
+.more-products-modal .product-category { margin-bottom: 25px; }
+.more-products-modal .product-category:last-child { margin-bottom: 0; }
+.more-products-modal .product-category h4 { color: #3E2723; font-size: 1.1rem; margin: 0 0 12px 0; padding-bottom: 8px; border-bottom: 2px solid #eee; }
+.more-products-modal .product-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+.more-products-modal .product-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: #f8f8f8; border-radius: 8px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
+.more-products-modal .product-item:hover { background: #fff; border-color: #FF6F00; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.more-products-modal .product-name { font-weight: 500; color: #3E2723; font-size: 0.9rem; }
+.more-products-modal .product-price { font-weight: 600; color: #FF6F00; white-space: nowrap; font-size: 0.85rem; }
+.more-products-footer { padding: 20px 30px; background: #f5f5f5; border-radius: 0 0 20px 20px; text-align: center; }
+.more-products-footer p { margin: 0; color: #666; font-size: 0.9rem; }
+.more-products-footer a { color: #FF6F00; font-weight: 600; }
+@media (max-width: 600px) { .more-products-modal .product-list { grid-template-columns: 1fr; } .more-products-header, .more-products-body, .more-products-footer { padding: 20px; } }
 </style>
 
 <!-- More Products Modal -->
@@ -1385,6 +1284,63 @@
 </div>
 
 <script src="/js/main.js"></script>
+
+<!-- Cart Management Functions -->
+<script>
+function removeCartItem(index) {
+    if (typeof window.cart !== 'undefined' && window.cart.length > index) {
+        const removedItem = window.cart[index];
+        window.cart.splice(index, 1);
+        if (typeof updateCartCount === 'function') updateCartCount();
+        if (typeof updateCartDrawer === 'function') updateCartDrawer();
+        if (typeof showToast === 'function') showToast('info', 'Item Removed', removedItem.product + ' removed from cart');
+    }
+}
+
+function clearCart() {
+    if (typeof window.cart !== 'undefined' && window.cart.length > 0) {
+        if (confirm('Are you sure you want to remove all items from your cart?')) {
+            window.cart.length = 0;
+            if (typeof updateCartCount === 'function') updateCartCount();
+            if (typeof updateCartDrawer === 'function') updateCartDrawer();
+            if (typeof showToast === 'function') showToast('info', 'Cart Cleared', 'All items have been removed from your cart');
+        }
+    }
+}
+
+(function() {
+    const checkAndOverride = function() {
+        if (typeof window.updateCartDrawer === 'function') {
+            const originalUpdateCartDrawer = window.updateCartDrawer;
+            window.updateCartDrawer = function() {
+                originalUpdateCartDrawer.apply(this, arguments);
+                setTimeout(function() {
+                    const cartItems = document.querySelectorAll('#cartItemsContainer > div');
+                    cartItems.forEach((item, index) => {
+                        if (!item.querySelector('.cart-item-delete')) {
+                            item.classList.add('cart-item');
+                            const deleteBtn = document.createElement('button');
+                            deleteBtn.className = 'cart-item-delete';
+                            deleteBtn.innerHTML = '&times;';
+                            deleteBtn.title = 'Remove item';
+                            deleteBtn.onclick = function(e) { e.stopPropagation(); removeCartItem(index); };
+                            item.insertBefore(deleteBtn, item.firstChild);
+                        }
+                    });
+                }, 10);
+            };
+        } else {
+            setTimeout(checkAndOverride, 100);
+        }
+    };
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', checkAndOverride);
+    } else {
+        checkAndOverride();
+    }
+})();
+</script>
+
 <script src="/js/square-checkout.js"></script>
 <script>
 // More Products Modal Functions
@@ -1410,14 +1366,12 @@ function selectMoreProduct(productValue) {
     }, 100);
 }
 
-// Close modal on overlay click
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('more-products-modal-overlay')) {
         closeMoreProductsModal();
     }
 });
 
-// Payment method toggle handler
 function onPaymentMethodChange(method) {
     const achNotice = document.getElementById('achNotice');
     const cardForm = document.getElementById('cardPaymentForm');
@@ -1425,7 +1379,6 @@ function onPaymentMethodChange(method) {
     const achSavingsDetail = document.getElementById('achSavingsDetail');
     const applePayContainer = document.getElementById('applePayButtonContainer');
     
-    // Hide all payment forms first
     achNotice.style.display = 'none';
     cardForm.style.display = 'none';
     achForm.style.display = 'none';
@@ -1438,46 +1391,25 @@ function onPaymentMethodChange(method) {
         if (achSavingsDetail) achSavingsDetail.classList.add('show');
     } else if (method === 'apple-pay') {
         if (applePayContainer) applePayContainer.classList.add('show');
-        // Also show card form as fallback
         cardForm.style.display = 'block';
     } else {
-        // Card payment
         cardForm.style.display = 'block';
     }
 }
 
-// Calculate and update ACH savings display
 function updateAchSavings() {
     const cartTotal = (window.cart || []).reduce((sum, item) => sum + item.total, 0);
     if (cartTotal <= 0) return;
-    
-    // Card fee: 2.9% + $0.30
     const cardFee = (cartTotal * 0.029) + 0.30;
-    // ACH fee: 1% capped at $5
     const achFee = Math.min(cartTotal * 0.01, 5.00);
-    // Savings
     const savings = cardFee - achFee;
-    
     const savingsBadge = document.getElementById('achSavingsBadge');
     const savingsAmount = document.getElementById('achSavingsAmount');
-    
-    if (savingsBadge && savings > 0) {
-        savingsBadge.textContent = 'Save $' + savings.toFixed(2);
-    }
-    if (savingsAmount && savings > 0) {
-        savingsAmount.textContent = '$' + savings.toFixed(2);
-    }
+    if (savingsBadge && savings > 0) savingsBadge.textContent = 'Save $' + savings.toFixed(2);
+    if (savingsAmount && savings > 0) savingsAmount.textContent = '$' + savings.toFixed(2);
 }
 
-// Call updateAchSavings when checkout step 3 is shown
-const originalGoToPaymentStep = typeof goToPaymentStep === 'function' ? goToPaymentStep : null;
-if (originalGoToPaymentStep) {
-    window._originalGoToPaymentStep = originalGoToPaymentStep;
-}
-
-// Hook into payment step to update ACH savings
 document.addEventListener('DOMContentLoaded', function() {
-    // Override goToPaymentStep if it exists
     if (typeof window.goToPaymentStep === 'function') {
         const orig = window.goToPaymentStep;
         window.goToPaymentStep = function() {
@@ -1486,8 +1418,6 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 });
-
-// Square payment handler - calls square-checkout.js
 
 async function handleSquarePayment() {
     const payButton = document.getElementById('squarePayButton');
@@ -1499,7 +1429,6 @@ async function handleSquarePayment() {
         
         const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
         
-        // Build customer info from form fields
         const customerInfo = {
             name: document.getElementById('checkoutName')?.value || '',
             email: document.getElementById('checkoutEmail')?.value || '',
@@ -1509,25 +1438,21 @@ async function handleSquarePayment() {
             zip: document.getElementById('checkoutZipConfirm')?.value || ''
         };
         
-        // Validate customer info
         if (!customerInfo.name || !customerInfo.email || !customerInfo.address) {
             throw new Error('Please complete all required fields');
         }
         
-        // Build order data from cart
         const cartItems = window.cart || [];
         if (cartItems.length === 0) {
             throw new Error('Your cart is empty');
         }
         
-        // Calculate totals
         const subtotal = cartItems.reduce((sum, item) => sum + (item.total || 0), 0);
         const salesTax = cartItems.reduce((sum, item) => sum + (item.salesTax || 0), 0);
         const serviceFee = cartItems.reduce((sum, item) => sum + (item.serviceFee || 0), 0);
         const precisionFee = window.selectedDelivery?.precisionFee || 0;
         const total = subtotal + precisionFee;
         
-        // Build the orderData object that processPayment expects
         const orderData = {
             customer: customerInfo,
             items: cartItems.map(item => ({
@@ -1560,7 +1485,6 @@ async function handleSquarePayment() {
         console.error('Payment error:', error);
         payButton.disabled = false;
         payButton.innerHTML = originalText;
-        
         if (typeof showToast === 'function') {
             showToast('error', 'Payment Failed', error.message || 'Please try again');
         }
