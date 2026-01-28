@@ -274,9 +274,80 @@ exports.handler = async (event, context) => {
           console.error('Error updating inventory:', invError);
         }
 
+        // Record sales commission (3% on materials + freight pretax)
+        try {
+          const materialsAmount = order.totals.materials || 0;
+          const freightAmount = order.totals.freight || 0;
+          const commissionBase = materialsAmount + freightAmount;
+          const commissionRate = 0.03;
+          const commissionAmount = commissionBase * commissionRate;
+
+          // Build material breakdown for reporting
+          const materialBreakdown = (order.items || []).map(item => ({
+            name: item.productName || item.name,
+            amount: item.lineTotal || (item.pricePerTon * item.tons)
+          }));
+
+          await db.collection('commissions').insertOne({
+            orderId: order._id,
+            orderNumber: order.orderNumber,
+            salesperson: 'alex.saplala',
+            materialsAmount,
+            freightAmount,
+            commissionBase,
+            commissionRate,
+            commissionAmount,
+            materialBreakdown,
+            paidAt: new Date(),
+            createdAt: new Date()
+          });
+          console.log('Commission recorded:', order.orderNumber, '$' + commissionAmount.toFixed(2));
+        } catch (commError) {
+          console.error('Error recording commission:', commError);
+        }
+
         // Send confirmation notification
         await sendNotification('ach_completed', order);
         console.log('Order updated to paid:', order.orderNumber);
+
+        // Record sales commission (3% on materials + freight, pretax)
+        try {
+          const materialsAmount = order.totals?.materials || order.totals?.subtotal || 0;
+          const freightAmount = order.totals?.freight || order.totals?.delivery || 0;
+          const commissionBase = materialsAmount + freightAmount;
+          const commissionRate = 0.03;
+          const commissionAmount = commissionBase * commissionRate;
+
+          // Build material breakdown for reporting
+          const materialBreakdown = (order.items || []).map(item => ({
+            name: item.productName || item.name,
+            quantity: item.cubicYards || item.quantity,
+            amount: item.subtotal || (item.pricePerTon * item.tons)
+          }));
+
+          await db.collection('commissions').insertOne({
+            orderId: order._id,
+            orderNumber: order.orderNumber,
+            salesperson: 'alex.saplala',
+            materialsAmount,
+            freightAmount,
+            commissionBase,
+            commissionRate,
+            commissionAmount,
+            materialBreakdown,
+            customerName: order.customer?.name || 'Unknown',
+            paidAt: new Date(),
+            createdAt: new Date()
+          });
+
+          console.log('Commission recorded:', {
+            orderNumber: order.orderNumber,
+            commissionBase,
+            commissionAmount: commissionAmount.toFixed(2)
+          });
+        } catch (commError) {
+          console.error('Error recording commission:', commError);
+        }
 
       } else if (paymentStatus === 'FAILED' || paymentStatus === 'CANCELED') {
         // Payment failed
