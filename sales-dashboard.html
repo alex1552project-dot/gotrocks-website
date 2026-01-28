@@ -220,6 +220,82 @@
         .quote-price { font-size: 2.5rem; font-weight: 800; color: var(--accent-green); }
         .quote-details { font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; }
 
+        /* Commission Card */
+        .commission-card {
+            background: linear-gradient(135deg, var(--bg-card), rgba(16, 185, 129, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 20px;
+            margin-bottom: 24px;
+        }
+
+        .commission-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .commission-title {
+            font-size: 1.1rem; font-weight: 600;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .commission-title svg { width: 22px; height: 22px; color: var(--accent-green); }
+
+        .commission-actions { display: flex; gap: 8px; }
+
+        .period-btn {
+            padding: 8px 14px; font-size: 0.8rem; font-weight: 600;
+            background: var(--bg-input); border: 1px solid var(--border-subtle);
+            border-radius: 8px; color: var(--text-secondary);
+            cursor: pointer; transition: all 0.2s ease;
+        }
+
+        .period-btn:hover { border-color: var(--accent-green); color: var(--text-primary); }
+        .period-btn.active { background: rgba(16, 185, 129, 0.15); border-color: var(--accent-green); color: var(--accent-green); }
+
+        .export-btn {
+            padding: 8px 12px; font-size: 0.8rem;
+            background: var(--bg-card); border: 1px solid var(--border-subtle);
+            border-radius: 8px; color: var(--text-secondary);
+            cursor: pointer; display: flex; align-items: center; gap: 6px;
+        }
+
+        .export-btn:hover { border-color: var(--accent-blue); color: var(--text-primary); }
+        .export-btn svg { width: 14px; height: 14px; }
+
+        .commission-body { padding: 20px 24px; }
+
+        .commission-totals {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .commission-total-item {
+            background: var(--bg-input);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .commission-total-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; }
+        .commission-total-value { font-size: 1.5rem; font-weight: 700; color: var(--accent-green); }
+        .commission-total-sub { font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; }
+
+        .commission-breakdown { margin-top: 16px; }
+        .commission-breakdown-title { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px; }
+
+        .material-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+
+        .material-name { font-weight: 500; }
+        .material-commission { color: var(--accent-green); font-weight: 600; }
+        .material-sales { font-size: 0.85rem; color: var(--text-muted); }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .content-grid { grid-template-columns: 1fr; }
@@ -286,6 +362,65 @@
             <div class="stat-card">
                 <div class="stat-label">Total Revenue</div>
                 <div class="stat-value green" id="totalRevenue">$0</div>
+            </div>
+        </div>
+
+        <!-- My Commissions Card -->
+        <div class="commission-card" id="commissionCard">
+            <div class="commission-header">
+                <div class="commission-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                    My Commissions
+                </div>
+                <div class="commission-actions">
+                    <button class="period-btn active" data-period="today" onclick="loadCommissions('today')">Today</button>
+                    <button class="period-btn" data-period="week" onclick="loadCommissions('week')">Week</button>
+                    <button class="period-btn" data-period="month" onclick="loadCommissions('month')">Month</button>
+                    <button class="period-btn" data-period="ytd" onclick="loadCommissions('ytd')">YTD</button>
+                    <button class="export-btn" onclick="exportCommissions()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        CSV
+                    </button>
+                </div>
+            </div>
+            <div class="commission-body">
+                <div class="commission-totals">
+                    <div class="commission-total-item">
+                        <div class="commission-total-label">Today</div>
+                        <div class="commission-total-value" id="commToday">$0</div>
+                        <div class="commission-total-sub" id="commTodayOrders">0 orders</div>
+                    </div>
+                    <div class="commission-total-item">
+                        <div class="commission-total-label">This Week</div>
+                        <div class="commission-total-value" id="commWeek">$0</div>
+                        <div class="commission-total-sub" id="commWeekOrders">0 orders</div>
+                    </div>
+                    <div class="commission-total-item">
+                        <div class="commission-total-label">This Month</div>
+                        <div class="commission-total-value" id="commMonth">$0</div>
+                        <div class="commission-total-sub" id="commMonthOrders">0 orders</div>
+                    </div>
+                    <div class="commission-total-item">
+                        <div class="commission-total-label">Year to Date</div>
+                        <div class="commission-total-value" id="commYTD">$0</div>
+                        <div class="commission-total-sub" id="commYTDOrders">0 orders</div>
+                    </div>
+                </div>
+                <div class="commission-breakdown">
+                    <div class="commission-breakdown-title">Breakdown by Material (<span id="selectedPeriod">Today</span>)</div>
+                    <div id="materialBreakdown">
+                        <div class="material-row" style="color: var(--text-muted); justify-content: center;">
+                            Loading commission data...
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -356,10 +491,106 @@
         const API_BASE = '/api';
         let allCustomers = [];
         let products = [];
+        let currentCommissionPeriod = 'today';
 
         // Format currency
         function formatCurrency(amount) {
             return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount);
+        }
+
+        // Load commissions data
+        async function loadCommissions(period = 'today') {
+            currentCommissionPeriod = period;
+            
+            // Update active button
+            document.querySelectorAll('.period-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.period === period);
+            });
+
+            // Update period label
+            const periodLabels = { today: 'Today', week: 'This Week', month: 'This Month', ytd: 'Year to Date' };
+            document.getElementById('selectedPeriod').textContent = periodLabels[period];
+
+            try {
+                const token = localStorage.getItem('tgr_token') || '';
+                const response = await fetch(`/.netlify/functions/commissions?period=${period}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load commissions');
+                }
+
+                const data = await response.json();
+                
+                // Update period totals
+                if (data.periodTotals) {
+                    document.getElementById('commToday').textContent = formatCurrency(data.periodTotals.today?.commission || 0);
+                    document.getElementById('commTodayOrders').textContent = `${data.periodTotals.today?.orders || 0} orders`;
+                    
+                    document.getElementById('commWeek').textContent = formatCurrency(data.periodTotals.week?.commission || 0);
+                    document.getElementById('commWeekOrders').textContent = `${data.periodTotals.week?.orders || 0} orders`;
+                    
+                    document.getElementById('commMonth').textContent = formatCurrency(data.periodTotals.month?.commission || 0);
+                    document.getElementById('commMonthOrders').textContent = `${data.periodTotals.month?.orders || 0} orders`;
+                    
+                    document.getElementById('commYTD').textContent = formatCurrency(data.periodTotals.ytd?.commission || 0);
+                    document.getElementById('commYTDOrders').textContent = `${data.periodTotals.ytd?.orders || 0} orders`;
+                }
+
+                // Update material breakdown
+                const breakdownContainer = document.getElementById('materialBreakdown');
+                if (data.byMaterial && data.byMaterial.length > 0) {
+                    breakdownContainer.innerHTML = data.byMaterial.map(m => `
+                        <div class="material-row">
+                            <div>
+                                <div class="material-name">${m.name}</div>
+                                <div class="material-sales">${formatCurrency(m.sales)} in sales</div>
+                            </div>
+                            <div class="material-commission">${formatCurrency(m.commission)}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    breakdownContainer.innerHTML = `
+                        <div class="material-row" style="color: var(--text-muted); justify-content: center;">
+                            No commissions for this period
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('Error loading commissions:', error);
+                document.getElementById('materialBreakdown').innerHTML = `
+                    <div class="material-row" style="color: var(--text-muted); justify-content: center;">
+                        Unable to load commission data
+                    </div>
+                `;
+            }
+        }
+
+        // Export commissions as CSV
+        async function exportCommissions() {
+            try {
+                const token = localStorage.getItem('tgr_token') || '';
+                const response = await fetch(`/.netlify/functions/commissions?period=${currentCommissionPeriod}&format=csv`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) throw new Error('Export failed');
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `commissions-${currentCommissionPeriod}-${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Error exporting commissions:', error);
+                alert('Failed to export commissions');
+            }
         }
 
         // Load products for dropdown
@@ -497,6 +728,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadProducts();
             loadCustomers();
+            loadCommissions('today');
         });
     </script>
 </body>
