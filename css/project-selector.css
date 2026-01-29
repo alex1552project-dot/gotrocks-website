@@ -1,0 +1,915 @@
+/* =====================================================
+   TEXAS GOT ROCKS - PROJECT SELECTOR STYLES
+   File: /css/project-selector.css
+   
+   Add to your <head>:
+   <link rel="stylesheet" href="/css/project-selector.css">
+   
+   This is a standalone file - does NOT modify styles.css
+===================================================== */
+
+/* =====================================================
+   PROJECT SELECTOR SECTION
+   Replaces: .field-gallery-section
+===================================================== */
+.project-selector-section {
+    padding: 60px 0;
+    background: linear-gradient(180deg, #f5f0e8 0%, #fff 50%, #f5f0e8 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.project-selector-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--warm-orange), var(--bright-yellow), var(--warm-orange));
+}
+
+.project-selector-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.project-selector-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.project-selector-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--success-green), #1B5E20);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+}
+
+.project-selector-title {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--earth-dark);
+    margin-bottom: 12px;
+    font-family: 'Outfit', sans-serif;
+}
+
+.project-selector-subtitle {
+    font-size: 18px;
+    color: var(--earth-brown);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* =====================================================
+   PROJECT GRID
+===================================================== */
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.project-card {
+    position: relative;
+    background: white;
+    border-radius: var(--radius-lg, 16px);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border: 3px solid transparent;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.project-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(255, 111, 0, 0.2);
+    border-color: var(--warm-orange);
+}
+
+.project-card-image {
+    position: relative;
+    height: 140px;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}
+
+.project-card-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.6) 100%);
+}
+
+.project-card-icon {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 44px;
+    height: 44px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    z-index: 2;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease;
+}
+
+.project-card:hover .project-card-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.project-card-search-volume {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.project-card-content {
+    padding: 16px;
+    text-align: center;
+}
+
+.project-card-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--earth-dark);
+    margin-bottom: 4px;
+    line-height: 1.2;
+    font-family: 'Outfit', sans-serif;
+}
+
+.project-card-material {
+    font-size: 12px;
+    color: var(--warm-orange);
+    font-weight: 600;
+}
+
+.project-card-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--success-green);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+.project-card:hover .project-card-cta {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* =====================================================
+   FOOTER
+===================================================== */
+.project-selector-footer {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 2px solid #eee;
+}
+
+.project-selector-tagline {
+    font-size: 16px;
+    color: var(--earth-brown);
+}
+
+.project-selector-tagline strong {
+    color: var(--warm-orange);
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+@media (max-width: 1024px) {
+    .project-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .project-selector-section {
+        padding: 40px 0;
+    }
+    
+    .project-selector-title {
+        font-size: 28px;
+    }
+    
+    .project-selector-subtitle {
+        font-size: 16px;
+    }
+    
+    .project-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .project-card-image {
+        height: 100px;
+    }
+    
+    .project-card-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+        top: 8px;
+        right: 8px;
+    }
+    
+    .project-card-title {
+        font-size: 13px;
+    }
+    
+    .project-card-material {
+        font-size: 11px;
+    }
+    
+    .project-card-content {
+        padding: 12px;
+    }
+    
+    .project-card-search-volume {
+        font-size: 9px;
+        padding: 3px 8px;
+    }
+    
+    .project-selector-tagline {
+        font-size: 14px;
+    }
+}
+
+/* =====================================================
+   GUIDE PAGE STYLES
+===================================================== */
+
+/* Hero Section */
+.guide-hero {
+    background: linear-gradient(135deg, var(--earth-dark, #2C1810) 0%, #3E2723 100%);
+    padding: 60px 40px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.guide-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+}
+
+.guide-hero-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.guide-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+
+.guide-breadcrumb a {
+    color: white;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.guide-breadcrumb a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+.guide-breadcrumb span {
+    opacity: 0.6;
+}
+
+.guide-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--warm-orange, #FF6F00);
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+}
+
+.guide-hero h1 {
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    line-height: 1.2;
+    font-family: 'Outfit', sans-serif;
+    max-width: 700px;
+}
+
+.guide-hero-description {
+    font-size: 18px;
+    opacity: 0.9;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    max-width: 650px;
+}
+
+.guide-hero-stats {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.guide-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    background: rgba(255,255,255,0.1);
+    padding: 10px 18px;
+    border-radius: 50px;
+    font-weight: 500;
+}
+
+.guide-stat-icon {
+    font-size: 18px;
+}
+
+/* Guide Content Layout */
+.guide-content {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 40px;
+    padding: 50px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.guide-main {
+    min-width: 0;
+}
+
+.guide-sidebar {
+    min-width: 0;
+}
+
+/* Video Section */
+.guide-video-section {
+    margin-bottom: 40px;
+}
+
+.guide-video-section h2 {
+    font-size: 20px;
+    margin-bottom: 16px;
+    color: var(--earth-dark);
+    font-family: 'Outfit', sans-serif;
+}
+
+.guide-video-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    background: #1a1a1a;
+    border-radius: var(--radius-md, 12px);
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+.guide-video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.guide-video-credit {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--earth-brown);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.guide-video-credit a {
+    color: var(--warm-orange);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.guide-video-credit a:hover {
+    text-decoration: underline;
+}
+
+/* Steps Section */
+.guide-steps-section {
+    margin-bottom: 40px;
+}
+
+.guide-steps-section h2 {
+    font-size: 24px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--earth-dark);
+    font-family: 'Outfit', sans-serif;
+}
+
+.guide-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.guide-step {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    background: var(--sand-light, #EFEBE9);
+    border-radius: var(--radius-md, 12px);
+    transition: all 0.3s ease;
+}
+
+.guide-step:hover {
+    background: var(--light-bg, #FFF8E1);
+    transform: translateX(8px);
+}
+
+.guide-step-number {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    background: var(--warm-orange, #FF6F00);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+    font-family: 'Outfit', sans-serif;
+}
+
+.guide-step-content h4 {
+    font-size: 17px;
+    margin-bottom: 6px;
+    color: var(--earth-dark);
+    font-family: 'Outfit', sans-serif;
+}
+
+.guide-step-content p {
+    font-size: 14px;
+    color: var(--earth-brown);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Pro Tips */
+.guide-pro-tips {
+    background: linear-gradient(135deg, #FFF8E1, #FFECB3);
+    border: 2px solid var(--bright-yellow, #FFB300);
+    border-radius: var(--radius-md, 12px);
+    padding: 24px;
+}
+
+.guide-pro-tips h3 {
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: var(--earth-dark);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Outfit', sans-serif;
+}
+
+.guide-pro-tips ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.guide-pro-tips li {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    font-size: 14px;
+    color: var(--earth-brown);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.guide-pro-tips li:last-child {
+    border-bottom: none;
+}
+
+.guide-pro-tips li::before {
+    content: '💡';
+    flex-shrink: 0;
+}
+
+/* Product Card */
+.guide-product-card {
+    background: white;
+    border: 3px solid var(--warm-orange, #FF6F00);
+    border-radius: var(--radius-lg, 16px);
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    margin-bottom: 24px;
+    position: sticky;
+    top: 120px;
+}
+
+.guide-product-header {
+    background: linear-gradient(135deg, var(--warm-orange, #FF6F00), var(--warm-orange-dark, #E65100));
+    color: white;
+    padding: 16px 20px;
+    text-align: center;
+}
+
+.guide-product-header h3 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    opacity: 0.9;
+    font-weight: 600;
+}
+
+.guide-product-header .product-name {
+    font-size: 24px;
+    font-weight: 800;
+    font-family: 'Outfit', sans-serif;
+}
+
+.guide-product-image {
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+    background-color: #d7ccc8;
+}
+
+.guide-product-details {
+    padding: 24px;
+}
+
+.guide-product-price {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.guide-product-price .amount {
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--warm-orange, #FF6F00);
+    font-family: 'Outfit', sans-serif;
+}
+
+.guide-product-price .unit {
+    font-size: 14px;
+    color: var(--earth-brown);
+}
+
+.guide-product-specs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #eee;
+}
+
+.guide-product-spec {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.guide-product-spec .label {
+    color: var(--earth-brown);
+}
+
+.guide-product-spec .value {
+    font-weight: 700;
+    color: var(--earth-dark);
+}
+
+.guide-product-cta {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, var(--success-green, #2E7D32), #1B5E20);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm, 8px);
+    font-family: 'Outfit', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.guide-product-cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(46, 125, 50, 0.4);
+}
+
+.guide-product-delivery {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--success-green, #2E7D32);
+    font-weight: 600;
+}
+
+/* Cross-sell */
+.guide-crosssell {
+    background: var(--sand-light, #EFEBE9);
+    border-radius: var(--radius-md, 12px);
+    padding: 24px;
+}
+
+.guide-crosssell h4 {
+    font-size: 16px;
+    margin-bottom: 16px;
+    color: var(--earth-dark);
+    font-family: 'Outfit', sans-serif;
+}
+
+.guide-crosssell-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.guide-crosssell-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: white;
+    border-radius: var(--radius-sm, 8px);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    color: inherit;
+}
+
+.guide-crosssell-item:hover {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transform: translateX(6px);
+}
+
+.guide-crosssell-item .icon {
+    font-size: 24px;
+}
+
+.guide-crosssell-item .name {
+    flex: 1;
+    font-weight: 600;
+    color: var(--earth-dark);
+}
+
+.guide-crosssell-item .add {
+    color: var(--warm-orange, #FF6F00);
+    font-weight: 700;
+    font-size: 20px;
+}
+
+/* CTA Banner */
+.guide-cta-banner {
+    background: linear-gradient(135deg, var(--warm-orange, #FF6F00), var(--warm-orange-dark, #E65100));
+    padding: 50px 40px;
+    text-align: center;
+    color: white;
+}
+
+.guide-cta-banner h2 {
+    font-size: 32px;
+    margin-bottom: 12px;
+    font-family: 'Outfit', sans-serif;
+}
+
+.guide-cta-banner p {
+    font-size: 18px;
+    opacity: 0.95;
+    margin-bottom: 30px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.guide-cta-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.guide-cta-buttons .btn-yellow {
+    background: var(--bright-yellow, #FFB300);
+    color: var(--earth-dark);
+    padding: 16px 32px;
+    border-radius: var(--radius-sm, 8px);
+    font-weight: 700;
+    font-size: 16px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.guide-cta-buttons .btn-yellow:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.guide-cta-buttons .btn-outline {
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+    padding: 16px 32px;
+    border-radius: var(--radius-sm, 8px);
+    font-weight: 700;
+    font-size: 16px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.guide-cta-buttons .btn-outline:hover {
+    background: white;
+    color: var(--warm-orange, #FF6F00);
+}
+
+/* Related Guides */
+.guide-related {
+    padding: 60px 40px;
+    background: var(--sand-light, #EFEBE9);
+}
+
+.guide-related-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.guide-related h2 {
+    font-size: 28px;
+    margin-bottom: 30px;
+    text-align: center;
+    color: var(--earth-dark);
+    font-family: 'Outfit', sans-serif;
+}
+
+.guide-related-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+/* Responsive Guide Styles */
+@media (max-width: 968px) {
+    .guide-hero {
+        padding: 40px 24px;
+    }
+    
+    .guide-hero h1 {
+        font-size: 32px;
+    }
+    
+    .guide-hero-description {
+        font-size: 16px;
+    }
+    
+    .guide-content {
+        grid-template-columns: 1fr;
+        padding: 30px 24px;
+        gap: 30px;
+    }
+    
+    .guide-product-card {
+        position: static;
+    }
+    
+    .guide-related-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .guide-cta-banner {
+        padding: 40px 24px;
+    }
+    
+    .guide-cta-banner h2 {
+        font-size: 26px;
+    }
+}
+
+@media (max-width: 640px) {
+    .guide-hero {
+        padding: 30px 20px;
+    }
+    
+    .guide-hero h1 {
+        font-size: 26px;
+    }
+    
+    .guide-hero-stats {
+        gap: 10px;
+    }
+    
+    .guide-stat {
+        font-size: 12px;
+        padding: 8px 14px;
+    }
+    
+    .guide-content {
+        padding: 24px 20px;
+    }
+    
+    .guide-steps-section h2 {
+        font-size: 20px;
+    }
+    
+    .guide-step {
+        padding: 16px;
+        gap: 12px;
+    }
+    
+    .guide-step-number {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        font-size: 14px;
+    }
+    
+    .guide-step-content h4 {
+        font-size: 15px;
+    }
+    
+    .guide-cta-buttons {
+        flex-direction: column;
+    }
+    
+    .guide-cta-buttons .btn-yellow,
+    .guide-cta-buttons .btn-outline {
+        width: 100%;
+        justify-content: center;
+    }
+}
