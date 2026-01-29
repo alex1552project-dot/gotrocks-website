@@ -1,389 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9N8HZT4KRL"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-9N8HZT4KRL');
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>How to Build a Gravel Driveway | DIY Guide + Materials | Texas Got Rocks</title>
-    <meta name="description" content="Step-by-step gravel driveway installation guide with video tutorial. Get limestone base and gravel delivered free in Conroe & The Woodlands.">
-    <meta name="keywords" content="gravel driveway, driveway base, limestone base, crushed stone driveway, gravel delivery, Conroe TX, The Woodlands">
-    
-    <meta property="og:title" content="How to Build a Gravel Driveway | Texas Got Rocks">
-    <meta property="og:description" content="DIY gravel driveway guide with video tutorial. Materials delivered free.">
-    <meta property="og:type" content="article">
-    <meta property="og:url" content="https://texasgotrocks.com/guides/driveway-base.html">
-    
+    <title>How to Build a Driveway Base | DIY Guide | Texas Got Rocks</title>
+    <meta name="description" content="Learn how to build a solid gravel driveway base. Step-by-step DIY guide with video. Get base materials delivered free from Texas Got Rocks.">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="/css/project-selector.css">
-    <link rel="stylesheet" href="/css/rocky-chat.css">
-    
     <style>
-        .guide-hero { margin-top: 110px; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Outfit', sans-serif; margin: 0; padding: 0; color: #2C1810; }
+        .guide-nav { background: #2C1810; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .guide-nav a.logo { color: white; font-weight: 700; font-size: 1.25rem; text-decoration: none; }
+        .guide-nav a.btn { background: #FF6F00; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; }
+        .guide-hero { background: linear-gradient(135deg, #3E2723 0%, #5D4037 100%); color: white; padding: 60px 20px 40px; }
+        .guide-hero-inner { max-width: 900px; margin: 0 auto; }
+        .guide-breadcrumb { font-size: 14px; margin-bottom: 16px; opacity: 0.8; }
+        .guide-breadcrumb a { color: white; text-decoration: none; }
+        .guide-breadcrumb a:hover { text-decoration: underline; }
+        .guide-hero h1 { font-size: 2.5rem; font-weight: 800; margin: 0 0 16px 0; }
+        .guide-hero-meta { display: flex; gap: 24px; flex-wrap: wrap; font-size: 15px; }
+        .guide-content { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; margin-bottom: 32px; background: #000; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        h2 { font-size: 1.5rem; color: #2C1810; margin: 40px 0 20px; font-weight: 700; border-bottom: 3px solid #FF6F00; padding-bottom: 10px; display: inline-block; }
+        .step { display: flex; gap: 20px; margin-bottom: 24px; padding: 20px; background: #FAF6F1; border-radius: 12px; }
+        .step-num { flex-shrink: 0; width: 40px; height: 40px; background: #FF6F00; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; }
+        .step-content h3 { margin: 0 0 8px 0; font-size: 1.1rem; color: #2C1810; }
+        .step-content p { margin: 0; color: #5D4037; line-height: 1.6; }
+        .pro-tip { background: #E8F5E9; border-left: 4px solid #4CAF50; padding: 20px; border-radius: 0 12px 12px 0; margin: 32px 0; }
+        .pro-tip h4 { margin: 0 0 8px 0; color: #2E7D32; }
+        .pro-tip p { margin: 0; color: #33691E; line-height: 1.6; }
+        .cta-box { background: linear-gradient(135deg, #FF6F00 0%, #E65100 100%); border-radius: 16px; padding: 32px; color: white; text-align: center; margin: 40px 0; }
+        .cta-box h3 { margin: 0 0 12px 0; font-size: 1.5rem; }
+        .cta-box p { margin: 0 0 20px 0; opacity: 0.9; }
+        .cta-box .btn { background: white; color: #FF6F00; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; display: inline-block; }
+        .cta-box .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: #FF6F00; text-decoration: none; font-weight: 600; margin-top: 20px; }
+        .back-link:hover { text-decoration: underline; }
+        .materials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 20px 0; }
+        .material-card { background: #FAF6F1; padding: 16px; border-radius: 12px; text-align: center; }
+        .material-card h4 { margin: 0 0 4px 0; color: #2C1810; }
+        .material-card p { margin: 0; color: #FF6F00; font-weight: 600; }
+        @media (max-width: 600px) { .guide-hero h1 { font-size: 1.8rem; } .step { flex-direction: column; gap: 12px; } }
     </style>
 </head>
 <body>
+    <nav class="guide-nav">
+        <a href="/" class="logo">Texas Got Rocks</a>
+        <a href="tel:9362592887" class="btn">📞 (936) 259-2887</a>
+    </nav>
 
-<!-- Navigation -->
-<nav class="nav" id="nav">
-    <div class="nav-container">
-        <a href="/" class="nav-logo"><img src="/images/logo.png" alt="Texas Got Rocks?"></a>
-        <ul class="nav-links">
-            <li><a href="/#products">Products</a></li>
-            <li><a href="/#how-it-works">How It Works</a></li>
-            <li class="nav-dropdown">
-                <a href="/#service-areas" class="dropdown-toggle">Service Areas ▾</a>
-                <div class="dropdown-menu">
-                    <div class="dropdown-grid">
-                        <a href="/conroe/">Conroe</a>
-                        <a href="/the-woodlands/">The Woodlands</a>
-                        <a href="/spring/">Spring</a>
-                        <a href="/magnolia/">Magnolia</a>
-                        <a href="/montgomery/">Montgomery</a>
-                    </div>
-                </div>
-            </li>
-            <li><a href="/#reviews">Reviews</a></li>
-            <li><a href="/#faq">FAQ</a></li>
-            <li class="nav-call-dropdown">
-                <button class="nav-call-btn" onclick="toggleNavCallDropdown(event)">📞 Call Or Text Now ▾</button>
-                <div class="nav-call-menu" id="navCallMenu">
-                    <a href="tel:9362592887">📞 Call (936) 259-2887</a>
-                    <a href="sms:9362592887">💬 Text (936) 259-2887</a>
-                </div>
-            </li>
-        </ul>
-        <div class="nav-right">
-            <div class="nav-cart" onclick="openCartDrawer()">
-                <span class="nav-cart-icon">🛒</span>
-                <span class="cart-count hidden" id="navCartCount">0</span>
+    <section class="guide-hero">
+        <div class="guide-hero-inner">
+            <div class="guide-breadcrumb">
+                <a href="/">Home</a> › <a href="/#project-guides">DIY Guides</a> › Driveway Base
             </div>
-            <button class="mobile-menu-btn" id="mobile-menu-btn"><span></span><span></span><span></span></button>
+            <h1>How to Build a Driveway Base</h1>
+            <div class="guide-hero-meta">
+                <span>⏱️ 1-2 Days</span>
+                <span>💪 Difficulty: Moderate-Hard</span>
+                <span>📦 10-30 Yards Typical</span>
+            </div>
         </div>
-    </div>
-</nav>
+    </section>
 
-<!-- Announcement Bar -->
-<div class="announcement-bar">
-    🚚 <span class="highlight">ALWAYS FREE DELIVERY</span> in Conroe & The Woodlands • Locally Owned—Direct Supplier Pricing
-</div>
+    <div class="guide-content">
+        <h2>🎬 Watch the Video</h2>
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/3YwJ9fzduI8" title="How to Build a Driveway Base" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
 
-<!-- Guide Hero -->
-<section class="guide-hero">
-    <div class="guide-hero-container">
-        <nav class="guide-breadcrumb">
-            <a href="/">Home</a>
-            <span>›</span>
-            <a href="/#project-guides">Project Guides</a>
-            <span>›</span>
-            <span>Driveway Base</span>
-        </nav>
+        <h2>📋 Step-by-Step Guide</h2>
         
-        <div class="guide-hero-badge">📺 Video Guide</div>
-        
-        <h1>How to Build a Gravel Driveway</h1>
-        
-        <p class="guide-hero-description">
-            Create a durable, attractive driveway that handles Texas weather and heavy vehicles. Whether you're building new or refreshing an existing drive, the right layers and materials make all the difference.
-        </p>
-        
-        <div class="guide-hero-stats">
-            <div class="guide-stat">
-                <span class="guide-stat-icon">⏱️</span>
-                <span>2-3 Day Project</span>
-            </div>
-            <div class="guide-stat">
-                <span class="guide-stat-icon">💪</span>
-                <span>Intermediate DIY</span>
-            </div>
-            <div class="guide-stat">
-                <span class="guide-stat-icon">📏</span>
-                <span>10-30 Tons Typical</span>
+        <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+                <h3>Plan & Calculate Materials</h3>
+                <p>Measure your driveway length and width. For a proper base, you'll need 6-8 inches of material. A typical 12x50 ft driveway needs about 12-15 cubic yards. Order 10% extra for compaction.</p>
             </div>
         </div>
+
+        <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+                <h3>Clear & Grade the Area</h3>
+                <p>Remove vegetation, topsoil, and debris. Grade the area to create proper drainage—crown the center slightly higher or slope to one side. Compact the subgrade soil thoroughly.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+                <h3>Install Geotextile Fabric (Optional)</h3>
+                <p>For soft or clay soils, lay geotextile fabric before adding base material. This prevents the base from sinking into soft ground and extends driveway life significantly.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+                <h3>Add First Layer of Base</h3>
+                <p>Spread 4 inches of limestone base or crusite. Limestone base compacts extremely well and creates a rock-solid foundation. Rake smooth and maintain your crown or slope.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+                <h3>Compact Thoroughly</h3>
+                <p>Use a plate compactor or roller to compact the base layer. Make multiple passes. Water lightly and compact again. The base should feel rock-solid when you walk on it.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">6</div>
+            <div class="step-content">
+                <h3>Add Finish Layer</h3>
+                <p>Add 2-3 inches of finish material—either more limestone base for a utility look, or decorative gravel for curb appeal. Compact the final layer and edge as needed.</p>
+            </div>
+        </div>
+
+        <div class="pro-tip">
+            <h4>💡 Pro Tip</h4>
+            <p>Limestone base is the go-to material for Texas driveways—it compacts to an almost concrete-like surface while still allowing drainage. For heavy vehicle traffic, go with 8 inches total depth minimum. Edge with steel edging to prevent spreading.</p>
+        </div>
+
+        <h2>📦 Materials You'll Need</h2>
+        <div class="materials-grid">
+            <div class="material-card">
+                <h4>Limestone Base</h4>
+                <p>From $55/yard</p>
+            </div>
+            <div class="material-card">
+                <h4>Granite Base</h4>
+                <p>From $91/yard</p>
+            </div>
+        </div>
+
+        <div class="cta-box">
+            <h3>🚚 Ready to Order?</h3>
+            <p>Get driveway base delivered FREE to your property—usually same or next day!</p>
+            <a href="/?openCalculator=true" class="btn">Get Instant Quote →</a>
+        </div>
+
+        <a href="/#project-guides" class="back-link">← Back to All Guides</a>
     </div>
-</section>
-
-<!-- Guide Content -->
-<div class="guide-content">
-    <div class="guide-main">
-        
-        <!-- Video Section -->
-        <div class="guide-video-section">
-            <h2>📺 Watch: Building a Gravel Driveway</h2>
-            <div class="guide-video-container">
-                <iframe 
-                    src="https://www.youtube.com/embed/Oz9Rmx-kY4A" 
-                    title="How to Build a Gravel Driveway"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
-            </div>
-            <p class="guide-video-credit">
-                Video by <a href="https://www.youtube.com/@StanleyGenadekProLawnCaregu" target="_blank" rel="noopener">Stanley Genadek</a>
-            </p>
-        </div>
-
-        <!-- Steps Section -->
-        <div class="guide-steps-section">
-            <h2>📋 Step-by-Step Overview</h2>
-            
-            <div class="guide-steps">
-                <div class="guide-step">
-                    <div class="guide-step-number">1</div>
-                    <div class="guide-step-content">
-                        <h4>Plan & Mark Layout</h4>
-                        <p>Stake out driveway boundaries. Standard width is 10-12 feet for single vehicle, 20-24 feet for two cars. Plan for slight crown in center (2-3" higher) for water runoff.</p>
-                    </div>
-                </div>
-                
-                <div class="guide-step">
-                    <div class="guide-step-number">2</div>
-                    <div class="guide-step-content">
-                        <h4>Excavate & Grade</h4>
-                        <p>Remove vegetation and excavate 8-12 inches down. Grade to ensure water flows away from structures. In Texas clay, consider installing a French drain alongside for drainage.</p>
-                    </div>
-                </div>
-                
-                <div class="guide-step">
-                    <div class="guide-step-number">3</div>
-                    <div class="guide-step-content">
-                        <h4>Compact Subgrade</h4>
-                        <p>Compact the native soil thoroughly with a plate compactor or roller. This prevents settling. If soil is soft, add 4-6" of <strong>Select Fill</strong> and compact.</p>
-                    </div>
-                </div>
-                
-                <div class="guide-step">
-                    <div class="guide-step-number">4</div>
-                    <div class="guide-step-content">
-                        <h4>Install Base Layer</h4>
-                        <p>Add 4-6 inches of <strong>Limestone Base</strong> or <strong>Granite Base</strong>. This is your structural foundation. Compact thoroughly—multiple passes. This layer does the heavy lifting.</p>
-                    </div>
-                </div>
-                
-                <div class="guide-step">
-                    <div class="guide-step-number">5</div>
-                    <div class="guide-step-content">
-                        <h4>Add Middle Layer (Optional)</h4>
-                        <p>For heavy traffic or soft soil, add 2-3" of <strong>3/4" Limestone</strong>. This intermediate layer locks together and adds strength. Compact after spreading.</p>
-                    </div>
-                </div>
-                
-                <div class="guide-step">
-                    <div class="guide-step-number">6</div>
-                    <div class="guide-step-content">
-                        <h4>Apply Top Layer</h4>
-                        <p>Finish with 2-3 inches of <strong>3/8" Limestone</strong>, <strong>Pea Gravel</strong>, or <strong>Decomposed Granite</strong>. Finer material fills gaps and creates a smooth driving surface. Maintain the crown.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pro Tips -->
-        <div class="guide-pro-tips">
-            <h3>💡 Pro Tips from Texas Got Rocks</h3>
-            <ul>
-                <li><strong>Three-layer system:</strong> Base (large), middle (medium), top (fine). Each layer should be about half the size of the one below. This creates a stable, interlocking structure.</li>
-                <li><strong>Compact each layer:</strong> Don't skip compaction—it's the difference between a driveway that lasts 20 years and one that ruts in 2.</li>
-                <li><strong>Texas clay consideration:</strong> Our clay soil expands and contracts. A thick base layer (6"+) is essential to prevent heaving and cracking.</li>
-                <li><strong>Edge containment:</strong> Without borders, gravel migrates into your lawn. Steel edging, landscape timbers, or Belgian blocks keep gravel contained.</li>
-                <li><strong>Maintenance:</strong> Rake and redistribute gravel annually. Add 1-2" of top layer every 2-3 years. Fill ruts and potholes immediately.</li>
-            </ul>
-        </div>
-
-    </div>
-
-    <!-- Sidebar -->
-    <div class="guide-sidebar">
-        
-        <!-- Primary Product Card -->
-        <div class="guide-product-card">
-            <div class="guide-product-header">
-                <h3>Foundation Material</h3>
-                <div class="product-name">Limestone Base</div>
-            </div>
-            
-            <div class="guide-product-image" style="background-image: url('/images/limestone-base.png');"></div>
-            
-            <div class="guide-product-details">
-                <div class="guide-product-price">
-                    <span class="amount">$55</span>
-                    <span class="unit">per ton • delivered</span>
-                </div>
-                
-                <div class="guide-product-specs">
-                    <div class="guide-product-spec">
-                        <span class="label">Size</span>
-                        <span class="value">3/4" minus (with fines)</span>
-                    </div>
-                    <div class="guide-product-spec">
-                        <span class="label">Best For</span>
-                        <span class="value">Base layer, foundation</span>
-                    </div>
-                    <div class="guide-product-spec">
-                        <span class="label">Typical Need</span>
-                        <span class="value">10-20 tons for 50ft drive</span>
-                    </div>
-                    <div class="guide-product-spec">
-                        <span class="label">Key Feature</span>
-                        <span class="value">Compacts rock-solid</span>
-                    </div>
-                </div>
-                
-                <a href="/#material-calculator" class="guide-product-cta" onclick="localStorage.setItem('preselect-material', 'limestone-base');">
-                    🛒 Get Quote for Limestone Base
-                </a>
-                
-                <p class="guide-product-delivery">🚚 FREE Delivery in Conroe & The Woodlands</p>
-            </div>
-        </div>
-
-        <!-- Cross-sell Section -->
-        <div class="guide-crosssell">
-            <h4>📦 Complete Driveway System</h4>
-            <div class="guide-crosssell-items">
-                <a href="/#material-calculator" class="guide-crosssell-item" onclick="localStorage.setItem('preselect-material', 'granite-base');">
-                    <span class="icon">🏗️</span>
-                    <span class="name">Granite Base (alt. base)</span>
-                    <span class="add">+</span>
-                </a>
-                <a href="/#material-calculator" class="guide-crosssell-item" onclick="localStorage.setItem('preselect-material', 'limestone-3/4');">
-                    <span class="icon">🪨</span>
-                    <span class="name">3/4" Limestone (middle)</span>
-                    <span class="add">+</span>
-                </a>
-                <a href="/#material-calculator" class="guide-crosssell-item" onclick="localStorage.setItem('preselect-material', 'decomposed-granite');">
-                    <span class="icon">🏜️</span>
-                    <span class="name">Decomposed Granite (top)</span>
-                    <span class="add">+</span>
-                </a>
-                <a href="/#material-calculator" class="guide-crosssell-item" onclick="localStorage.setItem('preselect-material', 'select-fill');">
-                    <span class="icon">🌍</span>
-                    <span class="name">Select Fill (soft soil fix)</span>
-                    <span class="add">+</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Need Help Box -->
-        <div class="guide-crosssell" style="margin-top: 24px; background: linear-gradient(135deg, #E8F5E9, #C8E6C9); border: 2px solid #2E7D32;">
-            <h4 style="color: #1B5E20;">🤔 Large Project? Let's Talk</h4>
-            <p style="font-size: 14px; color: #2E7D32; margin-bottom: 16px;">
-                Driveways often need 10+ tons. Call us for bulk pricing and delivery scheduling.
-            </p>
-            <a href="tel:9362592887" class="guide-product-cta" style="font-size: 15px; padding: 14px;">
-                📞 Call (936) 259-2887
-            </a>
-        </div>
-
-    </div>
-</div>
-
-<!-- CTA Banner -->
-<section class="guide-cta-banner">
-    <h2>Ready to Build Your Driveway?</h2>
-    <p>Get your materials delivered free—we handle the heavy hauling.</p>
-    <div class="guide-cta-buttons">
-        <a href="/#material-calculator" class="btn-yellow">🚚 Get Your Free Quote →</a>
-        <a href="tel:9362592887" class="btn-outline">📞 Call (936) 259-2887</a>
-    </div>
-</section>
-
-<!-- Related Guides -->
-<section class="guide-related">
-    <div class="guide-related-container">
-        <h2>More Project Guides</h2>
-        <div class="guide-related-grid">
-            <a href="/guides/gravel-patio.html" class="project-card">
-                <div class="project-card-image" style="background-image: url('/images/guides/gravel-patio-thumb.jpg');">
-                    <div class="project-card-icon">🪨</div>
-                </div>
-                <div class="project-card-content">
-                    <div class="project-card-title">Gravel Patio</div>
-                    <div class="project-card-material">Black Star Gravel</div>
-                </div>
-            </a>
-            <a href="/guides/french-drain.html" class="project-card">
-                <div class="project-card-image" style="background-image: url('/images/guides/french-drain-thumb.jpg');">
-                    <div class="project-card-icon">🌊</div>
-                </div>
-                <div class="project-card-content">
-                    <div class="project-card-title">French Drain</div>
-                    <div class="project-card-material">Limestone Base</div>
-                </div>
-            </a>
-            <a href="/guides/fire-pit.html" class="project-card">
-                <div class="project-card-image" style="background-image: url('/images/guides/fire-pit-thumb.jpg');">
-                    <div class="project-card-icon">🔥</div>
-                </div>
-                <div class="project-card-content">
-                    <div class="project-card-title">Fire Pit Area</div>
-                    <div class="project-card-material">Pea Gravel + Bull Rock</div>
-                </div>
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- Footer -->
-<footer class="footer">
-    <div class="footer-grid">
-        <div class="footer-brand">
-            <img src="/images/logo.png" alt="Texas Got Rocks?" class="footer-logo-img">
-            <p>Conroe's direct rock, gravel, mulch & topsoil supplier. We're your neighbors, not brokers.</p>
-            <div class="footer-call-dropdown">
-                <button class="footer-call-btn" onclick="toggleFooterCallDropdown(event)">📞 Call Or Text Now ▾</button>
-                <div class="footer-call-menu" id="footerCallMenu">
-                    <a href="tel:9362592887">📞 Call (936) 259-2887</a>
-                    <a href="sms:9362592887">💬 Text (936) 259-2887</a>
-                </div>
-            </div>
-        </div>
-        <div class="footer-column">
-            <h4>Project Guides</h4>
-            <ul class="footer-links">
-                <li><a href="/guides/french-drain.html">French Drain</a></li>
-                <li><a href="/guides/gravel-patio.html">Gravel Patio</a></li>
-                <li><a href="/guides/dry-creek-bed.html">Dry Creek Bed</a></li>
-                <li><a href="/guides/mulch-beds.html">Garden Beds</a></li>
-                <li><a href="/guides/driveway-base.html">Driveway Base</a></li>
-                <li><a href="/guides/fire-pit.html">Fire Pit Area</a></li>
-            </ul>
-        </div>
-        <div class="footer-column">
-            <h4>Service Areas</h4>
-            <ul class="footer-links">
-                <li><a href="/conroe/">Conroe</a></li>
-                <li><a href="/the-woodlands/">The Woodlands</a></li>
-                <li><a href="/spring/">Spring</a></li>
-                <li><a href="/magnolia/">Magnolia</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <p>© 2026 TexasGotRocks.com. All rights reserved.</p>
-    </div>
-</footer>
-
-<script src="/js/main.js"></script>
-<script src="/js/rocky-chat.js"></script>
-<script>
-function toggleNavCallDropdown(event) { event.stopPropagation(); document.getElementById('navCallMenu').classList.toggle('show'); }
-function toggleFooterCallDropdown(event) { event.stopPropagation(); document.getElementById('footerCallMenu').classList.toggle('show'); }
-document.addEventListener('click', function() { document.querySelectorAll('.nav-call-menu, .footer-call-menu').forEach(m => m.classList.remove('show')); });
-const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-const navLinks = document.querySelector('.nav-links');
-if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', function() { this.classList.toggle('active'); navLinks.classList.toggle('active'); });
-</script>
 </body>
 </html>

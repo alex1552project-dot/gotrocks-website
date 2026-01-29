@@ -1,385 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9N8HZT4KRL"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-9N8HZT4KRL');
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>How to Build a Dry Creek Bed | DIY Guide + Materials | Texas Got Rocks</title>
-    <meta name="description" content="Step-by-step dry creek bed installation guide with video tutorial. Get river rock and bull rock delivered free in Conroe & The Woodlands.">
-    <meta name="keywords" content="dry creek bed, dry river bed, drainage landscaping, bull rock, river rock, gravel delivery, Conroe TX, The Woodlands">
-    
-    <!-- Open Graph -->
-    <meta property="og:title" content="How to Build a Dry Creek Bed | Texas Got Rocks">
-    <meta property="og:description" content="DIY dry creek bed guide with video tutorial. Materials delivered free.">
-    <meta property="og:type" content="article">
-    <meta property="og:url" content="https://texasgotrocks.com/guides/dry-creek-bed.html">
-    
+    <title>How to Build a Dry Creek Bed | DIY Guide | Texas Got Rocks</title>
+    <meta name="description" content="Learn how to build a beautiful dry creek bed for drainage and landscaping. Step-by-step DIY guide with video. Get materials delivered free from Texas Got Rocks.">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="/css/project-selector.css">
-    <link rel="stylesheet" href="/css/rocky-chat.css">
-    
     <style>
-        .guide-hero { margin-top: 110px; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Outfit', sans-serif; margin: 0; padding: 0; color: #2C1810; }
+        .guide-nav { background: #2C1810; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .guide-nav a.logo { color: white; font-weight: 700; font-size: 1.25rem; text-decoration: none; }
+        .guide-nav a.btn { background: #FF6F00; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; }
+        .guide-hero { background: linear-gradient(135deg, #3E2723 0%, #5D4037 100%); color: white; padding: 60px 20px 40px; }
+        .guide-hero-inner { max-width: 900px; margin: 0 auto; }
+        .guide-breadcrumb { font-size: 14px; margin-bottom: 16px; opacity: 0.8; }
+        .guide-breadcrumb a { color: white; text-decoration: none; }
+        .guide-breadcrumb a:hover { text-decoration: underline; }
+        .guide-hero h1 { font-size: 2.5rem; font-weight: 800; margin: 0 0 16px 0; }
+        .guide-hero-meta { display: flex; gap: 24px; flex-wrap: wrap; font-size: 15px; }
+        .guide-content { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; margin-bottom: 32px; background: #000; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        h2 { font-size: 1.5rem; color: #2C1810; margin: 40px 0 20px; font-weight: 700; border-bottom: 3px solid #FF6F00; padding-bottom: 10px; display: inline-block; }
+        .step { display: flex; gap: 20px; margin-bottom: 24px; padding: 20px; background: #FAF6F1; border-radius: 12px; }
+        .step-num { flex-shrink: 0; width: 40px; height: 40px; background: #FF6F00; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; }
+        .step-content h3 { margin: 0 0 8px 0; font-size: 1.1rem; color: #2C1810; }
+        .step-content p { margin: 0; color: #5D4037; line-height: 1.6; }
+        .pro-tip { background: #E8F5E9; border-left: 4px solid #4CAF50; padding: 20px; border-radius: 0 12px 12px 0; margin: 32px 0; }
+        .pro-tip h4 { margin: 0 0 8px 0; color: #2E7D32; }
+        .pro-tip p { margin: 0; color: #33691E; line-height: 1.6; }
+        .cta-box { background: linear-gradient(135deg, #FF6F00 0%, #E65100 100%); border-radius: 16px; padding: 32px; color: white; text-align: center; margin: 40px 0; }
+        .cta-box h3 { margin: 0 0 12px 0; font-size: 1.5rem; }
+        .cta-box p { margin: 0 0 20px 0; opacity: 0.9; }
+        .cta-box .btn { background: white; color: #FF6F00; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; display: inline-block; }
+        .cta-box .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: #FF6F00; text-decoration: none; font-weight: 600; margin-top: 20px; }
+        .back-link:hover { text-decoration: underline; }
+        .materials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 20px 0; }
+        .material-card { background: #FAF6F1; padding: 16px; border-radius: 12px; text-align: center; }
+        .material-card h4 { margin: 0 0 4px 0; color: #2C1810; }
+        .material-card p { margin: 0; color: #FF6F00; font-weight: 600; }
+        @media (max-width: 600px) { .guide-hero h1 { font-size: 1.8rem; } .step { flex-direction: column; gap: 12px; } }
     </style>
 </head>
 <body>
+    <nav class="guide-nav">
+        <a href="/" class="logo">Texas Got Rocks</a>
+        <a href="tel:9362592887" class="btn">📞 (936) 259-2887</a>
+    </nav>
 
-<!-- Navigation -->
-<nav class="nav" id="nav">
-    <div class="nav-container">
-        <a href="/" class="nav-logo"><img src="/images/logo.png" alt="Texas Got Rocks?"></a>
-        <ul class="nav-links">
-            <li><a href="/#products">Products</a></li>
-            <li><a href="/#how-it-works">How It Works</a></li>
-            <li class="nav-dropdown">
-                <a href="/#service-areas" class="dropdown-toggle">Service Areas ▾</a>
-                <div class="dropdown-menu">
-                    <div class="dropdown-grid">
-                        <a href="/conroe/">Conroe</a>
-                        <a href="/the-woodlands/">The Woodlands</a>
-                        <a href="/spring/">Spring</a>
-                        <a href="/magnolia/">Magnolia</a>
-                        <a href="/montgomery/">Montgomery</a>
-                    </div>
-                </div>
-            </li>
-            <li><a href="/#reviews">Reviews</a></li>
-            <li><a href="/#faq">FAQ</a></li>
-            <li class="nav-call-dropdown">
-                <button class="nav-call-btn" onclick="toggleNavCallDropdown(event)">📞 Call Or Text Now ▾</button>
-                <div class="nav-call-menu" id="navCallMenu">
-                    <a href="tel:9362592887">📞 Call (936) 259-2887</a>
-                    <a href="sms:9362592887">💬 Text (936) 259-2887</a>
-                </div>
-            </li>
-        </ul>
-        <div class="nav-right">
-            <div class="nav-cart" onclick="openCartDrawer()">
-                <span class="nav-cart-icon">🛒</span>
-                <span class="cart-count hidden" id="navCartCount">0</span>
+    <section class="guide-hero">
+        <div class="guide-hero-inner">
+            <div class="guide-breadcrumb">
+                <a href="/">Home</a> › <a href="/#project-guides">DIY Guides</a> › Dry Creek Bed
             </div>
-            <button class="mobile-menu-btn" id="mobile-menu-btn"><span></span><span></span><span></span></button>
+            <h1>How to Build a Dry Creek Bed</h1>
+            <div class="guide-hero-meta">
+                <span>⏱️ 4-8 Hours</span>
+                <span>💪 Difficulty: Moderate</span>
+                <span>📦 2-6 Yards Typical</span>
+            </div>
         </div>
-    </div>
-</nav>
+    </section>
 
-<!-- Announcement Bar -->
-<div class="announcement-bar">
-    🚚 <span class="highlight">ALWAYS FREE DELIVERY</span> in Conroe & The Woodlands • Locally Owned—Direct Supplier Pricing
-</div>
+    <div class="guide-content">
+        <h2>🎬 Watch the Video</h2>
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/uSM6mJ2Yy2s" title="How to Build a Dry Creek Bed" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
 
-<!-- Guide Hero -->
-<section class="guide-hero">
-    <div class="guide-hero-container">
-        <nav class="guide-breadcrumb">
-            <a href="/">Home</a>
-            <span>›</span>
-            <a href="/#project-guides">Project Guides</a>
-            <span>›</span>
-            <span>Dry Creek Bed</span>
-        </nav>
+        <h2>📋 Step-by-Step Guide</h2>
         
-        <div class="guide-hero-badge">📺 Video Guide</div>
-        
-        <h1>How to Build a Dry Creek Bed</h1>
-        
-        <p class="guide-hero-description">
-            Turn drainage problems into stunning landscape features. A dry creek bed channels rainwater away from your home while adding natural beauty to your yard—functional art that works even when it's dry.
-        </p>
-        
-        <div class="guide-hero-stats">
-            <div class="guide-stat">
-                <span class="guide-stat-icon">⏱️</span>
-                <span>1-2 Day Project</span>
-            </div>
-            <div class="guide-stat">
-                <span class="guide-stat-icon">💪</span>
-                <span>Beginner-Intermediate</span>
-            </div>
-            <div class="guide-stat">
-                <span class="guide-stat-icon">📏</span>
-                <span>2-5 Tons Typical</span>
+        <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+                <h3>Plan the Path</h3>
+                <p>Identify where water naturally flows in your yard. Your dry creek should follow this path, guiding water away from problem areas. Use a garden hose to lay out a natural, meandering shape—avoid straight lines.</p>
             </div>
         </div>
+
+        <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+                <h3>Excavate the Channel</h3>
+                <p>Dig a shallow trench 4-8 inches deep and 2-4 feet wide. Create gently sloping sides like a natural stream. Make it deeper in the center and slightly wider at curves where water naturally pools.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+                <h3>Install Landscape Fabric</h3>
+                <p>Line the entire channel with heavy-duty landscape fabric. Extend it 6 inches beyond the edges. This prevents weeds and keeps soil from mixing with your rocks over time.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+                <h3>Place Large Boulders First</h3>
+                <p>Position your largest rocks along the edges and at key focal points. Bury them 1/3 into the ground for a natural look. Group odd numbers (3, 5, 7) together for visual appeal.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+                <h3>Add Medium Bull Rock</h3>
+                <p>Fill the channel with 3x5 bull rock or river rock. These mid-sized stones create the "stream bed" look. Vary the sizes slightly for a more natural appearance.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">6</div>
+            <div class="step-content">
+                <h3>Fill Gaps with Smaller Stone</h3>
+                <p>Use smaller gravel or pea gravel to fill gaps between larger rocks. This creates texture and prevents fabric from showing. Add plants along the edges for a finished look.</p>
+            </div>
+        </div>
+
+        <div class="pro-tip">
+            <h4>💡 Pro Tip</h4>
+            <p>For the most realistic look, use 3 sizes of rock: large boulders for edges, bull rock for the main bed, and smaller gravel for filling gaps. Mix colors for visual interest—our Rainbow Gravel works great as an accent!</p>
+        </div>
+
+        <h2>📦 Materials You'll Need</h2>
+        <div class="materials-grid">
+            <div class="material-card">
+                <h4>3x5 Bull Rock</h4>
+                <p>From $80/yard</p>
+            </div>
+            <div class="material-card">
+                <h4>Pea Gravel</h4>
+                <p>From $80/yard</p>
+            </div>
+            <div class="material-card">
+                <h4>Rainbow Gravel</h4>
+                <p>From $90/yard</p>
+            </div>
+        </div>
+
+        <div class="cta-box">
+            <h3>🚚 Ready to Order?</h3>
+            <p>Get creek bed rocks delivered FREE to your driveway—usually same or next day!</p>
+            <a href="/?openCalculator=true" class="btn">Get Instant Quote →</a>
+        </div>
+
+        <a href="/#project-guides" class="back-link">← Back to All Guides</a>
     </div>
-</section>
-
-<!-- Guide Content -->
-<div class="guide-content">
-    <div class="guide-main">
-        
-        <!-- Video Section -->
-        <div class="guide-video-section">
-            <h2>📺 Watch: Building a Dry Creek Bed</h2>
-            <div class="guide-video-container">
-                <iframe 
-                    src="https://www.youtube.com/embed/4sTPhJfLf8U" 
-                    title="How to Build a Dry Creek Bed"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
-            </div>
-            <p class="guide-video-credit">
-                Video by <a href="https://www.youtube.com/@ThisOldHouse" target="_blank" rel="noopener">This Old House</a>
-            </p>
-        </div>
-
-        <!-- Steps Section -->
-        <div class="guide-steps-section">
-            <h2>📋 Step-by-Step Overview</h2>
-            
-            <div class="guide-steps">
-                <div class="guide-step">
-                    <div class="guide-step-number">1</div>
-                    <div class="guide-step-content">
-                        <h4>Map the Water Flow</h4>
-                        <p>Watch where water naturally flows during rain. Mark the path from the problem area (like a downspout or low spot) to where you want water to exit. Natural curves look more realistic than straight lines.</p>
-                    </div>
-                </div>
-                
-                <div class="guide-step">
-                    <div class="guide-step-number">2</div>
-                    <div class="guide-step-content">
-                        <h4>Dig the Channel</h4>
-                        <p>Excavate 6-12 inches deep and 18-36 inches wide. Wider looks more natural. Create a gentle slope (1" drop per 10 feet) and make the center slightly deeper than the edges for realistic water flow.</p>
-                    </div>
-                </div>
-                
-                <div class="guide-step">
-                    <div class="guide-step-number">3</div>
-                    <div class="guide-step-content">
-                        <h4>Line with Landscape Fabric</h4>
-                        <p>Lay heavy-duty landscape fabric along the entire channel, extending 6-12 inches up the sides. This prevents weeds and keeps rocks from sinking into soil over time.</p>
-                    </div>
-                </div>
-                
-                <div class="guide-step">
-                    <div class="guide-step-number">4</div>
-                    <div class="guide-step-content">
-                        <h4>Place Large Anchor Stones</h4>
-                        <p>Position your largest <strong>Bull Rock</strong> or boulders along the edges and at curves. These "anchor stones" create natural-looking banks and prevent erosion. Bury them 1/3 deep for stability.</p>
-                    </div>
-                </div>
-                
-                <div class="guide-step">
-                    <div class="guide-step-number">5</div>
-                    <div class="guide-step-content">
-                        <h4>Fill with River Rock</h4>
-                        <p>Add medium <strong>Bull Rock</strong> (3-5") in the center channel. Vary sizes for a natural look. Larger rocks at edges, smaller toward the center mimics how real streams sort stones.</p>
-                    </div>
-                </div>
-                
-                <div class="guide-step">
-                    <div class="guide-step-number">6</div>
-                    <div class="guide-step-content">
-                        <h4>Add Finishing Touches</h4>
-                        <p>Fill gaps with <strong>Pea Gravel</strong> or small river rock. Add native plants along the edges—ornamental grasses, ferns, or sedges. A few larger accent boulders complete the look.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pro Tips -->
-        <div class="guide-pro-tips">
-            <h3>💡 Pro Tips from Texas Got Rocks</h3>
-            <ul>
-                <li><strong>Think in curves:</strong> Real streams never flow straight. Add gentle S-curves and vary the width to create a natural appearance.</li>
-                <li><strong>Mix rock sizes:</strong> Use at least 3 different sizes. Uniform rocks look artificial—nature is random.</li>
-                <li><strong>Create pools:</strong> Widen the creek at a few spots to create "pool" areas where water can collect briefly.</li>
-                <li><strong>Add a bridge:</strong> A simple flagstone or wooden plank bridge adds charm and function if the creek crosses a path.</li>
-                <li><strong>Plant strategically:</strong> Ornamental grasses hide fabric edges and soften the transition between rock and lawn.</li>
-            </ul>
-        </div>
-
-    </div>
-
-    <!-- Sidebar -->
-    <div class="guide-sidebar">
-        
-        <!-- Primary Product Card -->
-        <div class="guide-product-card">
-            <div class="guide-product-header">
-                <h3>Recommended Material</h3>
-                <div class="product-name">3x5 Bull Rock</div>
-            </div>
-            
-            <div class="guide-product-image" style="background-image: url('/images/bull-rock.png');"></div>
-            
-            <div class="guide-product-details">
-                <div class="guide-product-price">
-                    <span class="amount">$41</span>
-                    <span class="unit">per ton • delivered</span>
-                </div>
-                
-                <div class="guide-product-specs">
-                    <div class="guide-product-spec">
-                        <span class="label">Size</span>
-                        <span class="value">3-5" rounded</span>
-                    </div>
-                    <div class="guide-product-spec">
-                        <span class="label">Best For</span>
-                        <span class="value">Creek Beds, Borders</span>
-                    </div>
-                    <div class="guide-product-spec">
-                        <span class="label">Typical Need</span>
-                        <span class="value">2-4 tons for 20ft creek</span>
-                    </div>
-                    <div class="guide-product-spec">
-                        <span class="label">Look</span>
-                        <span class="value">Natural, rounded river rock</span>
-                    </div>
-                </div>
-                
-                <a href="/#material-calculator" class="guide-product-cta" onclick="localStorage.setItem('preselect-material', 'bull-rock-3x5');">
-                    🛒 Get Quote for Bull Rock
-                </a>
-                
-                <p class="guide-product-delivery">🚚 FREE Delivery in Conroe & The Woodlands</p>
-            </div>
-        </div>
-
-        <!-- Cross-sell Section -->
-        <div class="guide-crosssell">
-            <h4>📦 You May Also Need</h4>
-            <div class="guide-crosssell-items">
-                <a href="/#material-calculator" class="guide-crosssell-item" onclick="localStorage.setItem('preselect-material', 'pea-gravel');">
-                    <span class="icon">🪨</span>
-                    <span class="name">Pea Gravel (fill gaps)</span>
-                    <span class="add">+</span>
-                </a>
-                <a href="/#material-calculator" class="guide-crosssell-item" onclick="localStorage.setItem('preselect-material', 'gravel-2x3');">
-                    <span class="icon">🏔️</span>
-                    <span class="name">2x3 Gravel (medium fill)</span>
-                    <span class="add">+</span>
-                </a>
-                <a href="/#material-calculator" class="guide-crosssell-item" onclick="localStorage.setItem('preselect-material', 'limestone-base');">
-                    <span class="icon">🏗️</span>
-                    <span class="name">Limestone Base (heavy flow)</span>
-                    <span class="add">+</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Need Help Box -->
-        <div class="guide-crosssell" style="margin-top: 24px; background: linear-gradient(135deg, #E8F5E9, #C8E6C9); border: 2px solid #2E7D32;">
-            <h4 style="color: #1B5E20;">🤔 Not Sure How Much You Need?</h4>
-            <p style="font-size: 14px; color: #2E7D32; margin-bottom: 16px;">
-                Use our free calculator or chat with Rocky—we'll help you figure it out.
-            </p>
-            <a href="/#material-calculator" class="guide-product-cta" style="font-size: 15px; padding: 14px;">
-                📐 Open Material Calculator
-            </a>
-        </div>
-
-    </div>
-</div>
-
-<!-- CTA Banner -->
-<section class="guide-cta-banner">
-    <h2>Ready to Build Your Creek Bed?</h2>
-    <p>Get your materials delivered free—same or next day in most areas.</p>
-    <div class="guide-cta-buttons">
-        <a href="/#material-calculator" class="btn-yellow">🚚 Get Your Free Quote →</a>
-        <a href="tel:9362592887" class="btn-outline">📞 Call (936) 259-2887</a>
-    </div>
-</section>
-
-<!-- Related Guides -->
-<section class="guide-related">
-    <div class="guide-related-container">
-        <h2>More Project Guides</h2>
-        <div class="guide-related-grid">
-            <a href="/guides/french-drain.html" class="project-card">
-                <div class="project-card-image" style="background-image: url('/images/guides/french-drain-thumb.jpg');">
-                    <div class="project-card-icon">🌊</div>
-                </div>
-                <div class="project-card-content">
-                    <div class="project-card-title">French Drain</div>
-                    <div class="project-card-material">Limestone Base</div>
-                </div>
-            </a>
-            <a href="/guides/gravel-patio.html" class="project-card">
-                <div class="project-card-image" style="background-image: url('/images/guides/gravel-patio-thumb.jpg');">
-                    <div class="project-card-icon">🪨</div>
-                </div>
-                <div class="project-card-content">
-                    <div class="project-card-title">Gravel Patio</div>
-                    <div class="project-card-material">Black Star Gravel</div>
-                </div>
-            </a>
-            <a href="/guides/mulch-beds.html" class="project-card">
-                <div class="project-card-image" style="background-image: url('/images/guides/mulch-beds-thumb.jpg');">
-                    <div class="project-card-icon">🌿</div>
-                </div>
-                <div class="project-card-content">
-                    <div class="project-card-title">Garden Beds</div>
-                    <div class="project-card-material">Black or Brown Mulch</div>
-                </div>
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- Footer -->
-<footer class="footer">
-    <div class="footer-grid">
-        <div class="footer-brand">
-            <img src="/images/logo.png" alt="Texas Got Rocks?" class="footer-logo-img">
-            <p>Conroe's direct rock, gravel, mulch & topsoil supplier. We're your neighbors, not brokers—delivering honest prices and reliable service to Montgomery County since 2020.</p>
-            <div class="footer-call-dropdown">
-                <button class="footer-call-btn" onclick="toggleFooterCallDropdown(event)">📞 Call Or Text Now ▾</button>
-                <div class="footer-call-menu" id="footerCallMenu">
-                    <a href="tel:9362592887">📞 Call (936) 259-2887</a>
-                    <a href="sms:9362592887">💬 Text (936) 259-2887</a>
-                </div>
-            </div>
-        </div>
-        <div class="footer-column">
-            <h4>Project Guides</h4>
-            <ul class="footer-links">
-                <li><a href="/guides/french-drain.html">French Drain</a></li>
-                <li><a href="/guides/gravel-patio.html">Gravel Patio</a></li>
-                <li><a href="/guides/dry-creek-bed.html">Dry Creek Bed</a></li>
-                <li><a href="/guides/mulch-beds.html">Garden Beds</a></li>
-                <li><a href="/guides/driveway-base.html">Driveway Base</a></li>
-                <li><a href="/guides/fire-pit.html">Fire Pit Area</a></li>
-            </ul>
-        </div>
-        <div class="footer-column">
-            <h4>Service Areas</h4>
-            <ul class="footer-links">
-                <li><a href="/conroe/">Conroe</a></li>
-                <li><a href="/the-woodlands/">The Woodlands</a></li>
-                <li><a href="/spring/">Spring</a></li>
-                <li><a href="/magnolia/">Magnolia</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <p>© 2026 TexasGotRocks.com. All rights reserved. Locally owned in Conroe, TX.</p>
-    </div>
-</footer>
-
-<script src="/js/main.js"></script>
-<script src="/js/rocky-chat.js"></script>
-<script>
-function toggleNavCallDropdown(event) { event.stopPropagation(); document.getElementById('navCallMenu').classList.toggle('show'); }
-function toggleFooterCallDropdown(event) { event.stopPropagation(); document.getElementById('footerCallMenu').classList.toggle('show'); }
-document.addEventListener('click', function() { document.querySelectorAll('.nav-call-menu, .footer-call-menu').forEach(m => m.classList.remove('show')); });
-const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-const navLinks = document.querySelector('.nav-links');
-if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', function() { this.classList.toggle('active'); navLinks.classList.toggle('active'); });
-</script>
 </body>
 </html>
