@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/geo-pricing.css">
     <link rel="stylesheet" href="/css/rocky-chat.css">
+    <link rel="stylesheet" href="/css/project-selector.css">
     <!-- Square Web Payments SDK -->
     <script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
     <style>
@@ -455,12 +456,82 @@
     </div>
 </section>
 
-<!-- Field Photos Gallery -->
-<section class="field-gallery-section">
-    <div class="field-gallery">
-        <div class="field-photo"><img src="/images/Rocky-driving.jpg" alt="Rocky mascot driving delivery truck"></div>
-        <div class="field-photo"><img src="/images/Rocky-at-yard.jpg" alt="Rocky mascot at Texas Got Rocks yard"></div>
-        <div class="field-photo"><img src="/images/Rocky-frontyard.jpg" alt="Rocky mascot in landscaped front yard"></div>
+<!-- Project Selector Section -->
+<section class="project-selector-section" id="project-guides">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-label">DIY Video Guides</span>
+            <h2 class="section-title">What Are You Working On?</h2>
+            <p class="section-subtitle">Select your project to see how-to videos and get the right materials delivered</p>
+        </div>
+        <div class="project-cards-grid">
+            <a href="/guides/french-drain.html" class="project-card">
+                <div class="project-card-image">
+                    <img src="/images/projects/french-drain.jpg" alt="French Drain Installation">
+                    <span class="project-badge">Drainage</span>
+                </div>
+                <div class="project-card-content">
+                    <h3>French Drain</h3>
+                    <p>Stop yard flooding with proper drainage</p>
+                    <span class="project-material">Limestone Base + Bull Rock</span>
+                </div>
+            </a>
+            <a href="/guides/gravel-patio.html" class="project-card">
+                <div class="project-card-image">
+                    <img src="/images/projects/gravel-patio.jpg" alt="Gravel Patio">
+                    <span class="project-badge">Outdoor Living</span>
+                </div>
+                <div class="project-card-content">
+                    <h3>Gravel Patio</h3>
+                    <p>Create a stunning outdoor space</p>
+                    <span class="project-material">Black Star Gravel</span>
+                </div>
+            </a>
+            <a href="/guides/dry-creek-bed.html" class="project-card">
+                <div class="project-card-image">
+                    <img src="/images/projects/dry-creek-bed.jpg" alt="Dry Creek Bed">
+                    <span class="project-badge">Landscaping</span>
+                </div>
+                <div class="project-card-content">
+                    <h3>Dry Creek Bed</h3>
+                    <p>Beautiful drainage solution</p>
+                    <span class="project-material">Bull Rock + River Rock</span>
+                </div>
+            </a>
+            <a href="/guides/mulch-beds.html" class="project-card">
+                <div class="project-card-image">
+                    <img src="/images/projects/mulch-beds.jpg" alt="Garden Mulch Beds">
+                    <span class="project-badge">Garden</span>
+                </div>
+                <div class="project-card-content">
+                    <h3>Garden Beds</h3>
+                    <p>Refresh your flower beds</p>
+                    <span class="project-material">Black or Brown Mulch</span>
+                </div>
+            </a>
+            <a href="/guides/driveway-base.html" class="project-card">
+                <div class="project-card-image">
+                    <img src="/images/projects/driveway-base.jpg" alt="Driveway Base">
+                    <span class="project-badge">Driveway</span>
+                </div>
+                <div class="project-card-content">
+                    <h3>Driveway Base</h3>
+                    <p>Build a solid foundation</p>
+                    <span class="project-material">Limestone Base</span>
+                </div>
+            </a>
+            <a href="/guides/fire-pit.html" class="project-card">
+                <div class="project-card-image">
+                    <img src="/images/projects/fire-pit.jpg" alt="Fire Pit Area">
+                    <span class="project-badge">Backyard</span>
+                </div>
+                <div class="project-card-content">
+                    <h3>Fire Pit Area</h3>
+                    <p>Create the perfect gathering spot</p>
+                    <span class="project-material">Pea Gravel</span>
+                </div>
+            </a>
+        </div>
     </div>
 </section>
 
@@ -1077,7 +1148,7 @@
                     </div>
                 </div>
               <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 12px 16px; margin: 16px 0;">
-    <p style="margin: 0; font-size: 14px; color: #0c4a6e;">💳 <strong>Billing Notice:</strong> Your statement will show <strong>T & C Materials, LLC</strong> (doing business as Texas Got Rocks)</p>
+    <p style="margin: 0; font-size: 14px; color: #0c4a6e;">&#128179; <strong>Billing Notice:</strong> Your statement will show <strong>T & C Materials, LLC</strong> (doing business as Texas Got Rocks)</p>
 </div>
                 <div class="ach-savings-detail" id="achSavingsDetail">
                     <p>&#128176; <strong>You save <span class="savings-amount" id="achSavingsAmount">$0.00</span></strong> by paying with ACH instead of card (1% vs 2.9% + 30&cent;)</p>
@@ -1107,59 +1178,7 @@
         </div>
     </div>
 </div>
-
-<!-- Photo Consent Modal -->
-<div class="consent-modal-overlay" id="photoConsentModal">
-    <div class="consent-modal">
-        <div class="consent-modal-header"><span class="consent-icon">&#128205;</span><h3>Photo Upload Consent</h3></div>
-        <div class="consent-modal-body">
-            <p>By uploading a photo, you agree to the following:</p>
-            <ul class="consent-list">
-                <li>Your photo will be processed locally in your browser for visualization purposes only</li>
-                <li>We do not store, save, or transmit your photos to any server</li>
-                <li>Your photo will be deleted when you close the visualizer or refresh the page</li>
-                <li>You have the right to use and share the photo you are uploading</li>
-            </ul>
-            <p class="consent-note">Your privacy is important to us. This tool runs entirely in your browser.</p>
-        </div>
-        <div class="consent-modal-footer"><button class="btn btn-secondary" onclick="declinePhotoConsent()">Cancel</button><button class="btn btn-primary" onclick="acceptPhotoConsent()">I Agree - Continue</button></div>
-    </div>
-</div>
-
-<!-- Material Visualizer Modal -->
-<div class="visualizer-modal-overlay" id="visualizerModal">
-    <div class="visualizer-modal">
-        <div class="visualizer-header">
-            <div class="visualizer-logo"><img src="/images/logo.png" alt="Texas Got Rocks?"><p>Aggregate Visualizer</p></div>
-            <button class="visualizer-close" onclick="closeVisualizer()">&times;</button>
-        </div>
-        <div class="visualizer-content">
-            <div class="visualizer-controls">
-                <div class="visualizer-section">
-                    <h3>1. Your Photo</h3>
-                    <div class="photo-buttons">
-                        <label class="upload-btn">&#128205; Choose Photo<input type="file" accept="image/*" id="vizFileInput" onchange="handleVisualizerUpload(event)"></label>
-                        <label class="upload-btn camera-btn">&#128205; Use Camera<input type="file" accept="image/*" capture="environment" id="vizCameraInput" onchange="handleVisualizerUpload(event)"></label>
-                    </div>
-                    <button class="start-over-btn" id="vizStartOver" onclick="resetVisualizer()" style="display: none;">Start Over</button>
-                </div>
-                <div class="visualizer-section">
-                    <h3>2. Select Material</h3>
-                    <div class="material-grid" id="vizMaterialGrid">
-                        <button class="material-btn active" data-id="black-mulch" data-color="#1a1a1a" style="background-image: url('/images/materials/black-mulch.jpg'); background-size: cover;"><span>Black Mulch</span></button>
-                        <button class="material-btn" data-id="brown-mulch" data-color="#8B4513" style="background-image: url('/images/materials/brown-mulch.jpg'); background-size: cover;"><span>Brown Mulch</span></button>
-                        <button class="material-btn" data-id="blackstar-gravel" data-color="#2d2d2d" style="background-image: url('/images/materials/black-star.jpg'); background-size: cover;"><span>Blackstar Gravel</span></button>
-                        <button class="material-btn" data-id="decomposed-granite" data-color="#C9A66B" style="background-image: url('/images/materials/Decomposed-Granite.jpg'); background-size: cover;"><span>Decomposed Granite</span></button>
-                        <button class="material-btn" data-id="bull-rock" data-color="#a08060" style="background-image: url('/images/materials/2x3-bull-rock.jpeg'); background-size: cover;"><span>3x5 Bull Rock</span></button>
-                        <button class="material-btn" data-id="topsoil" data-color="#3d3225" style="background-image: url('/images/materials/top-soil.jpg'); background-size: cover;"><span>Topsoil</span></button>
-                    </div>
-                    <p class="material-price" id="vizMaterialPrice">Starting at $12.50/cy</p>
-                </div>
-                <div class="visualizer-section">
-                    <h3 id="vizStep3Title">3. Outline Area</h3>
-                    <div id="vizInstructions"><p class="viz-instruction">Upload a photo to get started</p></div>
-                    <div id="vizControls" style="display: none;">
-                        <label class="viz-checkbox"><input type="checkbox" id="vizShowOverlay" checked onchange="toggleVisualizerOverlay()">Show Material Preview</label>
+sualizerOverlay()">Show Material Preview</label>
                         <div class="viz-opacity"><div class="viz-opacity-header"><span>Opacity</span><span id="vizOpacityValue">70%</span></div><input type="range" min="30" max="100" value="70" id="vizOpacitySlider" oninput="updateVisualizerOpacity()"></div>
                         <button class="viz-reset-btn" onclick="resetVisualizerPoints()">&#8634; Draw New Area</button>
                     </div>
