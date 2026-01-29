@@ -1580,3 +1580,6 @@ document.addEventListener('click', function(e) {
         closeMoreProductsModal();
     }
 });
+
+// Auto-open calculator from guide pages
+if (window.location.search.includes('openCalculator=true')) { window.history.replaceState({}, '', '/'); setTimeout(openCalculatorModal, 300); }
