@@ -27,267 +27,55 @@
     <script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
     <style>
         /* Fix product card price alignment */
-        .products-grid .product-card {
-            display: flex;
-            flex-direction: column;
-        }
-        .products-grid .product-card .product-info {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-        .products-grid .product-card .product-description {
-            flex-grow: 1;
-        }
-        /* Align top of hero mascot with top of text */
-        .hero-top-row {
-            align-items: flex-start !important;
-        }
-        /* Keep scroll arrows behind Rocky chat widget */
-        .scroll-arrows {
-            z-index: 900 !important;
-        }
+        .products-grid .product-card { display: flex; flex-direction: column; }
+        .products-grid .product-card .product-info { display: flex; flex-direction: column; flex-grow: 1; }
+        .products-grid .product-card .product-description { flex-grow: 1; }
+        .hero-top-row { align-items: flex-start !important; }
+        .scroll-arrows { z-index: 900 !important; }
     </style>
     <style>
         /* Square Payment Styles */
-        .payment-method-selection {
-            margin: 20px 0;
-        }
-        .payment-method-selection h4 {
-            margin-bottom: 12px;
-            font-size: 16px;
-        }
-        .payment-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .payment-option {
-            display: block;
-            cursor: pointer;
-        }
-        .payment-option input {
-            display: none;
-        }
-        .payment-option-content {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            transition: all 0.2s;
-        }
-        .payment-option input:checked + .payment-option-content {
-            border-color: var(--warm-orange, #FF6F00);
-            background: rgba(255, 111, 0, 0.05);
-        }
-        .payment-icon {
-            font-size: 24px;
-        }
-        .payment-label {
-            font-weight: 700;
-            color: var(--earth-dark, #2C1810);
-        }
-        .payment-desc {
-            font-size: 12px;
-            color: var(--earth-brown, #5D4037);
-            margin-left: auto;
-        }
-        .ach-notice {
-            background: #FFF3CD;
-            border: 1px solid #FFCC00;
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin: 16px 0;
-        }
-        .ach-notice p {
-            margin: 0;
-            font-size: 14px;
-            color: #856404;
-        }
-        .square-card-container {
-            min-height: 56px;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            background: white;
-        }
-        .square-card-container:focus-within {
-            border-color: var(--warm-orange, #FF6F00);
-        }
-        .ach-instructions {
-            text-align: center;
-            padding: 20px;
-            background: #f5f5f5;
-            border-radius: 8px;
-            color: var(--earth-brown, #5D4037);
-        }
-        .payment-security-note {
-            text-align: center;
-            margin-top: 12px;
-            font-size: 13px;
-            color: var(--earth-brown, #5D4037);
-        }
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.8s linear infinite;
-            margin-right: 8px;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        @media (max-width: 480px) {
-            .payment-option-content {
-                flex-wrap: wrap;
-            }
-            .payment-desc {
-                width: 100%;
-                margin-left: 36px;
-                margin-top: 4px;
-            }
-        }
-        /* Fix CTA dropdown being cut off */
-        .cta-section {
-            overflow: visible !important;
-        }
-        .cta-section .call-dropdown-menu.show {
-            z-index: 9999 !important;
-        }
-        /* ACH Savings Styles */
-        .ach-savings-badge {
-            background: linear-gradient(135deg, #d4edda, #c3e6cb);
-            border: 1px solid #28a745;
-            color: #155724;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            margin-left: 8px;
-            display: inline-block;
-        }
-        .ach-savings-detail {
-            background: #d4edda;
-            border: 1px solid #28a745;
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin: 12px 0;
-            display: none;
-        }
-        .ach-savings-detail.show {
-            display: block;
-        }
-        .ach-savings-detail p {
-            margin: 0;
-            font-size: 14px;
-            color: #155724;
-        }
-        .ach-savings-detail .savings-amount {
-            font-weight: 700;
-            font-size: 16px;
-        }
-        /* Apple Pay Styles */
-        .apple-pay-button-container {
-            margin: 16px 0;
-            display: none;
-        }
-        .apple-pay-button-container.show {
-            display: block;
-        }
-        #apple-pay-button {
-            width: 100%;
-            height: 48px;
-        }
-        .apple-pay-divider {
-            display: flex;
-            align-items: center;
-            margin: 16px 0;
-            color: #666;
-            font-size: 13px;
-        }
-        .apple-pay-divider::before,
-        .apple-pay-divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #ddd;
-        }
-        .apple-pay-divider span {
-            padding: 0 12px;
-        }
-        .payment-option.apple-pay-option .payment-option-content {
-            background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
-            color: white;
-            border-color: #000;
-        }
-        .payment-option.apple-pay-option input:checked + .payment-option-content {
-            border-color: #000;
-            box-shadow: 0 0 0 2px rgba(0,0,0,0.3);
-        }
-        .payment-option.apple-pay-option .payment-label,
-        .payment-option.apple-pay-option .payment-desc {
-            color: white;
-        }
-        .payment-option.apple-pay-option .payment-icon {
-            font-size: 20px;
-        }
-        /* Cart Item Delete Button - NEW */
-        .cart-item {
-            position: relative !important;
-        }
-        .cart-item-delete {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 26px;
-            height: 26px;
-            border: none;
-            background: #e74c3c;
-            color: white;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0.8;
-            transition: opacity 0.2s, transform 0.2s, background 0.2s;
-            z-index: 10;
-        }
-        .cart-item-delete:hover {
-            opacity: 1;
-            transform: scale(1.1);
-            background: #c0392b;
-        }
-        /* Clear Cart Button - NEW */
-        .clear-cart-btn {
-            background: transparent;
-            border: 1.5px solid #e74c3c;
-            color: #e74c3c;
-            padding: 10px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            width: 100%;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .clear-cart-btn:hover {
-            background: #e74c3c;
-            color: white;
-        }
+        .payment-method-selection { margin: 20px 0; }
+        .payment-method-selection h4 { margin-bottom: 12px; font-size: 16px; }
+        .payment-options { display: flex; flex-direction: column; gap: 10px; }
+        .payment-option { display: block; cursor: pointer; }
+        .payment-option input { display: none; }
+        .payment-option-content { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 2px solid #e0e0e0; border-radius: 10px; transition: all 0.2s; }
+        .payment-option input:checked + .payment-option-content { border-color: var(--warm-orange, #FF6F00); background: rgba(255, 111, 0, 0.05); }
+        .payment-icon { font-size: 24px; }
+        .payment-label { font-weight: 700; color: var(--earth-dark, #2C1810); }
+        .payment-desc { font-size: 12px; color: var(--earth-brown, #5D4037); margin-left: auto; }
+        .ach-notice { background: #FFF3CD; border: 1px solid #FFCC00; border-radius: 8px; padding: 12px 16px; margin: 16px 0; }
+        .ach-notice p { margin: 0; font-size: 14px; color: #856404; }
+        .square-card-container { min-height: 56px; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; background: white; }
+        .square-card-container:focus-within { border-color: var(--warm-orange, #FF6F00); }
+        .ach-instructions { text-align: center; padding: 20px; background: #f5f5f5; border-radius: 8px; color: var(--earth-brown, #5D4037); }
+        .payment-security-note { text-align: center; margin-top: 12px; font-size: 13px; color: var(--earth-brown, #5D4037); }
+        .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 0.8s linear infinite; margin-right: 8px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 480px) { .payment-option-content { flex-wrap: wrap; } .payment-desc { width: 100%; margin-left: 36px; margin-top: 4px; } }
+        .cta-section { overflow: visible !important; }
+        .cta-section .call-dropdown-menu.show { z-index: 9999 !important; }
+        .ach-savings-badge { background: linear-gradient(135deg, #d4edda, #c3e6cb); border: 1px solid #28a745; color: #155724; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-left: 8px; display: inline-block; }
+        .ach-savings-detail { background: #d4edda; border: 1px solid #28a745; border-radius: 8px; padding: 12px 16px; margin: 12px 0; display: none; }
+        .ach-savings-detail.show { display: block; }
+        .ach-savings-detail p { margin: 0; font-size: 14px; color: #155724; }
+        .ach-savings-detail .savings-amount { font-weight: 700; font-size: 16px; }
+        .apple-pay-button-container { margin: 16px 0; display: none; }
+        .apple-pay-button-container.show { display: block; }
+        #apple-pay-button { width: 100%; height: 48px; }
+        .apple-pay-divider { display: flex; align-items: center; margin: 16px 0; color: #666; font-size: 13px; }
+        .apple-pay-divider::before, .apple-pay-divider::after { content: ''; flex: 1; height: 1px; background: #ddd; }
+        .apple-pay-divider span { padding: 0 12px; }
+        .payment-option.apple-pay-option .payment-option-content { background: linear-gradient(135deg, #000 0%, #1a1a1a 100%); color: white; border-color: #000; }
+        .payment-option.apple-pay-option input:checked + .payment-option-content { border-color: #000; box-shadow: 0 0 0 2px rgba(0,0,0,0.3); }
+        .payment-option.apple-pay-option .payment-label, .payment-option.apple-pay-option .payment-desc { color: white; }
+        .payment-option.apple-pay-option .payment-icon { font-size: 20px; }
+        .cart-item { position: relative !important; }
+        .cart-item-delete { position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; border: none; background: #e74c3c; color: white; border-radius: 50%; cursor: pointer; font-size: 16px; font-weight: bold; line-height: 1; display: flex; align-items: center; justify-content: center; opacity: 0.8; transition: opacity 0.2s, transform 0.2s, background 0.2s; z-index: 10; }
+        .cart-item-delete:hover { opacity: 1; transform: scale(1.1); background: #c0392b; }
+        .clear-cart-btn { background: transparent; border: 1.5px solid #e74c3c; color: #e74c3c; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; margin-bottom: 12px; width: 100%; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .clear-cart-btn:hover { background: #e74c3c; color: white; }
     </style>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script>
@@ -304,7 +92,6 @@
 <nav class="nav" id="nav">
     <div class="nav-container">
         <a href="#" class="nav-logo"><img src="/images/logo.png" alt="Texas Got Rocks?"></a>
-        
         <ul class="nav-links">
             <li><a href="#products">Products</a></li>
             <li><a href="#how-it-works">How It Works</a></li>
@@ -338,32 +125,25 @@
             <li><a href="#reviews">Reviews</a></li>
             <li><a href="#faq">FAQ</a></li>
             <li class="nav-call-dropdown">
-                <button class="nav-call-btn" onclick="toggleNavCallDropdown(event)">
-                    &#128222; Call Or Text Now &#9662;
-                </button>
+                <button class="nav-call-btn" onclick="toggleNavCallDropdown(event)">&#128222; Call Or Text Now &#9662;</button>
                 <div class="nav-call-menu" id="navCallMenu">
                     <a href="tel:9362592887">&#128222; Call (936) 259-2887</a>
                     <a href="sms:9362592887">&#128172; Text (936) 259-2887</a>
                 </div>
             </li>
         </ul>
-        
         <div class="nav-right">
             <div class="nav-cart" onclick="openCartDrawer()">
                 <span class="nav-cart-icon">&#128722;</span>
                 <span class="cart-count hidden" id="navCartCount">0</span>
             </div>
-            <button class="mobile-menu-btn" id="mobile-menu-btn">
-                <span></span><span></span><span></span>
-            </button>
+            <button class="mobile-menu-btn" id="mobile-menu-btn"><span></span><span></span><span></span></button>
         </div>
     </div>
 </nav>
 
 <!-- Announcement Bar -->
-<div class="announcement-bar">
-    &#128666; <span class="highlight">ALWAYS FREE DELIVERY</span> in Conroe & The Woodlands &bull; Locally Owned&mdash;Direct Supplier Pricing
-</div>
+<div class="announcement-bar">&#128666; <span class="highlight">ALWAYS FREE DELIVERY</span> in Conroe & The Woodlands &bull; Locally Owned&mdash;Direct Supplier Pricing</div>
 
 <!-- Hero Section -->
 <section class="hero" id="home">
@@ -378,34 +158,13 @@
                 </div>
                 <div class="hero-text-content animate-fade-in delay-1">
                     <h1 class="hero-title">Bulk Rock, Gravel, Mulch & Topsoil – Delivered to Your Site – Stop making 12 trips to the BIG BOX stores, we deliver right to you!</h1>
-                    <p class="hero-description">
-                        <strong>We are local and one of your neighbors</strong>, so we can reduce your prices by eliminating broker markups. Instant online quotes, same day delivery in most cases and honest service from a family that owns their own trucks and inventory.
-                    </p>
+                    <p class="hero-description"><strong>We are local and one of your neighbors</strong>, so we can reduce your prices by eliminating broker markups. Instant online quotes, same day delivery in most cases and honest service from a family that owns their own trucks and inventory.</p>
                     <div class="hero-ctas">
                         <div class="hero-dropdown">
                             <button class="btn btn-primary hero-dropdown-btn">&#127968; The Communities We Serve &#9662;</button>
                             <div class="hero-dropdown-menu">
                                 <div class="hero-dropdown-grid">
-                                    <a href="/conroe/">&#128205;Conroe</a>
-                                    <a href="/the-woodlands/">&#128205;The Woodlands</a>
-                                    <a href="/spring/">&#128205;Spring</a>
-                                    <a href="/houston/">&#128205;Houston</a>
-                                    <a href="/humble/">&#128205;Humble</a>
-                                    <a href="/cypress/">&#128205;Cypress</a>
-                                    <a href="/katy/">&#128205;Katy</a>
-                                    <a href="/tomball/">&#128205;Tomball</a>
-                                    <a href="/magnolia/">&#128205;Magnolia</a>
-                                    <a href="/willis/">&#128205;Willis</a>
-                                    <a href="/montgomery/">&#128205;Montgomery</a>
-                                    <a href="/huntsville/">&#128205;Huntsville</a>
-                                    <a href="/new-caney/">&#128205;New Caney</a>
-                                    <a href="/splendora/">&#128205;Splendora</a>
-                                    <a href="/cleveland/">&#128205;Cleveland</a>
-                                    <a href="/plantersville/">&#128205;Plantersville</a>
-                                    <a href="/new-waverly/">&#128205;New Waverly</a>
-                                    <a href="/oak-ridge-north/">&#128205;Oak Ridge North</a>
-                                    <a href="/shenandoah/">&#128205;Shenandoah</a>
-                                    <a href="/porter/">&#128205;Porter</a>
+                                    <a href="/conroe/">&#128205;Conroe</a><a href="/the-woodlands/">&#128205;The Woodlands</a><a href="/spring/">&#128205;Spring</a><a href="/houston/">&#128205;Houston</a><a href="/humble/">&#128205;Humble</a><a href="/cypress/">&#128205;Cypress</a><a href="/katy/">&#128205;Katy</a><a href="/tomball/">&#128205;Tomball</a><a href="/magnolia/">&#128205;Magnolia</a><a href="/willis/">&#128205;Willis</a><a href="/montgomery/">&#128205;Montgomery</a><a href="/huntsville/">&#128205;Huntsville</a><a href="/new-caney/">&#128205;New Caney</a><a href="/splendora/">&#128205;Splendora</a><a href="/cleveland/">&#128205;Cleveland</a><a href="/plantersville/">&#128205;Plantersville</a><a href="/new-waverly/">&#128205;New Waverly</a><a href="/oak-ridge-north/">&#128205;Oak Ridge North</a><a href="/shenandoah/">&#128205;Shenandoah</a><a href="/porter/">&#128205;Porter</a>
                                 </div>
                             </div>
                         </div>
@@ -419,30 +178,16 @@
                     </div>
                 </div>
             </div>
-
             <div class="hero-bottom-row">
                 <div class="value-card animate-fade-in delay-2">
-                    <div class="free-delivery-badge">
-                        <span class="badge-icon">&#128666;</span>
-                        <span class="badge-text">Always FREE Delivery</span>
-                    </div>
+                    <div class="free-delivery-badge"><span class="badge-icon">&#128666;</span><span class="badge-text">Always FREE Delivery</span></div>
                     <h3>Why Pay More Elsewhere?</h3>
                     <ul class="value-list">
-                        <li> No delivery fees&mdash;ever</li>
-                        <li> No broker markups</li>
-                        <li> Same materials, better prices</li>
-                        <li> Local family-owned</li>
-                        <li> Same/next-day delivery</li>
-                        <li> Instant online quotes</li>
+                        <li> No delivery fees&mdash;ever</li><li> No broker markups</li><li> Same materials, better prices</li><li> Local family-owned</li><li> Same/next-day delivery</li><li> Instant online quotes</li>
                     </ul>
-                    <button class="btn btn-primary" style="width: 100%; margin-top: 16px;" onclick="openCalculatorModal()">
-                        Get Your Free Quote &rarr;
-                    </button>
-                    <p style="text-align: center; margin-top: 10px; font-size: 13px; color: var(--earth-brown);">
-                        Takes 30 seconds &bull; No obligation
-                    </p>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 16px;" onclick="openCalculatorModal()">Get Your Free Quote &rarr;</button>
+                    <p style="text-align: center; margin-top: 10px; font-size: 13px; color: var(--earth-brown);">Takes 30 seconds &bull; No obligation</p>
                 </div>
-
                 <div class="trust-grid animate-fade-in delay-3">
                     <div class="trust-item"><div class="trust-icon">&#128666;</div><span><strong>Always FREE Delivery</strong></span></div>
                     <div class="trust-item"><div class="trust-icon">&#9889;</div><span>Same/Next-Day in Conroe</span></div>
@@ -455,7 +200,6 @@
         </div>
     </div>
 </section>
-
 <!-- Project Selector Section -->
 <section class="project-selector-section" id="project-guides">
     <div class="section-container">
@@ -466,70 +210,28 @@
         </div>
         <div class="project-cards-grid">
             <a href="/guides/french-drain.html" class="project-card">
-                <div class="project-card-image">
-                    <img src="/images/projects/french-drain.jpg" alt="French Drain Installation">
-                    <span class="project-badge">Drainage</span>
-                </div>
-                <div class="project-card-content">
-                    <h3>French Drain</h3>
-                    <p>Stop yard flooding with proper drainage</p>
-                    <span class="project-material">Limestone Base + Bull Rock</span>
-                </div>
+                <div class="project-card-image"><img src="/images/projects/french-drain.jpg" alt="French Drain Installation"><span class="project-badge">Drainage</span></div>
+                <div class="project-card-content"><h3>French Drain</h3><p>Stop yard flooding with proper drainage</p><span class="project-material">Limestone Base + Bull Rock</span></div>
             </a>
             <a href="/guides/gravel-patio.html" class="project-card">
-                <div class="project-card-image">
-                    <img src="/images/projects/gravel-patio.jpg" alt="Gravel Patio">
-                    <span class="project-badge">Outdoor Living</span>
-                </div>
-                <div class="project-card-content">
-                    <h3>Gravel Patio</h3>
-                    <p>Create a stunning outdoor space</p>
-                    <span class="project-material">Black Star Gravel</span>
-                </div>
+                <div class="project-card-image"><img src="/images/projects/gravel-patio.jpg" alt="Gravel Patio"><span class="project-badge">Outdoor Living</span></div>
+                <div class="project-card-content"><h3>Gravel Patio</h3><p>Create a stunning outdoor space</p><span class="project-material">Black Star Gravel</span></div>
             </a>
             <a href="/guides/dry-creek-bed.html" class="project-card">
-                <div class="project-card-image">
-                    <img src="/images/projects/dry-creek-bed.jpg" alt="Dry Creek Bed">
-                    <span class="project-badge">Landscaping</span>
-                </div>
-                <div class="project-card-content">
-                    <h3>Dry Creek Bed</h3>
-                    <p>Beautiful drainage solution</p>
-                    <span class="project-material">Bull Rock + River Rock</span>
-                </div>
+                <div class="project-card-image"><img src="/images/projects/dry-creek-bed.jpg" alt="Dry Creek Bed"><span class="project-badge">Landscaping</span></div>
+                <div class="project-card-content"><h3>Dry Creek Bed</h3><p>Beautiful drainage solution</p><span class="project-material">Bull Rock + River Rock</span></div>
             </a>
             <a href="/guides/mulch-beds.html" class="project-card">
-                <div class="project-card-image">
-                    <img src="/images/projects/mulch-beds.jpg" alt="Garden Mulch Beds">
-                    <span class="project-badge">Garden</span>
-                </div>
-                <div class="project-card-content">
-                    <h3>Garden Beds</h3>
-                    <p>Refresh your flower beds</p>
-                    <span class="project-material">Black or Brown Mulch</span>
-                </div>
+                <div class="project-card-image"><img src="/images/projects/mulch-beds.jpg" alt="Garden Mulch Beds"><span class="project-badge">Garden</span></div>
+                <div class="project-card-content"><h3>Garden Beds</h3><p>Refresh your flower beds</p><span class="project-material">Black or Brown Mulch</span></div>
             </a>
             <a href="/guides/driveway-base.html" class="project-card">
-                <div class="project-card-image">
-                    <img src="/images/projects/driveway-base.jpg" alt="Driveway Base">
-                    <span class="project-badge">Driveway</span>
-                </div>
-                <div class="project-card-content">
-                    <h3>Driveway Base</h3>
-                    <p>Build a solid foundation</p>
-                    <span class="project-material">Limestone Base</span>
-                </div>
+                <div class="project-card-image"><img src="/images/projects/driveway-base.jpg" alt="Driveway Base"><span class="project-badge">Driveway</span></div>
+                <div class="project-card-content"><h3>Driveway Base</h3><p>Build a solid foundation</p><span class="project-material">Limestone Base</span></div>
             </a>
             <a href="/guides/fire-pit.html" class="project-card">
-                <div class="project-card-image">
-                    <img src="/images/projects/fire-pit.jpg" alt="Fire Pit Area">
-                    <span class="project-badge">Backyard</span>
-                </div>
-                <div class="project-card-content">
-                    <h3>Fire Pit Area</h3>
-                    <p>Create the perfect gathering spot</p>
-                    <span class="project-material">Pea Gravel</span>
-                </div>
+                <div class="project-card-image"><img src="/images/projects/fire-pit.jpg" alt="Fire Pit Area"><span class="project-badge">Backyard</span></div>
+                <div class="project-card-content"><h3>Fire Pit Area</h3><p>Create the perfect gathering spot</p><span class="project-material">Pea Gravel</span></div>
             </a>
         </div>
     </div>
@@ -542,9 +244,7 @@
             <div class="before-after-slider" id="beforeAfterSlider">
                 <div class="ba-image-container">
                     <img src="/images/after.jpg" alt="After - Texas Got Rocks Transformation" class="ba-after-img">
-                    <div class="ba-before-wrapper">
-                        <img src="/images/before.jpg" alt="Before" class="ba-before-img">
-                    </div>
+                    <div class="ba-before-wrapper"><img src="/images/before.jpg" alt="Before" class="ba-before-img"></div>
                     <div class="ba-slider-handle" id="baSliderHandle">
                         <div class="ba-handle-line"></div>
                         <div class="ba-handle-circle"><span>&#9664; &#9654;</span></div>
@@ -559,15 +259,9 @@
                 <h2 class="section-title">See It Before You Buy It</h2>
                 <p class="visualizer-feature-description">Upload a photo of your driveway, patio, or yard and preview exactly how different materials will look. No guessing&mdash;see the transformation before you order!</p>
                 <ul class="visualizer-feature-list">
-                    <li> Upload any photo of your space</li>
-                    <li> Choose from 6+ material types</li>
-                    <li> Outline your project area</li>
-                    <li> See realistic material preview</li>
-                    <li> Get instant quote when ready</li>
+                    <li> Upload any photo of your space</li><li> Choose from 6+ material types</li><li> Outline your project area</li><li> See realistic material preview</li><li> Get instant quote when ready</li>
                 </ul>
-                <div class="turnstile-wrapper">
-                    <div class="cf-turnstile" data-sitekey="0x4AAAAAACLhbHDiLonhYq3P" data-callback="onTurnstileVisualizer"></div>
-                </div>
+                <div class="turnstile-wrapper"><div class="cf-turnstile" data-sitekey="0x4AAAAAACLhbHDiLonhYq3P" data-callback="onTurnstileVisualizer"></div></div>
                 <button class="btn btn-primary btn-lg" id="visualizerBtn" onclick="openVisualizerWithCaptcha()" disabled>&#128205; Try the Visualizer Free &rarr;</button>
             </div>
         </div>
@@ -654,10 +348,7 @@
                     </div>
                     <div class="quantity-recommendations">
                         <h4>&#128205; Quantity Recommendations</h4>
-                        <ul>
-                            <li><strong>Orders Under 5 Tons</strong> &mdash; Add 20% extra to your estimated material needs.</li>
-                            <li><strong>5+ Ton Orders</strong> &mdash; Add around 10% to ensure enough additional material on hand.</li>
-                        </ul>
+                        <ul><li><strong>Orders Under 5 Tons</strong> &mdash; Add 20% extra to your estimated material needs.</li><li><strong>5+ Ton Orders</strong> &mdash; Add around 10% to ensure enough additional material on hand.</li></ul>
                     </div>
                     <div class="get-price-box">
                         <h4>&#128666; Ready to order?</h4>
@@ -679,7 +370,6 @@
         </div>
     </div>
 </section>
-
 <!-- Products Section -->
 <section class="products" id="products">
     <div class="section-container">
@@ -741,7 +431,6 @@
         </div>
     </div>
 </section>
-
 <!-- How It Works Section -->
 <section class="how-it-works" id="how-it-works">
     <div class="section-container">
@@ -827,7 +516,6 @@
         </div>
     </div>
 </section>
-
 <!-- FAQ Section -->
 <section class="faq" id="faq">
     <div class="section-container">
@@ -867,7 +555,6 @@
         </div>
     </div>
 </section>
-
 <!-- Footer -->
 <footer class="footer">
     <div class="footer-grid">
@@ -951,7 +638,6 @@
 
 <!-- Toast Notifications Container -->
 <div class="toast-container" id="toast-container"></div>
-
 <!-- Calculator Modal -->
 <div class="calculator-modal-overlay" id="calculator-modal">
     <div class="calculator-modal">
@@ -1028,10 +714,7 @@
             </div>
             <div id="quoteMinimumWarning" class="minimum-warning-box hidden">
                 <div class="warning-icon">&#9888;</div>
-                <div class="warning-content">
-                    <strong>2 Yard Minimum Required</strong>
-                    <p><span id="minWarningMaterialName">This material</span> requires a minimum order of 2 cubic yards. Please adjust your quantity to continue.</p>
-                </div>
+                <div class="warning-content"><strong>2 Yard Minimum Required</strong><p><span id="minWarningMaterialName">This material</span> requires a minimum order of 2 cubic yards. Please adjust your quantity to continue.</p></div>
             </div>
             <div id="quoteUpsellSection" class="upsell-section hidden">
                 <div class="upsell-header"><span class="upsell-icon">&#128172;</span><strong>Get More Value!</strong></div>
@@ -1056,15 +739,12 @@
             <div id="needAProSection" class="need-a-pro-section hidden">
                 <a href="/faust-landscaping.html?from=quote" class="need-a-pro-link"><span class="need-pro-icon">&#128119;</span><span class="need-pro-text">Need a Pro to install it?</span><span class="need-pro-arrow">&rarr;</span></a>
             </div>
-            <div class="turnstile-wrapper" id="quoteTurnstileWrapper">
-                <div class="cf-turnstile" data-sitekey="0x4AAAAAACLhbHDiLonhYq3P" data-callback="onTurnstileQuote"></div>
-            </div>
+            <div class="turnstile-wrapper" id="quoteTurnstileWrapper"><div class="cf-turnstile" data-sitekey="0x4AAAAAACLhbHDiLonhYq3P" data-callback="onTurnstileQuote"></div></div>
             <button id="quoteCtaButton" class="quote-cta-button" onclick="addToCartWithCaptcha()" disabled>Enter ZIP Code to Get Quote</button>
             <p class="service-area-note">Serving the Greater Houston & Conroe area<br><small>Full address collected at checkout</small></p>
         </div>
     </div>
 </div>
-
 <!-- Cart Drawer -->
 <div class="cart-drawer-overlay" id="cartDrawerOverlay" onclick="closeCartDrawer()"></div>
 <div class="cart-drawer" id="cartDrawer">
@@ -1089,7 +769,6 @@
         <p class="cart-add-more-link">Need more materials? <a href="#" onclick="closeCartDrawer(); openCalculatorModal(); return false;">+ Add Another Item</a></p>
     </div>
 </div>
-
 <!-- Checkout Confirmation Modal -->
 <div class="checkout-modal-overlay" id="checkoutModal">
     <div class="checkout-modal">
@@ -1123,67 +802,69 @@
                     <div class="payment-options">
                         <label class="payment-option apple-pay-option" id="applePayOption" style="display: none;">
                             <input type="radio" name="paymentMethod" value="apple-pay" onchange="onPaymentMethodChange('apple-pay')">
-                            <span class="payment-option-content">
-                                <span class="payment-icon"></span>
-                                <span class="payment-label">Apple Pay</span>
-                                <span class="payment-desc">Fast &amp; secure</span>
-                            </span>
+                            <span class="payment-option-content"><span class="payment-icon"></span><span class="payment-label">Apple Pay</span><span class="payment-desc">Fast &amp; secure</span></span>
                         </label>
                         <label class="payment-option">
                             <input type="radio" name="paymentMethod" value="card" checked onchange="onPaymentMethodChange('card')">
-                            <span class="payment-option-content">
-                                <span class="payment-icon">&#128179;</span>
-                                <span class="payment-label">Credit/Debit Card</span>
-                                <span class="payment-desc">Instant payment</span>
-                            </span>
+                            <span class="payment-option-content"><span class="payment-icon">&#128179;</span><span class="payment-label">Credit/Debit Card</span><span class="payment-desc">Instant payment</span></span>
                         </label>
                         <label class="payment-option">
                             <input type="radio" name="paymentMethod" value="ach" onchange="onPaymentMethodChange('ach')">
-                            <span class="payment-option-content">
-                                <span class="payment-icon">&#127970;</span>
-                                <span class="payment-label">Bank Account (ACH)<span class="ach-savings-badge" id="achSavingsBadge">Save $0.00</span></span>
-                                <span class="payment-desc">Lower fees &bull; 2-3 days to clear</span>
-                            </span>
+                            <span class="payment-option-content"><span class="payment-icon">&#127970;</span><span class="payment-label">Bank Account (ACH)<span class="ach-savings-badge" id="achSavingsBadge">Save $0.00</span></span><span class="payment-desc">Lower fees &bull; 2-3 days to clear</span></span>
                         </label>
                     </div>
                 </div>
-              <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 12px 16px; margin: 16px 0;">
-    <p style="margin: 0; font-size: 14px; color: #0c4a6e;">&#128179; <strong>Billing Notice:</strong> Your statement will show <strong>T & C Materials, LLC</strong> (doing business as Texas Got Rocks)</p>
-</div>
-                <div class="ach-savings-detail" id="achSavingsDetail">
-                    <p>&#128176; <strong>You save <span class="savings-amount" id="achSavingsAmount">$0.00</span></strong> by paying with ACH instead of card (1% vs 2.9% + 30&cent;)</p>
+                <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 12px 16px; margin: 16px 0;">
+                    <p style="margin: 0; font-size: 14px; color: #0c4a6e;">&#128179; <strong>Billing Notice:</strong> Your statement will show <strong>T & C Materials, LLC</strong> (doing business as Texas Got Rocks)</p>
                 </div>
-                <div class="ach-notice" id="achNotice" style="display: none;">
-                    <p>&#9888;&#65039; <strong>Bank payments take 2-3 business days to clear.</strong> Your delivery will be scheduled after payment clears.</p>
-                </div>
-                <div id="cardPaymentForm">
-                    <div class="form-group">
-                        <label>Card Details</label>
-                        <div id="square-card-container" class="square-card-container"></div>
-                    </div>
-                </div>
-                <div id="achPaymentForm" style="display: none;">
-                    <p class="ach-instructions">Click "Pay Now" to securely connect your bank account through Square.</p>
-                </div>
-                <div id="applePayButtonContainer" class="apple-pay-button-container">
-                    <div id="apple-pay-button"></div>
-                    <div class="apple-pay-divider"><span>or pay with card below</span></div>
-                </div>
+                <div class="ach-savings-detail" id="achSavingsDetail"><p>&#128176; <strong>You save <span class="savings-amount" id="achSavingsAmount">$0.00</span></strong> by paying with ACH instead of card (1% vs 2.9% + 30&cent;)</p></div>
+                <div class="ach-notice" id="achNotice" style="display: none;"><p>&#9888;&#65039; <strong>Bank payments take 2-3 business days to clear.</strong> Your delivery will be scheduled after payment clears.</p></div>
+                <div id="cardPaymentForm"><div class="form-group"><label>Card Details</label><div id="square-card-container" class="square-card-container"></div></div></div>
+                <div id="achPaymentForm" style="display: none;"><p class="ach-instructions">Click "Pay Now" to securely connect your bank account through Square.</p></div>
+                <div id="applePayButtonContainer" class="apple-pay-button-container"><div id="apple-pay-button"></div><div class="apple-pay-divider"><span>or pay with card below</span></div></div>
                 <button id="squarePayButton" class="btn btn-primary" style="width: 100%; margin-top: 16px;" onclick="handleSquarePayment()">&#128274; Pay Now</button>
-                <div class="checkout-nav-buttons" style="margin-top: 12px;">
-                    <button class="btn btn-secondary" style="width: 100%;" onclick="goToDeliveryStep()">&larr; Back to Delivery</button>
-                </div>
+                <div class="checkout-nav-buttons" style="margin-top: 12px;"><button class="btn btn-secondary" style="width: 100%;" onclick="goToDeliveryStep()">&larr; Back to Delivery</button></div>
                 <p class="payment-security-note">&#128274; Secure payment powered by Square</p>
             </div>
         </div>
     </div>
 </div>
+<!-- Visualizer Modal -->
+<div class="visualizer-modal-overlay" id="visualizerModal">
+    <div class="visualizer-modal">
+        <button class="modal-close" onclick="closeVisualizer()">&times;</button>
+        <div class="visualizer-header"><h3>&#127912; Material Visualizer</h3><p>See how materials look in your space</p></div>
+        <div class="visualizer-body">
+            <div class="visualizer-sidebar">
+                <div class="visualizer-section">
+                    <h3>1. Upload Your Photo</h3>
+                    <div class="upload-buttons">
+                        <label class="upload-btn"><input type="file" accept="image/*" id="vizFileInput" onchange="handleVisualizerUpload(event)" hidden>&#128194; Choose File</label>
+                        <label class="upload-btn camera-btn"><input type="file" accept="image/*" capture="environment" id="vizCameraInput" onchange="handleVisualizerUpload(event)" hidden>&#128247; Take Photo</label>
+                    </div>
+                </div>
+                <div class="visualizer-section">
+                    <h3>2. Select Material</h3>
+                    <div class="material-grid" id="vizMaterialGrid">
+                        <button class="material-btn active" data-id="black-mulch"><span class="material-swatch" style="background: #1a1a1a;"></span>Black Mulch</button>
+                        <button class="material-btn" data-id="brown-mulch"><span class="material-swatch" style="background: #8B4513;"></span>Brown Mulch</button>
+                        <button class="material-btn" data-id="blackstar-gravel"><span class="material-swatch" style="background: #2d2d2d;"></span>Blackstar Gravel</button>
+                        <button class="material-btn" data-id="decomposed-granite"><span class="material-swatch" style="background: #C9A66B;"></span>Decomposed Granite</button>
+                        <button class="material-btn" data-id="bull-rock"><span class="material-swatch" style="background: #a08060;"></span>3x5 Bull Rock</button>
+                        <button class="material-btn" data-id="topsoil"><span class="material-swatch" style="background: #3d3225;"></span>Topsoil</button>
+                    </div>
+                    <div class="material-price" id="vizMaterialPrice">$25/ton</div>
+                </div>
+                <div class="visualizer-section" id="vizStep3">
+                    <h3 id="vizStep3Title">3. Outline Area</h3>
+                    <div class="viz-instructions" id="vizInstructions"><p class="viz-instruction">Upload a photo to get started</p></div>
+                    <div class="viz-controls" id="vizControls" style="display: none;">
                         <label class="viz-checkbox"><input type="checkbox" id="vizShowOverlay" checked onchange="toggleVisualizerOverlay()">Show Material Preview</label>
                         <div class="viz-opacity"><div class="viz-opacity-header"><span>Opacity</span><span id="vizOpacityValue">70%</span></div><input type="range" min="30" max="100" value="70" id="vizOpacitySlider" oninput="updateVisualizerOpacity()"></div>
                         <button class="viz-reset-btn" onclick="resetVisualizerPoints()">&#8634; Draw New Area</button>
                     </div>
                 </div>
-                <div class="visualizer-section" id="vizCalcSection" style="display: block;">
+                <div class="visualizer-section" id="vizCalcSection" style="display: none;">
                     <h3>4. Calculate Amount Needed</h3>
                     <p class="viz-calc-material" id="vizCalcMaterial">Calculating for: <strong>Decomposed Granite</strong></p>
                     <div class="viz-calc-inputs">
@@ -1206,6 +887,7 @@
                         <button class="viz-quote-btn" onclick="getVisualizerQuoteWithQuantity()">Get Delivery Price &rarr;</button>
                     </div>
                 </div>
+                <button class="viz-start-over" id="vizStartOver" onclick="resetVisualizer()" style="display: none;">&#8634; Start Over</button>
             </div>
             <div class="visualizer-canvas-container" id="vizCanvasContainer" ondragover="handleVizDragOver(event)" ondragleave="handleVizDragLeave(event)" ondrop="handleVizDrop(event)">
                 <div class="viz-placeholder" id="vizPlaceholder">
@@ -1214,7 +896,7 @@
                 <div class="viz-canvas-wrapper" id="vizCanvasWrapper" style="display: none;">
                     <canvas id="vizMainCanvas" onclick="handleVisualizerClick(event)"></canvas>
                     <canvas id="vizOverlayCanvas"></canvas>
-                    <div class="viz-material-badge" id="vizMaterialBadge" style="display: none;"> <span id="vizBadgeName">Decomposed Granite</span></div>
+                    <div class="viz-material-badge" id="vizMaterialBadge" style="display: none;"><span id="vizBadgeName">Decomposed Granite</span></div>
                     <div class="viz-point-counter" id="vizPointCounter" style="display: none;"><span id="vizPointCount">0</span> points</div>
                 </div>
             </div>
@@ -1222,6 +904,21 @@
     </div>
 </div>
 
+<!-- Photo Consent Modal -->
+<div class="modal-overlay" id="photoConsentModal">
+    <div class="modal" style="max-width: 480px;">
+        <button class="modal-close" onclick="closePhotoConsent()">&times;</button>
+        <div class="modal-header"><div class="modal-icon">&#128247;</div><h3 class="modal-title">Photo Privacy Notice</h3></div>
+        <div class="modal-body">
+            <p>Your photo will be processed locally in your browser to preview materials. We do not upload, store, or share your photos on any server.</p>
+            <p style="font-size: 14px; color: #666;">By continuing, you confirm you have the right to use this image.</p>
+            <div style="display: flex; gap: 12px; margin-top: 20px;">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="declinePhotoConsent()">Cancel</button>
+                <button class="btn btn-primary" style="flex: 1;" onclick="acceptPhotoConsent()">Continue</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- More Products Modal Styles -->
 <style>
 .more-products-modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center; padding: 20px; }
@@ -1306,7 +1003,6 @@
 </div>
 
 <script src="/js/main.js"></script>
-
 <!-- Cart Management Functions -->
 <script>
 function removeCartItem(index) {
